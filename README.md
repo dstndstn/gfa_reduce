@@ -37,3 +37,5 @@ utilities related to CI WCS
 
 # environment
 to access auxiliary calibration files, it will be necessary to set \$CI\_REDUCE\_ETC to the location of the etc/ directory
+this code is intended to be run at NERSC using the DESI software environment, which is Python 3 based:
+https://github.com/ameisner/ci_reduce.git
