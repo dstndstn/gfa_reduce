@@ -1,7 +1,7 @@
 # directories
 
 ## etc/
-auxiliary files such as master biases, master flats, bad pixel masks, dark images ; will not be checked in to git due to file sizes
+auxiliary files such as master biases, master flats, bad pixel masks, dark images; will not be checked in to git due to file sizes
 
 ## py/analysis/
 core image analysis such as source detection, centroid measurements, PSF fitting, flux measurements
@@ -16,7 +16,7 @@ convert raw images to reduced images
 plotting utilities, for example overplotting circles at the locations of Gaia stars
 
 ## py/xmatch/
-cross-matching utilities, such as for matching to Gaia and other external catalogs
+cross-matching utilities, such as for matching to Gaia or other external catalogs
 
 # top-level py/ Python files
 
@@ -33,7 +33,7 @@ miscellaneous utilities, such as conversions between CI numbering/labeling schem
 will contain class that encapsulates a single CI exposure consisting of multiple single-camera images
 
 ## py/image.py
-will contain class that encapsulates a single-camera image (and its metadata) of a single CI exposure
+will contain class that encapsulates a single-camera image (and its metadata) drawn from a single CI exposure
 
 # environment
 to access auxiliary calibration files, it will be necessary to set \$CI\_REDUCE\_ETC to the location of the etc/ directory
