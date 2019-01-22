@@ -46,7 +46,7 @@ def valid_image_extname_list():
     """ any reason to set order a specific way here? """
 
     # order of CI# in DESI-3347
-    return ['CIE', 'CIN', 'CIC', 'CIS', 'CIE']
+    return ['CIE', 'CIN', 'CIC', 'CIS', 'CIW']
 
 def valid_ci_number_list():
     """ from DESI-3347 page 2 CI# labels """
