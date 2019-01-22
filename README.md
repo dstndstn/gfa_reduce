@@ -36,6 +36,6 @@ will contain class that encapsulates a single CI exposure consisting of multiple
 will contain class that encapsulates a single-camera image (and its metadata) drawn from a single CI exposure
 
 # environment
-to access auxiliary calibration files, it will be necessary to set \$CI\_REDUCE\_ETC to the location of the etc/ directory
-this code is intended to be run at NERSC using the DESI software environment, which is Python 3 based:
+* to access auxiliary calibration files, it will be necessary to set $CI\_REDUCE\_ETC to the location of the etc/ directory
+* this code is intended to be run at NERSC using the DESI software environment, which is Python 3 based:
 https://desi.lbl.gov/trac/wiki/Pipeline/GettingStarted/NERSC
