@@ -43,9 +43,8 @@ def valid_image_extnum_list(fz=True):
     return (np.arange(1, 6) if fz else np.arange(0, 5))
 
 def valid_image_extname_list():
-    """ any reason to set order a specific way here? """
+    """ returned list is in order of CI# in DESI-3347 """
 
-    # order of CI# in DESI-3347
     return ['CIE', 'CIN', 'CIC', 'CIS', 'CIW']
 
 def valid_ci_number_list():
@@ -53,11 +52,35 @@ def valid_ci_number_list():
 
     return np.arange(1, 6)
 
-def ci_extname_to_extnum(extname):
+def ci_extname_to_extnum_dict(fz=True):
+    """
+    return a dictionary with the correspondence between CI 
+    extension name and CI extension number
+    for now I'm including the dummy zeroth extension in the fzipped case    
+    """
+
+    if fz:
+        d = {'CI': 0, 'CIN': 1, 'CIW': 2, 'CIC': 3, 'CIE': 4, 'CIS': 5}
+    else:
+        d = {'CIN': 0, 'CIW': 1, 'CIC': 2, 'CIE': 3, 'CIS': 4}
+
+    return d
+
+def ci_extname_to_extnum(extname, fz=True):
+    """ convert CI image extension name to extension number"""
     
 
 def ci_extname_to_ci_number(extname):
+    """ convert CI image extension name to integer CI# from DESI-3347"""
 
+    # trim whitespace in case the input somehow has any
+    extname = extname.replace(' ', '')
+
+    assert(is_valid_extname(extname))
+
+    d = dict(zip(valid_image_extname_list(), valid_ci_number_list()))
+
+    return d[extname]
 
 def ci_extnum_to_extname(extnum):
 
@@ -77,13 +100,19 @@ def ci_boundary_coords(pix_center=False):
 def ci_corner_coords(pix_center=False):
 
 
-def check_valid_extnum():
+def is_valid_extnum(fz=True):
 
 
-def check_valid_extname():
+def is_valid_image_extname(extname):
+    return (extname in valid_image_extname_list())
 
+def is_valid_extname(extname, fz=True):
+    """
+    this is different from the above because when fzipped there's
+    a dummy zeroth extension with extname 'CI'
+    """
 
-def check_valid_ci_number(num):
+def is_valid_ci_number(num):
     return (num in valid_ci_number_list())
 
 def valid_flavor_list():
@@ -92,5 +121,5 @@ def valid_flavor_list():
     capitalization inconsistent in sample data
     """
 
-def check_valid_flavor(flavor):
+def is_valid_flavor(flavor):
     """ need to find out what the valid flavors (observation types) will be"""
