@@ -68,7 +68,7 @@ def ci_extname_to_extnum_dict(fz=True):
 
 def ci_extname_to_extnum(extname, fz=True):
     """ convert CI image extension name to extension number"""
-    
+    print('stub')
 
 def ci_extname_to_ci_number(extname):
     """ convert CI image extension name to integer CI# from DESI-3347"""
@@ -83,25 +83,25 @@ def ci_extname_to_ci_number(extname):
     return d[extname]
 
 def ci_extnum_to_extname(extnum):
-
+    print('stub')
 
 def ci_number_to_ci_extname():
-
+    print('stub')
 
 def ci_number_to_extnum():
-
+    print('stub')
 
 def ci_number_to_extname():
-
+    print('stub')
 
 def ci_boundary_coords(pix_center=False):
-
+    print('stub')
 
 def ci_corner_coords(pix_center=False):
-
+    print('stub')
 
 def is_valid_extnum(fz=True):
-
+    print('stub')
 
 def is_valid_image_extname(extname):
     return (extname in valid_image_extname_list())
@@ -111,6 +111,7 @@ def is_valid_extname(extname, fz=True):
     this is different from the above because when fzipped there's
     a dummy zeroth extension with extname 'CI'
     """
+    print('stub')
 
 def is_valid_ci_number(num):
     return (num in valid_ci_number_list())
@@ -120,6 +121,8 @@ def valid_flavor_list():
     this includes at least LIGHT, BIAS 
     capitalization inconsistent in sample data
     """
+    print('stub')
 
 def is_valid_flavor(flavor):
     """ need to find out what the valid flavors (observation types) will be"""
+    print('stub')
