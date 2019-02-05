@@ -4,6 +4,7 @@ class CI_exposure:
     """Object encapsulating the contents of a single CI exposure"""
 
     def __init__(self, image_list):
+        # images is a dictionary of CI_image objects
         self.images = {1: None, 2: None, 3: None, 4: None, 5: None}
 
         self.process_image_list(image_list)
