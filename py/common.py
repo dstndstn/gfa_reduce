@@ -185,24 +185,68 @@ def valid_flavor_list():
 
 def is_valid_flavor(flavor):
     """ need to find out what the valid flavors (observation types) will be"""
-    # be case insensitive
+    # be case insensitive for now
 
     return (flavor.upper() in valid_flavor_list())
 
-def ci_xmax(center=False):
+def ci_pixel_xmax(center=False):
+    """
+    "x" here is in CI pixel coordinates
+    could imagine adding a "binfac" keyword here for use in processing
+    steps where I've performed an integer downbinning
+    """
+    par = ci_misc_params()
+
+    # right edge of rightmost pixel
+    xmax = par['width_pix'] - 0.5
+
+    if center:
+        xmax -= 0.5 # center of rightmost pixel
+
+    return xmax
+
+def ci_pixel_ymax(center=False):
+    """
+    "y" here is in CI pixel coordinates
+    """
+    par = ci_misc_params()
+
+    # right edge of rightmost pixel
+    ymax = par['height_pix'] - 0.5
+
+    if center:
+        ymax -= 0.5 # center of rightmost pixel
+
+    return ymax
+
+def ci_pixel_xmin(center=False):
+    """
+    "x" here is in CI pixel coordinates
+    """
+
+    # left edge of leftmost pixel
+    xmin = -0.5
+
+    if center:
+        xmin += 0.5 # center of leftmost pixel
+
+    return xmin
+
+def ci_pixel_ymin(center=False):
+    """
+    "y" here is in CI pixel coordinates
+    """
+
+    # left edge of leftmost pixel
+    ymin = -0.5
+
+    if center:
+        ymin += 0.5 # center of leftmost pixel
+
+    return ymin
+
+def ci_boundary_pixel_coords(pix_center=False, wrap=False):
     print('stub')
 
-def ci_ymax(center=False):
-    print('stub')
-
-def ci_xmin(center=False):
-    print('stub')
-
-def ci_ymin(center=False):
-    print('stub')
-
-def ci_boundary_coords(pix_center=False, wrap=False):
-    print('stub')
-
-def ci_corner_coords(pix_center=False, wrap=False):
+def ci_corner_pixel_coords(pix_center=False, wrap=False):
     print('stub')
