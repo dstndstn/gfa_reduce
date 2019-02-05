@@ -3,36 +3,36 @@
 ## etc/
 auxiliary files such as master biases, master flats, bad pixel masks, dark images; will not be checked in to git due to file sizes
 
-## py/analysis/
+## py/ci_reduce/analysis/
 core image analysis such as source detection, centroid measurements, PSF fitting, flux measurements
 
-## py/calib/
+## py/ci_reduce/calib/
 code that generates calibration files in etc/, such as master biases, master flats, bad pixel masks, dark images
 
-## py/imred/
+## py/ci_reduce/imred/
 convert raw images to reduced images
 
-## py/plotting/
+## py/ci_reduce/plotting/
 plotting utilities, for example overplotting circles at the locations of Gaia stars
 
-## py/xmatch/
+## py/ci_reduce/xmatch/
 cross-matching utilities, such as for matching to Gaia or other external catalogs
 
-# top-level py/ Python files
+# top-level py/ci_reduce Python files
 
-## py/ci.py
+## py/ci_reduce/ci.py
 will contain class that will serve as repository for nominal CI parameters (gain, readnoise, ...)
 
-## py/ci_wcs.py
+## py/ci_reduce/ci_wcs.py
 utilities related to CI WCS
 
-## py/common.py
+## py/ci_reduce/common.py
 miscellaneous utilities, such as conversions between CI numbering/labeling schemes
 
-## py/exposure.py
+## py/ci_reduce/exposure.py
 will contain class that encapsulates a single CI exposure consisting of multiple single-camera images
 
-## py/image.py
+## py/ci_reduce/image.py
 will contain class that encapsulates a single-camera image (and its metadata) drawn from a single CI exposure
 
 # environment
