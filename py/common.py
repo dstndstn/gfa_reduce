@@ -1,5 +1,18 @@
 import numpy as np
 
+# utilities re: rotation relative to CS5
+
+def ci_misc_params():
+    width_pix = 3072
+    height_pix = 2048
+
+    par = {'width_pix': width_pix,
+           'height_pix': height_pix,
+           'center_pix_x': 0.5*width_pix + 0.5,
+           'center_pix_y': 0.5*height_pix + 0.5}
+
+    return par
+
 def valid_image_extnum_list(fz=True):
     """ 
     When fzipped, valid image extension numbers are 1-5 inclusive.
@@ -42,10 +55,15 @@ def valid_image_extnum_list(fz=True):
 
     return (np.arange(1, 6) if fz else np.arange(0, 5))
 
-def valid_image_extname_list():
+def valid_image_extname_list(fz=True):
     """ returned list is in order of CI# in DESI-3347 """
 
-    return ['CIE', 'CIN', 'CIC', 'CIS', 'CIW']
+    extnames = ['CIE', 'CIN', 'CIC', 'CIS', 'CIW']
+
+    if fz:
+        extnames.append('CI')
+
+    return extnames
 
 def valid_ci_number_list():
     """ from DESI-3347 page 2 CI# labels """
@@ -66,9 +84,26 @@ def ci_extname_to_extnum_dict(fz=True):
 
     return d
 
+def ci_extnum_to_extname_dict(fz=True):
+    """ 
+    make this a wrapper of ci_extname_to_extnum_dict to
+    to avoid having the same information typed out explicitly twice, 
+    which would be asking for additional bugs/inconsistencies
+    """
+    d_reverse = ci_extname_to_extnum_dict(fz=fz)
+
+    d = dict((v,k) for k,v in d_reverse.items())
+
+    return d
+
 def ci_extname_to_extnum(extname, fz=True):
     """ convert CI image extension name to extension number"""
-    print('stub')
+
+    assert(is_valid_extname(extname))
+
+    d = ci_extname_to_extnum_dict(fz=fz)
+
+    return d[extname]
 
 def ci_extname_to_ci_number(extname):
     """ convert CI image extension name to integer CI# from DESI-3347"""
@@ -82,8 +117,13 @@ def ci_extname_to_ci_number(extname):
 
     return d[extname]
 
-def ci_extnum_to_extname(extnum):
-    print('stub')
+def ci_extnum_to_extname(extnum, fz=True):
+
+    assert(is_valid_extnum(fz=fz))
+
+    d = ci_extnum_to_extname_dict(fz=fz)
+
+    return d[extnum]
 
 def ci_number_to_ci_extname():
     print('stub')
@@ -92,12 +132,6 @@ def ci_number_to_extnum():
     print('stub')
 
 def ci_number_to_extname():
-    print('stub')
-
-def ci_boundary_coords(pix_center=False):
-    print('stub')
-
-def ci_corner_coords(pix_center=False):
     print('stub')
 
 def is_valid_extnum(fz=True):
@@ -111,18 +145,43 @@ def is_valid_extname(extname, fz=True):
     this is different from the above because when fzipped there's
     a dummy zeroth extension with extname 'CI'
     """
-    print('stub')
+
+    return (extname in valid_image_extname_list(fz=fz))
 
 def is_valid_ci_number(num):
     return (num in valid_ci_number_list())
 
 def valid_flavor_list():
     """
-    this includes at least LIGHT, BIAS 
-    capitalization inconsistent in sample data
+    this includes at least 'BIAS', 'LIGHT' based on forDK.tar.gz samples
+    capitalization inconsistent in forDK.tar.gz samples
+    need to keep an eye out for additional valid flavors to add
     """
-    print('stub')
+
+    valid_flavors = ['BIAS', 'LIGHT']
+
+    return valid_flavors
 
 def is_valid_flavor(flavor):
     """ need to find out what the valid flavors (observation types) will be"""
+    # be case insensitive
+
+    return (flavor.upper() in valid_flavor_list())
+
+def ci_xmax(center=False):
+    print('stub')
+
+def ci_ymax(center=False):
+    print('stub')
+
+def ci_xmin(center=False):
+    print('stub')
+
+def ci_ymin(center=False):
+    print('stub')
+
+def ci_boundary_coords(pix_center=False, wrap=False):
+    print('stub')
+
+def ci_corner_coords(pix_center=False, wrap=False):
     print('stub')
