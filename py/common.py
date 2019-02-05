@@ -189,7 +189,7 @@ def is_valid_flavor(flavor):
 
     return (flavor.upper() in valid_flavor_list())
 
-def ci_pixel_xmax(center=False):
+def ci_pixel_xmax(pix_center=False):
     """
     "x" here is in CI pixel coordinates
     could imagine adding a "binfac" keyword here for use in processing
@@ -200,12 +200,12 @@ def ci_pixel_xmax(center=False):
     # right edge of rightmost pixel
     xmax = par['width_pix'] - 0.5
 
-    if center:
+    if pix_center:
         xmax -= 0.5 # center of rightmost pixel
 
     return xmax
 
-def ci_pixel_ymax(center=False):
+def ci_pixel_ymax(pix_center=False):
     """
     "y" here is in CI pixel coordinates
     """
@@ -214,12 +214,12 @@ def ci_pixel_ymax(center=False):
     # right edge of rightmost pixel
     ymax = par['height_pix'] - 0.5
 
-    if center:
+    if pix_center:
         ymax -= 0.5 # center of rightmost pixel
 
     return ymax
 
-def ci_pixel_xmin(center=False):
+def ci_pixel_xmin(pix_center=False):
     """
     "x" here is in CI pixel coordinates
     """
@@ -227,12 +227,12 @@ def ci_pixel_xmin(center=False):
     # left edge of leftmost pixel
     xmin = -0.5
 
-    if center:
+    if pix_center:
         xmin += 0.5 # center of leftmost pixel
 
     return xmin
 
-def ci_pixel_ymin(center=False):
+def ci_pixel_ymin(pix_center=False):
     """
     "y" here is in CI pixel coordinates
     """
@@ -240,13 +240,49 @@ def ci_pixel_ymin(center=False):
     # left edge of leftmost pixel
     ymin = -0.5
 
-    if center:
+    if pix_center:
         ymin += 0.5 # center of leftmost pixel
 
     return ymin
 
-def ci_boundary_pixel_coords(pix_center=False, wrap=False):
-    print('stub')
+def ci_boundary_pixel_coords(pix_center=True):
+    par = ci_misc_params()
+
+    x_top = np.arange(ci_pixel_xmin(pix_center=pix_center), 
+                      ci_pixel_xmax(pix_center=pix_center) + 1)
+    x_left = np.zeros(par['height_pix']) + ci_pixel_xmin(pix_center=pix_center)
+    y_left = np.arange(ci_pixel_ymin(pix_center=pix_center),
+                      ci_pixel_ymax(pix_center=pix_center) + 1)
+    y_bottom = np.zeros(par['width_pix']) + ci_pixel_ymin(pix_center=pix_center)
+    y_top = y_bottom + par['height_pix'] - 1
+    x_right = x_left + par['width_pix'] - 1
+    y_right = np.flip(y_left, axis=0)
+    x_bottom = np.flip(x_top, axis=0)
+
+    print(np.min(x_left), np.max(x_left), len(x_left))
+    print(np.min(x_top), np.max(x_top), len(x_top))
+    print(np.min(y_left), np.max(y_left), len(y_left))
+    print(np.min(y_bottom), np.max(y_bottom), len(y_bottom))
+
+    x_bdy = np.concatenate((x_left, x_top, x_right, x_bottom))
+    y_bdy = np.concatenate((y_left, y_top, y_right, y_bottom))
+
+    return x_bdy, y_bdy
 
 def ci_corner_pixel_coords(pix_center=False, wrap=False):
-    print('stub')
+    # LL -> UL -> UR -> LR
+    x_pix = [ci_pixel_xmin(pix_center=pix_center),
+             ci_pixel_xmin(pix_center=pix_center), 
+             ci_pixel_xmax(pix_center=pix_center),
+             ci_pixel_xmax(pix_center=pix_center)]
+
+    y_pix = [ci_pixel_ymin(pix_center=pix_center),
+             ci_pixel_ymax(pix_center=pix_center),
+             ci_pixel_ymax(pix_center=pix_center),
+             ci_pixel_ymin(pix_center=pix_center)]
+
+    if wrap:
+        x_pix.append(x_pix[0])
+        y_pix.append(y_pix[0])
+
+    return x_pix, y_pix
