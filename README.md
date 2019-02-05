@@ -37,5 +37,6 @@ will contain class that encapsulates a single-camera image (and its metadata) dr
 
 # environment
 * to access auxiliary calibration files, it will be necessary to set $CI\_REDUCE\_ETC to the location of the etc/ directory
+* to enable Gaia cross-matching, the GAIA_CAT_DIR environment variable must be set to the full path of "chunks-gaia-dr2-astrom"
 * this code is intended to be run at NERSC using the DESI software environment, which is Python 3 based:
 https://desi.lbl.gov/trac/wiki/Pipeline/GettingStarted/NERSC
