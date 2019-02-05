@@ -1,15 +1,21 @@
 import numpy as np
 
-# utilities re: rotation relative to CS5
+# could add utilities re: rotation relative to CS5
 
 def ci_misc_params():
+    """
+    repository for various constant values that I don't want to 
+    end up hardcoding in various places throughout the code base
+    """
+
     width_pix = 3072
     height_pix = 2048
 
     par = {'width_pix': width_pix,
            'height_pix': height_pix,
-           'center_pix_x': 0.5*width_pix + 0.5,
-           'center_pix_y': 0.5*height_pix + 0.5}
+           'center_pix_coord_x': 0.5*width_pix + 0.5,
+           'center_pix_coord_y': 0.5*height_pix + 0.5,
+           'n_cameras': 5}
 
     return par
 
@@ -105,6 +111,12 @@ def ci_extname_to_extnum(extname, fz=True):
 
     return d[extname]
 
+def ci_extname_to_ci_number_dict():
+    return dict(zip(valid_image_extname_list(), valid_ci_number_list()))
+
+def ci_number_to_ci_extname_dict():
+    return dict(zip(valid_ci_number_list(), valid_image_extname_list()))
+
 def ci_extname_to_ci_number(extname):
     """ convert CI image extension name to integer CI# from DESI-3347"""
 
@@ -113,7 +125,7 @@ def ci_extname_to_ci_number(extname):
 
     assert(is_valid_extname(extname))
 
-    d = dict(zip(valid_image_extname_list(), valid_ci_number_list()))
+    d = ci_extname_to_ci_number_dict()
 
     return d[extname]
 
@@ -125,17 +137,26 @@ def ci_extnum_to_extname(extnum, fz=True):
 
     return d[extnum]
 
-def ci_number_to_ci_extname():
-    print('stub')
+def ci_number_to_ci_extname(num):
+    """
+    CI number refers to CI# as labeled on DESI-3347 page 4
+    """
+    assert(is_valid_ci_number(num))
 
-def ci_number_to_extnum():
-    print('stub')
+    d = ci_number_to_ci_extname_dict()
 
-def ci_number_to_extname():
-    print('stub')
+    return d[num]
 
-def is_valid_extnum(fz=True):
-    print('stub')
+def ci_number_to_extnum(num, fz=True):
+    # convert ci number to ci extname
+    # then use extname to get extnum
+    extname = ci_number_to_ci_extname(num)
+
+    d = ci_extname_to_extnum_dict(fz=fz)
+    return d[extname]
+
+def is_valid_extnum(extnum, fz=True):
+    return (extnum in valid_image_extnum_list(fz=fz))
 
 def is_valid_image_extname(extname):
     return (extname in valid_image_extname_list())
