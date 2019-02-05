@@ -20,9 +20,6 @@ cross-matching utilities, such as for matching to Gaia or other external catalog
 
 # top-level py/ci_reduce Python files
 
-## py/ci_reduce/ci.py
-will contain class that will serve as repository for nominal CI parameters (gain, readnoise, ...)
-
 ## py/ci_reduce/ci_wcs.py
 utilities related to CI WCS
 
