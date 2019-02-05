@@ -250,12 +250,14 @@ def ci_boundary_pixel_coords(pix_center=True):
 
     x_top = np.arange(ci_pixel_xmin(pix_center=pix_center), 
                       ci_pixel_xmax(pix_center=pix_center) + 1)
-    x_left = np.zeros(par['height_pix']) + ci_pixel_xmin(pix_center=pix_center)
+    x_left = np.zeros(par['height_pix'] + 1*(not pix_center)) + \
+                      ci_pixel_xmin(pix_center=pix_center)
     y_left = np.arange(ci_pixel_ymin(pix_center=pix_center),
                       ci_pixel_ymax(pix_center=pix_center) + 1)
-    y_bottom = np.zeros(par['width_pix']) + ci_pixel_ymin(pix_center=pix_center)
-    y_top = y_bottom + par['height_pix'] - 1
-    x_right = x_left + par['width_pix'] - 1
+    y_bottom = np.zeros(par['width_pix'] + 1*(not pix_center)) + \
+                        ci_pixel_ymin(pix_center=pix_center)
+    y_top = y_bottom + par['height_pix'] - 1 + 1*(not pix_center)
+    x_right = x_left + par['width_pix'] - 1 + 1*(not pix_center)
     y_right = np.flip(y_left, axis=0)
     x_bottom = np.flip(x_top, axis=0)
 
