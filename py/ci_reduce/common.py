@@ -1,6 +1,7 @@
 import numpy as np
 
 # could add utilities re: rotation relative to CS5
+# add retrieval of nominal gain and readnoise values for each camerax
 
 def ci_misc_params():
     """
