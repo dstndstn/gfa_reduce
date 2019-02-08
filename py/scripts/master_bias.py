@@ -54,7 +54,8 @@ def write_master_bias():
     # replace CIC bias with CIN bias because no non-simulated CIC lab data
     # is available
 
-    outname = 'CI_master_bias.fits'
+    par = common.ci_misc_params()
+    outname = par['master_bias_filename']
     outname = os.path.join(os.environ['CI_REDUCE_ETC'], outname)
 
     assert(not os.path.exists(outname))
