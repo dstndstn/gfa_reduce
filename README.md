@@ -3,6 +3,9 @@
 ## etc/
 auxiliary files such as master biases, master flats, bad pixel masks, dark images; will not be checked in to git due to file sizes
 
+## py/scripts
+miscellaneous scripts not intended to be used as part of production pipeline
+
 ## py/ci_reduce/analysis/
 core image analysis such as source detection, centroid measurements, PSF fitting, flux measurements
 
