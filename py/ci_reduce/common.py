@@ -132,7 +132,7 @@ def ci_extname_to_ci_number(extname):
 
 def ci_extnum_to_extname(extnum, fz=True):
 
-    assert(is_valid_extnum(fz=fz))
+    assert(is_valid_extnum(extnum, fz=fz))
 
     d = ci_extnum_to_extname_dict(fz=fz)
 
