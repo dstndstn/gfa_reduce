@@ -16,7 +16,8 @@ def ci_misc_params():
            'height_pix': height_pix,
            'center_pix_coord_x': 0.5*width_pix + 0.5,
            'center_pix_coord_y': 0.5*height_pix + 0.5,
-           'n_cameras': 5}
+           'n_cameras': 5,
+           'master_bias_filename': 'CI_master_bias.fits'}
 
     return par
 
