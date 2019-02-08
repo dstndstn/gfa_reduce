@@ -1,4 +1,5 @@
-etc/*
+etc
 py/ci_reduce/__pycache__/
 py/ci_reduce/xmatch/__pycache__/
+py/scripts/__pycache__/
 *~
