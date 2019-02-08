@@ -1,7 +1,6 @@
 import numpy as np
 
 # could add utilities re: rotation relative to CS5
-# add retrieval of nominal gain and readnoise values for each camerax
 
 def ci_misc_params():
     """
@@ -20,6 +19,37 @@ def ci_misc_params():
            'master_bias_filename': 'CI_master_bias.fits'}
 
     return par
+
+def ci_camera_gain_dict():
+    gains = {'CIW': 1.64, 
+             'CIS': 1.65, 
+             'CIC': 1.64, 
+             'CIN': 1.61,
+             'CIE': 1.67}
+    return gains
+
+def ci_camera_gain(extname):
+    assert(is_valid_extname(extname))
+
+    gains = ci_camera_gain_dict()
+
+    return gains[extname]
+
+def ci_camera_readnoise_dict():
+    # units are electrons per pixel
+    readnoise_electrons = {'CIW': 12.8,
+                           'CIS': 13.3,
+                           'CIC': 13.7,
+                           'CIN': 13.2,
+                           'CIE': 14.2}
+
+    return readnoise_electrons
+
+def ci_camera_readnoise(extname):
+    assert(is_valid_extname(extname))
+
+    r = ci_camera_readnoise_dict()
+    return r[extname]
 
 def valid_image_extnum_list(fz=True):
     """ 
