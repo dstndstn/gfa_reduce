@@ -32,6 +32,9 @@ will contain class that encapsulates a single CI exposure consisting of multiple
 ## py/ci_reduce/image.py
 will contain class that encapsulates a single-camera image (and its metadata) drawn from a single CI exposure
 
+## py/ci_reduce/platescale.py
+utility for retrieving desimodel platescale as a function of CI pixel coordinates
+
 # environment
 * to access auxiliary calibration files, it will be necessary to set $CI\_REDUCE\_ETC to the location of the etc/ directory
 * to enable Gaia cross-matching, the GAIA_CAT_DIR environment variable must be set to the full path of "chunks-gaia-dr2-astrom"
