@@ -35,7 +35,7 @@ will contain class that encapsulates a single-camera image (and its metadata) dr
 ## py/ci_reduce/platescale.py
 utility for retrieving desimodel platescale as a function of CI pixel coordinates
 
-## convention for pixel coordinates
+# convention for pixel coordinates
 unless otherwise stated in a particular portion of the code...
 
 Throughout the codebase, pixel coordinate (0, 0) will be the **center** of the lower left pixel (where "lower left" applies in the context of the IDL/DS9 convention for 2D image display). "x" will refer to the "AXIS1" coordinate (long axis for CI cameras, a.k.a. "width"), and "y" will refer to the "AXIS2" coordinate (short axis for CI cameras, a.k.a. "height").
