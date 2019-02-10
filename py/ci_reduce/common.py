@@ -8,13 +8,13 @@ def ci_misc_params():
     end up hardcoding in various places throughout the code base
     """
 
-    width_pix = 3072
-    height_pix = 2048
+    width_pix_native = 3072
+    height_pix_native = 2048
 
-    par = {'width_pix': width_pix,
-           'height_pix': height_pix,
-           'center_pix_coord_x': 0.5*width_pix + 0.5,
-           'center_pix_coord_y': 0.5*height_pix + 0.5,
+    par = {'width_pix_native': width_pix_native,
+           'height_pix_native': height_pix_native,
+           'center_pix_coord_x': 0.5*width_pix_native + 0.5,
+           'center_pix_coord_y': 0.5*height_pix_native + 0.5,
            'n_cameras': 5,
            'master_bias_filename': 'CI_master_bias.fits'}
 
@@ -230,7 +230,7 @@ def ci_pixel_xmax(pix_center=False):
     par = ci_misc_params()
 
     # right edge of rightmost pixel
-    xmax = par['width_pix'] - 0.5
+    xmax = par['width_pix_native'] - 0.5
 
     if pix_center:
         xmax -= 0.5 # center of rightmost pixel
@@ -244,7 +244,7 @@ def ci_pixel_ymax(pix_center=False):
     par = ci_misc_params()
 
     # right edge of rightmost pixel
-    ymax = par['height_pix'] - 0.5
+    ymax = par['height_pix_native'] - 0.5
 
     if pix_center:
         ymax -= 0.5 # center of rightmost pixel
@@ -282,14 +282,14 @@ def ci_boundary_pixel_coords(pix_center=True):
 
     x_top = np.arange(ci_pixel_xmin(pix_center=pix_center), 
                       ci_pixel_xmax(pix_center=pix_center) + 1)
-    x_left = np.zeros(par['height_pix'] + 1*(not pix_center)) + \
+    x_left = np.zeros(par['height_pix_native'] + 1*(not pix_center)) + \
                       ci_pixel_xmin(pix_center=pix_center)
     y_left = np.arange(ci_pixel_ymin(pix_center=pix_center),
                       ci_pixel_ymax(pix_center=pix_center) + 1)
-    y_bottom = np.zeros(par['width_pix'] + 1*(not pix_center)) + \
+    y_bottom = np.zeros(par['width_pix_native'] + 1*(not pix_center)) + \
                         ci_pixel_ymin(pix_center=pix_center)
-    y_top = y_bottom + par['height_pix'] - 1 + 1*(not pix_center)
-    x_right = x_left + par['width_pix'] - 1 + 1*(not pix_center)
+    y_top = y_bottom + par['height_pix_native'] - 1 + 1*(not pix_center)
+    x_right = x_left + par['width_pix_native'] - 1 + 1*(not pix_center)
     y_right = np.flip(y_left, axis=0)
     x_bottom = np.flip(x_top, axis=0)
 

@@ -15,8 +15,8 @@ def ci_downbinned_shape(binfac):
 
     par = common.ci_misc_params()
 
-    width_native = par['width_pix']
-    height_native = par['height_pix']
+    width_native = par['width_pix_native']
+    height_native = par['height_pix_native']
 
     width_downbinned = float(width_native)/float(binfac)
     height_downbinned = float(height_native)/float(binfac)
