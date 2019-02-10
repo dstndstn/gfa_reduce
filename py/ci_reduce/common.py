@@ -16,7 +16,8 @@ def ci_misc_params():
            'height_pix_native': height_pix_native,
            'n_cameras': 5,
            'master_bias_filename': 'CI_master_bias.fits', 
-           'master_flat_filename': 'CI_master_flat.fits'}
+           'master_flat_filename': 'CI_master_flat.fits',
+           'static_mask_filename': 'CI_static_badpixels.fits'}
 
     return par
 
@@ -211,7 +212,7 @@ def valid_flavor_list():
     need to keep an eye out for additional valid flavors to add
     """
 
-    valid_flavors = ['BIAS', 'LIGHT', 'FLAT']
+    valid_flavors = ['BIAS', 'LIGHT', 'FLAT', 'MASK']
 
     return valid_flavors
 
