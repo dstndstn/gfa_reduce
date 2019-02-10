@@ -11,11 +11,12 @@ def ci_misc_params():
     width_pix_native = 3072
     height_pix_native = 2048
 
-    par = {'etc_env_var' : 'CI_REDUCE_ETC', 
+    par = {'etc_env_var': 'CI_REDUCE_ETC', 
            'width_pix_native': width_pix_native,
            'height_pix_native': height_pix_native,
            'n_cameras': 5,
-           'master_bias_filename': 'CI_master_bias.fits'}
+           'master_bias_filename': 'CI_master_bias.fits', 
+           'master_flat_filename': 'CI_master_flat.fits'}
 
     return par
 
@@ -210,7 +211,7 @@ def valid_flavor_list():
     need to keep an eye out for additional valid flavors to add
     """
 
-    valid_flavors = ['BIAS', 'LIGHT']
+    valid_flavors = ['BIAS', 'LIGHT', 'FLAT']
 
     return valid_flavors
 
