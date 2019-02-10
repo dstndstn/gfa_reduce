@@ -13,8 +13,6 @@ def ci_misc_params():
 
     par = {'width_pix_native': width_pix_native,
            'height_pix_native': height_pix_native,
-           'center_pix_coord_x': 0.5*width_pix_native + 0.5,
-           'center_pix_coord_y': 0.5*height_pix_native + 0.5,
            'n_cameras': 5,
            'master_bias_filename': 'CI_master_bias.fits'}
 

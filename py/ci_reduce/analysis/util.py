@@ -57,6 +57,17 @@ def ci_pixel_ymin(pix_center=False):
 
     return ymin
 
+def ci_center_pix_coords():
+    # native binning, this is the exact center of the image, 
+    # which is at the corner of four pixels because of even sidelengths
+
+    par = common.ci_misc_params()
+
+    x_pix_center = par['width_pix_native']*0.5 + 0.5
+    y_pix_center = par['height_pix_native']*0.5 + 0.5
+
+    return x_pix_center, y_pix_center
+
 def ci_boundary_pixel_coords(pix_center=True):
     par = common.ci_misc_params()
 
