@@ -56,7 +56,7 @@ def write_master_bias():
 
     par = common.ci_misc_params()
     outname = par['master_bias_filename']
-    outname = os.path.join(os.environ['CI_REDUCE_ETC'], outname)
+    outname = os.path.join(os.environ[par['etc_env_var']], outname)
 
     assert(not os.path.exists(outname))
 

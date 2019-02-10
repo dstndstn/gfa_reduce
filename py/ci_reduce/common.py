@@ -11,7 +11,8 @@ def ci_misc_params():
     width_pix_native = 3072
     height_pix_native = 2048
 
-    par = {'width_pix_native': width_pix_native,
+    par = {'etc_env_var' : 'CI_REDUCE_ETC', 
+           'width_pix_native': width_pix_native,
            'height_pix_native': height_pix_native,
            'n_cameras': 5,
            'master_bias_filename': 'CI_master_bias.fits'}
