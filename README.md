@@ -3,7 +3,7 @@
 ## etc/
 auxiliary files such as master biases, master flats, bad pixel masks, dark images; will not be checked in to git due to file sizes involved
 
-## py/scripts
+## py/scripts/
 miscellaneous scripts not intended to be used as part of production pipeline; includes code that generates calibration files in etc/, such as master biases, master flats, bad pixel masks, dark images
 
 ## py/ci_reduce/analysis/
