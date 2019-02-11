@@ -23,6 +23,9 @@ cross-matching utilities, such as for matching to Gaia or other external catalog
 ## py/ci_reduce/common.py
 miscellaneous utilities, such as conversions between CI numbering/labeling schemes
 
+## py/ci_reduce/dark_current.py
+utilities related to dark current
+
 ## py/ci_reduce/exposure.py
 class that encapsulates a single CI exposure consisting of multiple single-camera images
 
