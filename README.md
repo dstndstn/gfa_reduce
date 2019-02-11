@@ -24,10 +24,10 @@ cross-matching utilities, such as for matching to Gaia or other external catalog
 miscellaneous utilities, such as conversions between CI numbering/labeling schemes
 
 ## py/ci_reduce/exposure.py
-will contain class that encapsulates a single CI exposure consisting of multiple single-camera images
+class that encapsulates a single CI exposure consisting of multiple single-camera images
 
 ## py/ci_reduce/image.py
-will contain class that encapsulates a single-camera image (and its metadata) drawn from a single CI exposure
+class that encapsulates a single-camera image (and its metadata) drawn from a single CI exposure
 
 ## py/ci_reduce/platescale.py
 utility for retrieving desimodel platescale as a function of CI pixel coordinates
