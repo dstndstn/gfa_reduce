@@ -1,3 +1,4 @@
+import ci_reduce.common as common
 import fitsio
 import healpy
 import numpy as np
@@ -8,8 +9,6 @@ from astropy import units as u
 # this is intended to mirror how the DESI imaging surveys access
 # Gaia, namely through the HEALPix-elized full-sky catalog at:
 #     /global/project/projectdirs/cosmo/work/gaia/chunks-gaia-dr2-astrom
-# this directory is identified via the GAIA_CAT_DIR environment variable,
-# as in legacypipe
 #
 # each catalog contains one Nside = 32 HEALPix pixel worth of Gaia souces
 # the HEALPix indices are determined using RA/Dec as longitude/latitude
@@ -23,7 +22,9 @@ def gaia_chunknames(ipix):
     # RIGHT NOW THIS ASSUMES IPIX IS AN ARRAY !! 
     # should eventually make this also work for scalar ipix
 
-    gaia_dir = os.environ['GAIA_CAT_DIR']
+    par = common.ci_misc_params()
+
+    gaia_dir = os.environ[par['gaia_env_var']]
 
     flist = [os.path.join(gaia_dir, 'chunk-' + str(i).zfill(5) + 
                                     '.fits') for i in ipix]

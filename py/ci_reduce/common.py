@@ -11,7 +11,8 @@ def ci_misc_params():
     width_pix_native = 3072
     height_pix_native = 2048
 
-    par = {'etc_env_var': 'CI_REDUCE_ETC', 
+    par = {'etc_env_var': 'CI_REDUCE_ETC',
+           'gaia_env_var': 'GAIA_CAT_DIR',
            'width_pix_native': width_pix_native,
            'height_pix_native': height_pix_native,
            'n_cameras': 5,
