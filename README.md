@@ -29,6 +29,9 @@ class that encapsulates a single CI exposure consisting of multiple single-camer
 ## py/ci_reduce/image.py
 class that encapsulates a single-camera image (and its metadata) drawn from a single CI exposure
 
+## py/ci_reduce/io.py
+input/output utilities
+
 ## py/ci_reduce/platescale.py
 utility for retrieving desimodel platescale as a function of CI pixel coordinates
 
