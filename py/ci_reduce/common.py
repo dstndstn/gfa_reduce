@@ -95,7 +95,7 @@ def valid_image_extnum_list(fz=True):
 
     return (np.arange(1, 6) if fz else np.arange(0, 5))
 
-def valid_image_extname_list(fz=True):
+def valid_extname_list(fz=True):
     """ returned list is in order of CI# in DESI-3347 """
 
     extnames = ['CIE', 'CIN', 'CIC', 'CIS', 'CIW']
@@ -104,6 +104,9 @@ def valid_image_extname_list(fz=True):
         extnames.append('CI')
 
     return extnames
+
+def valid_image_extname_list():
+    return valid_extname_list(fz=False)
 
 def valid_ci_number_list():
     """ from DESI-3347 page 2 CI# labels """
@@ -201,7 +204,7 @@ def is_valid_extname(extname, fz=True):
     a dummy zeroth extension with extname 'CI'
     """
 
-    return (extname in valid_image_extname_list(fz=fz))
+    return (extname in valid_extname_list(fz=fz))
 
 def is_valid_ci_number(num):
     return (num in valid_ci_number_list())
