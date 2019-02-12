@@ -1,5 +1,6 @@
 import ci_reduce.common as common
 import imred.load_calibs as load_calibs
+import ci_reduce.dark_current as dark_current
 
 class CI_exposure:
     """Object encapsulating the contents of a single CI exposure"""
@@ -37,7 +38,11 @@ class CI_exposure:
                     load_calibs.read_flat_image(extname)
 
     def subtract_dark_current(self):
-        print('stub')
+        for extname in self.images.keys():
+            acttime = self.images[extname].header['ACTTIME']
+            t_c = self.images[extname].header['TAIRTEMP']
+            self.images[extname].image = self.images[extname].image - \
+                dark_current.total_dark_current_adu(extname, acttime, t_c)
 
     def calibrate_pixels(self):
         self.subtract_bias()
