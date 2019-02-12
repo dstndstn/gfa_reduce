@@ -10,12 +10,12 @@ class CI_exposure:
         self.images = dict(zip(common.valid_image_extname_list(), 
                                par['n_cameras']*[None]))
 
-        self.process_image_list(image_list)
+        self.assign_image_list(image_list)
 
     def assign_one_image(self, image):
         extname = (image.header)['EXTNAME']
         self.images[extname] = image
 
-    def process_image_list(self, image_list):
+    def assign_image_list(self, image_list):
         for image in image_list:
             self.assign_one_image(image)
