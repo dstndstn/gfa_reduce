@@ -22,6 +22,14 @@ def load_exposure(fname):
     assert(os.path.exists(fname))
 
     hdul = fits.open(fname)
+
+    dummy_fz_header = None
+
+    for hdu in hdul:
+        if (hdu.header['EXTNAME']).strip() == 'CI':
+            dummy_fz_header = hdu.header
+            hdul.remove(hdu)
+
     imlist = [load_image_from_hdu(hdu) for hdu in hdul]
 
-    return CI_exposure(imlist)
+    return CI_exposure(imlist, dummy_fz_header=dummy_fz_header)
