@@ -16,10 +16,14 @@ def ci_misc_params():
            'width_pix_native': width_pix_native,
            'height_pix_native': height_pix_native,
            'n_cameras': 5,
+           'nominal_zeropoint': 26.56,
            'fz_dummy_extname': 'CI',
            'master_bias_filename': 'CI_master_bias.fits', 
            'master_flat_filename': 'CI_master_flat.fits',
-           'static_mask_filename': 'CI_static_badpixels.fits'}
+           'static_mask_filename': 'CI_static_badpixels.fits',
+           'nominal_sag_cd': 3.55978e-5, 
+           'nominal_mer_cd': 3.26627e-5,
+           'nominal_cen_cd': 3.70303e-5}
 
     return par
 
