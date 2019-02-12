@@ -5,13 +5,16 @@ class CI_exposure:
 
     def __init__(self, image_list):
         # images is a dictionary of CI_image objects
-        self.images = {1: None, 2: None, 3: None, 4: None, 5: None}
+
+        par = common.ci_misc_params()
+        self.images = dict(zip(common.valid_image_extname_list(), 
+                               par['n_cameras']*[None]))
 
         self.process_image_list(image_list)
 
     def assign_one_image(self, image):
         extname = (image.header)['EXTNAME']
-        self.images[common.ci_extname_to_ci_number(extname)] = image
+        self.images[extname] = image
 
     def process_image_list(self, image_list):
         for image in image_list:
