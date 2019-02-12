@@ -16,6 +16,7 @@ def ci_misc_params():
            'width_pix_native': width_pix_native,
            'height_pix_native': height_pix_native,
            'n_cameras': 5,
+           'fz_dummy_extname': 'CI',
            'master_bias_filename': 'CI_master_bias.fits', 
            'master_flat_filename': 'CI_master_flat.fits',
            'static_mask_filename': 'CI_static_badpixels.fits'}
@@ -100,8 +101,9 @@ def valid_extname_list(fz=True):
 
     extnames = ['CIE', 'CIN', 'CIC', 'CIS', 'CIW']
 
+    par = ci_misc_params()
     if fz:
-        extnames.append('CI')
+        extnames.append(par['fz_dummy_extname'])
 
     return extnames
 
@@ -120,8 +122,11 @@ def ci_extname_to_extnum_dict(fz=True):
     for now I'm including the dummy zeroth extension in the fzipped case    
     """
 
+    par = ci_misc_params()
+
     if fz:
-        d = {'CI': 0, 'CIN': 1, 'CIW': 2, 'CIC': 3, 'CIE': 4, 'CIS': 5}
+        d = {par['fz_dummy_extname']: 0, 'CIN': 1, 'CIW': 2, 'CIC': 3, 
+                 'CIE': 4, 'CIS': 5}
     else:
         d = {'CIN': 0, 'CIW': 1, 'CIC': 2, 'CIE': 3, 'CIS': 4}
 

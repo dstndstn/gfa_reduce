@@ -21,12 +21,14 @@ def load_image_from_filename(fname, extname):
 def load_exposure(fname):
     assert(os.path.exists(fname))
 
+    par = common.ci_misc_params()
+
     hdul = fits.open(fname)
 
     dummy_fz_header = None
 
     for hdu in hdul:
-        if (hdu.header['EXTNAME']).strip() == 'CI':
+        if (hdu.header['EXTNAME']).strip() == par['fz_dummy_extname']:
             dummy_fz_header = hdu.header
             hdul.remove(hdu)
 
