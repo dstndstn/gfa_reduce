@@ -1,4 +1,5 @@
 import ci_reduce.common as common
+import imred.load_calibs as load_calibs
 
 class CI_exposure:
     """Object encapsulating the contents of a single CI exposure"""
@@ -12,6 +13,8 @@ class CI_exposure:
 
         self.assign_image_list(image_list)
         self.dummy_fz_header = dummy_fz_header
+        self.bitmasks = None
+        self.ivars = None
 
     def assign_one_image(self, image):
         extname = (image.header)['EXTNAME']
@@ -22,14 +25,24 @@ class CI_exposure:
             self.assign_one_image(image)
 
     def subtract_bias(self):
-        print('stub')
+        for extname in self.images.keys():
+            if self.images[extname] is not None:
+                self.images[extname].image = self.images[extname].image - \
+                    load_calibs.read_bias_image(extname)
 
     def apply_flatfield(self):
-        print('stub')
+        for extname in self.images.keys():
+            if self.images[extname] is not None:
+                self.images[extname].image = self.images[extname].image / \
+                    load_calibs.read_flat_image(extname)
 
     def subtract_dark_current(self):
         print('stub')
 
     def calibrate_pixels(self):
+        self.subtract_bias()
+        self.subtract_dark_current()
+        self.apply_flatfield()
+
         print('stub')
 
