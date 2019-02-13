@@ -20,6 +20,9 @@ cross-matching utilities, such as for matching to Gaia or other external catalog
 
 # top-level py/ci_reduce Python files
 
+## py/ci_reduce/ci_proc.py
+primary driver that gets called to run the reduction pipeline end-to-end
+
 ## py/ci_reduce/common.py
 miscellaneous utilities, such as conversions between CI numbering/labeling schemes
 
