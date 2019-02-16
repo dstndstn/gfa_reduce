@@ -46,7 +46,14 @@ def master_bias_header_cards(hdu, ci_extname):
     h = hdu.header
     h['FLAVOR'] = 'BIAS'
     h['EXTNAME'] = ci_extname
+    h['EXPTIME'] = 0.0
+    h['ACTTIME'] = 0.0
+    # zero idea whatsoever what temperature the forDK.tar.gz bias frames were 
+    # acquired at; just putting in 0 here since the dark current will be
+    # zeroed out by ACTTIME = 0 anyway
 
+    # CAMTEMP header card name comes from DESI-4000v3, "CI Camera" tab
+    h['CAMTEMP'] = 0.0
     return h
 
 def write_master_bias():
@@ -60,7 +67,7 @@ def write_master_bias():
 
     assert(not os.path.exists(outname))
 
-    ci_extnames = common.valid_image_extname_list(fz=False)
+    ci_extnames = common.valid_image_extname_list()
 
     hdus = []
     for ci_extnum in range(len(ci_extnames)):
