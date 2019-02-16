@@ -9,6 +9,9 @@ def read_bias_image(ci_extname):
     bias_fname = os.path.join(os.environ[par['etc_env_var']], \
                               par['master_bias_filename'])
 
+    print('Attempting to read master bias : ' + bias_fname + 
+          ', extension name : ' + ci_extname)
+
     assert(os.path.exists(bias_fname))
 
     bias = fits.getdata(bias_fname, extname=ci_extname)
@@ -23,6 +26,9 @@ def read_flat_image(ci_extname):
     par = common.ci_misc_params()
     flat_fname = os.path.join(os.environ[par['etc_env_var']], \
                               par['master_flat_filename'])
+
+    print('Attempting to read master flat : ' + flat_fname + 
+          ', extension name : ' + ci_extname)
 
     assert(os.path.exists(flat_fname))
 
