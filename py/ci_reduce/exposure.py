@@ -26,21 +26,24 @@ class CI_exposure:
             self.assign_one_image(image)
 
     def subtract_bias(self):
+        print('Attempting to subtract bias...')
         for extname in self.images.keys():
             if self.images[extname] is not None:
                 self.images[extname].image = self.images[extname].image - \
                     load_calibs.read_bias_image(extname)
 
     def apply_flatfield(self):
+        print('Attempting to apply flat field...')
         for extname in self.images.keys():
             if self.images[extname] is not None:
                 self.images[extname].image = self.images[extname].image / \
                     load_calibs.read_flat_image(extname)
 
     def subtract_dark_current(self):
+        print('Attempting to subtract dark current...')
         for extname in self.images.keys():
             acttime = self.images[extname].header['ACTTIME']
-            t_c = self.images[extname].header['TAIRTEMP']
+            t_c = self.images[extname].header['CAMTEMP']
             self.images[extname].image = self.images[extname].image - \
                 dark_current.total_dark_current_adu(extname, acttime, t_c)
 
@@ -48,8 +51,6 @@ class CI_exposure:
         self.subtract_bias()
         self.subtract_dark_current()
         self.apply_flatfield()
-
-        print('stub')
 
     def num_images_populated(self):
         return sum( im != None for im in self.images.values() )

@@ -71,6 +71,8 @@ def total_dark_current_adu(ci_extname, acttime, t_celsius):
 
     assert(common.is_valid_image_extname(ci_extname))
 
+    assert(acttime >= 0)
+
     gain = common.ci_camera_gain(ci_extname)
     dark_e_per_pix = total_dark_current_electrons(acttime, t_celsius)
     dark_adu_per_pix = dark_e_per_pix/gain

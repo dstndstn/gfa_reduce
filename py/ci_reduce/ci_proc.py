@@ -16,3 +16,6 @@ if __name__ == "__main__":
     assert(os.path.exists(fname_in))
 
     exp = io.load_exposure(fname_in)
+
+    # go from "raw" images to "reduced" images
+    exp.calibrate_pixels()
