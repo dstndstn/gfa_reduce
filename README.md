@@ -58,9 +58,9 @@ Throughout the codebase, pixel coordinate (0, 0) will be the **center** of the l
 
 the following is a bash script that can be used to configure one's environment for running the `ci_reduce` package at NERSC
 
-source /project/projectdirs/desi/software/desi_environment.sh 18.7
-export PYTHONPATH=${PYTHONPATH}:/global/homes/a/ameisner/ci_reduce/py
-export CI_REDUCE_ETC=/project/projectdirs/desi/users/ameisner/CI/ci_reduce_etc
-export GAIA_CAT_DIR=/global/project/projectdirs/cosmo/work/gaia/chunks-gaia-dr2-astrom
+    source /project/projectdirs/desi/software/desi_environment.sh 18.7
+    export PYTHONPATH=${PYTHONPATH}:/global/homes/a/ameisner/ci_reduce/py
+    export CI_REDUCE_ETC=/project/projectdirs/desi/users/ameisner/CI/ci_reduce_etc
+    export GAIA_CAT_DIR=/global/project/projectdirs/cosmo/work/gaia/chunks-gaia-dr2-astrom
 
 reading files from other places or running a `ci_reduce` checkout located elsewhere on NERSC would require modifications of these paths
