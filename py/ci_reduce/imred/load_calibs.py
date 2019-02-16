@@ -35,3 +35,19 @@ def read_flat_image(ci_extname):
     flat = fits.getdata(flat_fname, extname=ci_extname)
 
     return flat
+
+def read_static_mask_image(ci_extname):
+    assert(common.is_valid_extname(ci_extname))
+
+    par = common.ci_misc_params()
+    mask_fname = os.path.join(os.environ[par['etc_env_var']], \
+                              par['static_mask_filename'])
+
+    print('Attempting to read static bad pixel mask : ' + mask_fname + 
+          ', extension name : ' + ci_extname)
+
+    assert(os.path.exists(mask_fname))
+
+    mask = fits.getdata(mask_fname, extname=ci_extname)
+
+    return mask
