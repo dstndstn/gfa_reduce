@@ -46,5 +46,7 @@ def load_exposure(fname):
     print('Successfully loaded exposure : ' + fname)
     print('Exposure has ' + str(exp.num_images_populated()) + 
           ' image extensions populated')
+    print('Populated image extension names are : ' + 
+          str(exp.populated_extnames()))
 
     return exp

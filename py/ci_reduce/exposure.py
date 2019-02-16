@@ -53,3 +53,6 @@ class CI_exposure:
 
     def num_images_populated(self):
         return sum( im != None for im in self.images.values() )
+
+    def populated_extnames(self):
+        return [k for k,v in self.images.items() if v is not None]
