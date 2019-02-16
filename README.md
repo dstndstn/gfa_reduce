@@ -51,6 +51,7 @@ Throughout the codebase, pixel coordinate (0, 0) will be the **center** of the l
   * the authoritative copy can be found at `/project/projectdirs/desi/users/ameisner/CI/ci_reduce_etc`
 * to enable Gaia cross-matching, the `GAIA_CAT_DIR` environment variable must be set to the full path of "chunks-gaia-dr2-astrom"
   * the recommended path at NERSC is `/global/project/projectdirs/cosmo/work/gaia/chunks-gaia-dr2-astrom`
+  * this directory contains a full-sky set of 12,288 FITS "chunk" files, one per nside = 32 HEALPix pixel, with ring-ordered indexing in equatorial coordinates
 * this code is intended to be run at NERSC using the DESI software environment, which is Python 3 based:
   * https://desi.lbl.gov/trac/wiki/Pipeline/GettingStarted/NERSC
 
