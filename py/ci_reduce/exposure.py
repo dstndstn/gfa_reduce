@@ -51,3 +51,5 @@ class CI_exposure:
 
         print('stub')
 
+    def num_images_populated(self):
+        return sum( im != None for im in self.images.values() )
