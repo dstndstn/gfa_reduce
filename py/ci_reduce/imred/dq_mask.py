@@ -33,12 +33,13 @@ def dq_bitmask(im, extname):
 
     mask = load_calibs.read_static_mask_image(extname)
 
+    maskbits = common.mask_bit_dict()
+
     satmask = create_satmask(im, extname)
-    print(satmask.shape, np.sum(satmask != 0), np.min(satmask), np.max(satmask))
-    mask = np.bitwise_or(mask, (2**2)*satmask)
+    mask = np.bitwise_or(mask, (2**maskbits['SATUR'])*satmask)
 
     nanmask = create_nanmask(im)
-    mask = np.bitwise_or(mask, (2**3)*nanmask)
+    mask = np.bitwise_or(mask, (2**maskbits['NAN'])*nanmask)
 
     return mask
 
