@@ -17,10 +17,10 @@ if __name__ == "__main__":
 
     exp = io.load_exposure(fname_in)
 
-    # go from "raw" images to "reduced" images
-    exp.calibrate_pixels()
-
     # create data quality bitmasks
     exp.create_all_bitmasks()
+
+    # go from "raw" images to "reduced" images
+    exp.calibrate_pixels()
 
     print('Succesfully finished reducing ' + fname_in)
