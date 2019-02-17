@@ -19,3 +19,5 @@ if __name__ == "__main__":
 
     # go from "raw" images to "reduced" images
     exp.calibrate_pixels()
+
+    print('Succesfully finished reducing ' + fname_in)

@@ -23,7 +23,8 @@ def ci_misc_params():
            'static_mask_filename': 'CI_static_badpixels.fits',
            'nominal_sag_cd': 3.55978e-5, 
            'nominal_mer_cd': 3.26627e-5,
-           'nominal_cen_cd': 3.70303e-5}
+           'nominal_cen_cd': 3.70303e-5,
+           'full_well_electrons' : 100000.0}
 
     return par
 
