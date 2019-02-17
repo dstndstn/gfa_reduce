@@ -60,6 +60,8 @@ class CI_exposure:
 
     def create_all_bitmasks(self):
         for image in self.images.values():
+            if image is None:
+                continue
             print('Attempting to create image quality bitmask, ' + 
                   'extension name : ' + image.header['EXTNAME'])
             image.create_dq_mask()
