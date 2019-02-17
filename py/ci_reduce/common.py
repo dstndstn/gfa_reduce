@@ -18,7 +18,7 @@ def ci_misc_params():
            'n_cameras': 5,
            'nominal_zeropoint': 26.56,
            'fz_dummy_extname': 'CI',
-           'master_bias_filename': 'CI_master_bias.fits', 
+           'master_bias_filename': 'CI_master_bias.fits.gz', 
            'master_flat_filename': 'CI_master_flat.fits',
            'static_mask_filename': 'CI_static_badpixels.fits.gz',
            'nominal_sag_cd': 3.55978e-5, 
