@@ -14,7 +14,6 @@ class CI_exposure:
 
         self.assign_image_list(image_list)
         self.dummy_fz_header = dummy_fz_header
-        self.ivars = None
 
     def assign_one_image(self, image):
         extname = (image.header)['EXTNAME']
@@ -31,14 +30,7 @@ class CI_exposure:
                 self.images[extname].image = self.images[extname].image - \
                     load_calibs.read_bias_image(extname)
                 self.images[extname].bias_subtracted = True
-
-    def apply_flatfield(self):
-        print('Attempting to apply flat field...')
-        for extname in self.images.keys():
-            if self.images[extname] is not None:
-                self.images[extname].image = self.images[extname].image / \
-                    load_calibs.read_flat_image(extname)
-                self.images[extname].flatfielded = True
+                self.images[extname].calc_variance_e_squared()
 
     def subtract_dark_current(self):
         print('Attempting to subtract dark current...')
@@ -48,6 +40,16 @@ class CI_exposure:
             self.images[extname].image = self.images[extname].image - \
                 dark_current.total_dark_current_adu(extname, acttime, t_c)
             self.images[extname].dark_subtracted = True
+
+    def apply_flatfield(self):
+        print('Attempting to apply flat field...')
+        for extname in self.images.keys():
+            if self.images[extname] is not None:
+                flatfield = load_calibs.read_flat_image(extname)
+                self.images[extname].image = self.images[extname].image / \
+                    flatfield
+                self.images[extname].flatfielded = True
+                self.images[extname].calc_variance_adu(flatfield)
 
     def calibrate_pixels(self):
         self.subtract_bias()
