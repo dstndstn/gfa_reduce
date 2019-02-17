@@ -9,6 +9,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=descr)
     parser.add_argument('fname_in', type=str, nargs=1)
 
+    parser.add_argument('--outdir', default='', type=str,
+                        help='directory to write outputs in')
+
     args = parser.parse_args()
 
     fname_in = args.fname_in[0]
@@ -22,5 +25,14 @@ if __name__ == "__main__":
 
     # go from "raw" images to "reduced" images
     exp.calibrate_pixels()
+
+    # try to write image-level outputs if outdir is specified
+    if len(args.outdir) > 0:
+        outdir = args.outdir
+        print('Attempting to write outputs to : ' + 
+              outdir)
+
+        if not os.path.exists(outdir):
+            os.mkdir(outdir)
 
     print('Succesfully finished reducing ' + fname_in)
