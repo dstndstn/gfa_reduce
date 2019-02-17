@@ -14,7 +14,6 @@ class CI_exposure:
 
         self.assign_image_list(image_list)
         self.dummy_fz_header = dummy_fz_header
-        self.bitmasks = None
         self.ivars = None
 
     def assign_one_image(self, image):
