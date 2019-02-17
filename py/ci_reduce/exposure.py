@@ -14,6 +14,7 @@ class CI_exposure:
 
         self.assign_image_list(image_list)
         self.dummy_fz_header = dummy_fz_header
+        self.pixels_calibrated = None
 
     def assign_one_image(self, image):
         extname = (image.header)['EXTNAME']
@@ -55,6 +56,7 @@ class CI_exposure:
         self.subtract_bias()
         self.subtract_dark_current()
         self.apply_flatfield()
+        self.pixels_calibrated = True
 
     def num_images_populated(self):
         return sum( im != None for im in self.images.values() )
