@@ -235,3 +235,42 @@ def is_valid_flavor(flavor):
     # be case insensitive for now
 
     return (flavor.upper() in valid_flavor_list())
+
+def mask_bit_dict():
+    # keys are strings with shorthand name for each bit, values
+    # are the corresponding powers of 2
+
+    d = {'FLATBAD' : 0, 
+         'FLATQ'   : 1, 
+         'SATUR'   : 2,
+         'NAN'     : 3}
+
+    return d
+
+def mask_bit_from_bitname(bitname):
+
+    d = mask_bit_dict()
+
+    assert(bitname in d.keys())
+
+    return d[bitname]
+
+def mask_bit_description_dict():
+
+    d = {'FLATBAD' : 'bad pixel based on master flat', 
+         'FLATQ'   : 'questionable pixel based on master flat', 
+         'SATUR'   : 'saturated pixel',
+         'NAN'     : 'non-finite pixel value'}
+
+    return d
+
+def mask_bit_description(bitname):
+    # bitname is the shorthand name for 
+
+    d = mask_bit_description_dict()
+
+    assert(bitname in d.keys())
+
+    return d[bitname]
+
+    
