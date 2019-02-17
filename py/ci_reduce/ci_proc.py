@@ -20,4 +20,7 @@ if __name__ == "__main__":
     # go from "raw" images to "reduced" images
     exp.calibrate_pixels()
 
+    # create data quality bitmasks
+    exp.create_all_bitmasks()
+
     print('Succesfully finished reducing ' + fname_in)

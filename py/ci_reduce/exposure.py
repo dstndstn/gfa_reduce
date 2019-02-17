@@ -57,3 +57,9 @@ class CI_exposure:
 
     def populated_extnames(self):
         return [k for k,v in self.images.items() if v is not None]
+
+    def create_all_bitmasks(self):
+        for image in self.images.values():
+            print('Attempting to create image quality bitmask, ' + 
+                  'extension name : ' + image.header['EXTNAME'])
+            image.create_dq_mask()
