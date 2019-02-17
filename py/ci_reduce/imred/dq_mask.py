@@ -43,6 +43,15 @@ def dq_bitmask(im, extname):
 
     return mask
 
-# should add a function for creating the header needed for writing the
-# output dq mask -- in particular the self-documentation of the mask bit
-# meanings
+def add_dq_bitmask_header_cards(h):
+    # h should be a FITS header
+    # input gets modified !!
+
+    maskbits = common.mask_bit_dict()
+
+    for k,v in maskbits.items():
+        card_name = 'MASKB' + str(v)
+        card_value = common.mask_bit_description(k)
+
+        comment = 'Mask bit 2**' + str(v) + '=' + str(2**v) + ' meaning'
+        h[card_name] = (card_value, comment)
