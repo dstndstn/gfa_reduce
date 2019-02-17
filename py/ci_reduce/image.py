@@ -9,8 +9,13 @@ class CI_image:
         self.image = image
         self.header = header
         self.wcs = wcs.WCS(header)
+
         # lazily compute bitmask image only as requested
         self.bitmask = None
+
+        self.bias_subtracted = False
+        self.dark_subtracted = False
+        self.flatfielded = False
 
     def create_dq_mask(self):
         if self.bitmask is not None:

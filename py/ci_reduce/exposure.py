@@ -30,6 +30,7 @@ class CI_exposure:
             if self.images[extname] is not None:
                 self.images[extname].image = self.images[extname].image - \
                     load_calibs.read_bias_image(extname)
+                self.images[extname].bias_subtracted = True
 
     def apply_flatfield(self):
         print('Attempting to apply flat field...')
@@ -37,6 +38,7 @@ class CI_exposure:
             if self.images[extname] is not None:
                 self.images[extname].image = self.images[extname].image / \
                     load_calibs.read_flat_image(extname)
+                self.images[extname].flatfielded = True
 
     def subtract_dark_current(self):
         print('Attempting to subtract dark current...')
@@ -45,6 +47,7 @@ class CI_exposure:
             t_c = self.images[extname].header['CAMTEMP']
             self.images[extname].image = self.images[extname].image - \
                 dark_current.total_dark_current_adu(extname, acttime, t_c)
+            self.images[extname].dark_subtracted = True
 
     def calibrate_pixels(self):
         self.subtract_bias()
