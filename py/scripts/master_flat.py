@@ -145,7 +145,7 @@ def write_master_flat():
 
     flat, ivar = create_master_flat()
 
-    ci_extnames = common.valid_image_extname_list(fz=False)
+    ci_extnames = common.valid_image_extname_list()
 
     hdus = []
     for ci_extnum in range(len(ci_extnames)):
