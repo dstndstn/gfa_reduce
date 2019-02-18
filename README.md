@@ -1,8 +1,5 @@
 # directories
 
-## etc/
-auxiliary files such as master biases, master flats, static bad pixel masks, dark images; will not be checked in to git due to file sizes involved
-
 ## py/scripts/
 miscellaneous scripts not intended to be used as part of production pipeline; includes code that generates calibration files in etc/, such as master biases, master flats, static bad pixel masks, dark images
 
@@ -48,7 +45,9 @@ Throughout the codebase, pixel coordinate (0, 0) will be the **center** of the l
 
 # environment
 * to access auxiliary calibration files, it will be necessary to set the `CI_REDUCE_ETC` environment variable to the location of the etc/ directory
-  * the authoritative copy can be found at `/project/projectdirs/desi/users/ameisner/CI/ci_reduce_etc`
+  * examples of auxiliary calibration files include master biases, master flats, static bad pixel masks, master dark images
+  * these files will not be checked in to git due to the file sizes involved
+  * the authoritative copy of this directory can be found at `/project/projectdirs/desi/users/ameisner/CI/ci_reduce_etc`
 * to enable Gaia cross-matching, the `GAIA_CAT_DIR` environment variable must be set to the full path of "chunks-gaia-dr2-astrom"
   * the recommended path at NERSC is `/project/projectdirs/cosmo/work/gaia/chunks-gaia-dr2-astrom`
   * this directory contains a full-sky set of 12,288 FITS "chunk" files, one per nside = 32 HEALPix pixel, with ring-ordered indexing in equatorial coordinates
