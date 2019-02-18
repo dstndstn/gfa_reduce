@@ -3,6 +3,7 @@
 import argparse
 import os
 import ci_reduce.io as io
+from datetime import datetime
 
 if __name__ == "__main__":
     descr = 'run full ci_reduce pipeline on a CI exposure'
@@ -13,6 +14,9 @@ if __name__ == "__main__":
                         help='directory to write outputs in')
 
     args = parser.parse_args()
+
+    print('Starting CI reduction pipeline at: ' + str(datetime.utcnow()) + 
+          ' UTC')
 
     fname_in = args.fname_in[0]
 
@@ -36,3 +40,6 @@ if __name__ == "__main__":
             os.mkdir(outdir)
 
     print('Succesfully finished reducing ' + fname_in)
+
+    print('CI reduction pipeline completed at: ' + str(datetime.utcnow()) + 
+          ' UTC')
