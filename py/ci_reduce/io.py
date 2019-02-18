@@ -50,3 +50,45 @@ def load_exposure(fname):
           str(exp.populated_extnames()))
 
     return exp
+
+def reduced_image_fname(outdir, fname_in, flavor, gzip=True):
+    assert(os.path.exists(outdir))
+
+    outname = os.path.join(outdir, os.path.basename(fname_in))
+
+    # get rid of any ".fz" or ".gz" present in input filename
+    outname = outname.replace('.fz', '')
+    outname = outname.replace('.gz', '')
+
+    assert(outname[-5:] == '.fits')
+
+    outname = outname.replace('.fits', 
+        common.reduced_image_filename_label(flavor) + '.fits')
+
+    if gzip:
+        outname += '.gz'
+
+    assert(not os.path.exists(outname))
+
+    return outname
+
+
+def write_image_level_outputs(exp, outdir, fname_in, gzip=True):
+    # exp is a CI_exposure object
+    # outdir is the output directory (string)
+    # fname_in is the input filename (string)
+
+    par = common.ci_misc_params()
+
+    for flavor in par['reduced_image_flavors']:
+        outname = reduced_image_fname(outdir, fname_in, flavor, gzip=gzip)
+
+        hdulist = exp.to_hdulist(flavor=flavor)
+
+        print('Attempting to write ' + flavor + ' image output to ' + 
+              outname)
+
+        hdulist.writeto(outname)
+
+        print('Successfully wrote ' + flavor + ' image output to ' + 
+              outname)

@@ -1,6 +1,7 @@
 import ci_reduce.common as common
 import imred.load_calibs as load_calibs
 import ci_reduce.dark_current as dark_current
+import astropy.io.fits as fits
 
 class CI_exposure:
     """Object encapsulating the contents of a single CI exposure"""
@@ -71,3 +72,18 @@ class CI_exposure:
             print('Attempting to create image quality bitmask, ' + 
                   'extension name : ' + image.header['EXTNAME'])
             image.create_dq_mask()
+
+    def to_hdulist(self, flavor=''):
+        # I don't plan on writing fpack'ed outputs
+        fz = False
+
+        extnum_list = common.valid_image_extnum_list(fz=fz)
+
+        hdulist = []
+        for extnum in extnum_list:
+            extname = common.ci_extnum_to_extname(extnum, fz=fz)
+            hdu = self.images[extname].to_hdu(primary=(extnum == 0), 
+                                              flavor=flavor)
+            hdulist.append(hdu)
+
+        return fits.HDUList(hdulist)

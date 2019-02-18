@@ -1,6 +1,7 @@
 import ci_reduce.common as common
 import ci_reduce.imred.dq_mask as dq_mask
 import numpy as np
+import astropy.io.fits as fits
 from astropy import wcs
 
 class CI_image:
@@ -75,3 +76,27 @@ class CI_image:
         ivar_adu *= (self.bitmask == 0)
 
         self.ivar_adu = ivar_adu
+
+    def to_hdu(self, primary=False, flavor=''):
+        # convert this image to an HDU
+
+        # currently expect flavor to be one of
+        #     REDUCED - reduced image
+        #     BITMASK - data quality bitmask
+        #     INVVAR - inverse variance image
+
+        # if no flavor is specified then assume ".image" attribute is desired
+        # data for this HDU
+
+        f = (fits.PrimaryHDU if primary else fits.ImageHDU)
+
+        if (flavor == '') or (flavor == 'REDUCED'):
+            hdu = f(self.image, header=self.header)
+        elif (flavor == 'BITMASK'):
+            hdu = f(self.bitmask, header=self.header)
+        elif (flavor == 'INVVAR'):
+            hdu = f(self.ivar_adu, header=self.header)
+
+        hdu.header['FLAVOR'] = flavor
+
+        return hdu

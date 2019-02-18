@@ -24,7 +24,8 @@ def ci_misc_params():
            'nominal_sag_cd': 3.55978e-5, 
            'nominal_mer_cd': 3.26627e-5,
            'nominal_cen_cd': 3.70303e-5,
-           'full_well_electrons' : 100000.0}
+           'full_well_electrons' : 100000.0,
+           'reduced_image_flavors' : ['REDUCED', 'INVVAR', 'BITMASK']}
 
     return par
 
@@ -273,4 +274,11 @@ def mask_bit_description(bitname):
 
     return d[bitname]
 
-    
+def reduced_image_filename_label(flavor):
+    par = ci_misc_params()
+
+    assert(flavor in par['reduced_image_flavors'])
+
+    label = '_' + flavor.lower()
+
+    return label
