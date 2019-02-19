@@ -1,5 +1,6 @@
 import ci_reduce.common as common
 import ci_reduce.imred.dq_mask as dq_mask
+import ci_reduce.analysis.sky as sky
 import numpy as np
 import astropy.io.fits as fits
 from astropy import wcs
@@ -100,3 +101,32 @@ class CI_image:
         hdu.header['FLAVOR'] = flavor
 
         return hdu
+
+    def are_pixels_calibrated(self):
+        return (self.bias_subtracted and self.dark_subtracted and 
+                self.flatfielded)
+
+
+    def estimate_sky_level(self):
+        # do something dumb for now, return to this later with something
+        # more sophisticated, possibly involving segmentation
+        # and/or finding the mode
+
+        assert(self.are_pixels_calibrated())
+
+        return np.median(self.image)
+
+    def estimate_sky_mag(self):
+        # this is meant to be run on the reduced image in ADU
+
+        assert(self.are_pixels_calibrated())
+
+        sky_adu_per_pixel = self.estimate_sky_level()
+
+        extname = self.header['EXTNAME']
+        acttime = self.header['ACTTIME']
+
+        sky_mag = sky.adu_to_surface_brightness(sky_adu_per_pixel, 
+                                                acttime, extname)
+        
+        return sky_mag

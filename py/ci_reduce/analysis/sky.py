@@ -10,8 +10,8 @@ def adu_to_surface_brightness(sky_adu_1pixel, acttime, extname):
     platescale variations within a camera
     """
 
-    assert(sky_adu_1pixel > 0)
-    assert(acttime > 0)
+    if (sky_adu_1pixel <= 0) or (acttime <= 0):
+        return np.nan
 
     par = common.ci_misc_params()
 
