@@ -43,8 +43,8 @@ if __name__ == "__main__":
     # probably go somewhere else eventually
 
     for image in exp.images.values():
-        print(image.header['EXTNAME'] + ' sky mag per square asec AB : ', 
-              image.estimate_sky_mag())
+        print(image.header['EXTNAME'] + ' sky mag per square asec AB : ' +  
+              '{:.3f}'.format(image.estimate_sky_mag()))
 
     # try to write image-level outputs if outdir is specified
     if write_outputs:
