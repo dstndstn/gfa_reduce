@@ -10,7 +10,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=descr)
     parser.add_argument('fname_in', type=str, nargs=1)
 
-    parser.add_argument('--outdir', default=None, type=str,
+    parser.add_argument('--outdir', default='', type=str,
                         help='directory to write outputs in')
 
     args = parser.parse_args()
@@ -19,6 +19,8 @@ if __name__ == "__main__":
           ' UTC')
 
     fname_in = args.fname_in[0]
+
+    write_outputs = (len(args.outdir) > 0)
 
     assert(os.path.exists(fname_in))
 
@@ -31,7 +33,7 @@ if __name__ == "__main__":
     exp.calibrate_pixels()
 
     # try to write image-level outputs if outdir is specified
-    if len(args.outdir) > 0:
+    if write_outputs:
         outdir = args.outdir
         print('Attempting to write image-level outputs to directory : ' + 
               outdir)
@@ -39,7 +41,7 @@ if __name__ == "__main__":
         if not os.path.exists(outdir):
             os.mkdir(outdir)
 
-    if outdir is not None:
+    if write_outputs:
         # could add command line arg for turning off gzip compression
         io.write_image_level_outputs(exp, outdir, fname_in, gzip=True)
 

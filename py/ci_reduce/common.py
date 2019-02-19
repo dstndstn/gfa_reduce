@@ -227,6 +227,8 @@ def valid_flavor_list():
     need to keep an eye out for additional valid flavors to add
     """
 
+    # not sure how to deal with reduced image flavors that I've invented:
+    #     REDUCED, INVVAR, BITMASK
     valid_flavors = ['BIAS', 'LIGHT', 'FLAT', 'MASK']
 
     return valid_flavors
