@@ -26,6 +26,8 @@ if __name__ == "__main__":
 
     if write_outputs:
         outdir = args.outdir
+        if not os.path.exists(outdir):
+            os.mkdir(outdir)
         # fail if ANY of expected outputs already exist
         io.check_image_level_outputs_exist(outdir, fname_in, gzip=True)
 
@@ -41,9 +43,6 @@ if __name__ == "__main__":
     if write_outputs:
         print('Attempting to write image-level outputs to directory : ' + 
               outdir)
-
-        if not os.path.exists(outdir):
-            os.mkdir(outdir)
 
     if write_outputs:
         # could add command line arg for turning off gzip compression

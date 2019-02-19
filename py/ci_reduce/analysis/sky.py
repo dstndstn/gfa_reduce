@@ -4,6 +4,10 @@ import numpy as np
 def adu_to_surface_brightness(sky_adu_1pixel, acttime, extname):
     """
     convert from ADU (per pixel) to mag per square asec (AB)
+
+    note that this is meant to be applied to an average sky value across
+    an entire CI camera; this function does not take into account
+    platescale variations within a camera
     """
 
     assert(sky_adu_1pixel > 0)
