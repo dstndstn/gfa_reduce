@@ -24,6 +24,11 @@ if __name__ == "__main__":
 
     assert(os.path.exists(fname_in))
 
+    if write_outputs:
+        outdir = args.outdir
+        # fail if ANY of expected outputs already exist
+        io.check_image_level_outputs_exist(outdir, fname_in, gzip=True)
+
     exp = io.load_exposure(fname_in)
 
     # create data quality bitmasks
@@ -34,7 +39,6 @@ if __name__ == "__main__":
 
     # try to write image-level outputs if outdir is specified
     if write_outputs:
-        outdir = args.outdir
         print('Attempting to write image-level outputs to directory : ' + 
               outdir)
 
