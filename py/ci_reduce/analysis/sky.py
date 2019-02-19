@@ -15,7 +15,7 @@ def adu_to_surface_brightness(sky_adu_1pixel, acttime, extname):
 
     par = common.ci_misc_params()
 
-    if extname is 'CIC':
+    if extname == 'CIC':
         pixel_area_sq_asec = (par['nominal_cen_cd']*3600.0)**2
     else:
         pixel_area_sq_asec = \
