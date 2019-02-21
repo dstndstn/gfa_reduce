@@ -25,6 +25,7 @@ class CI_image:
         self.var_e_sq = None
         # the _adu in ivar_adu is meant to indicate the units are 1/(ADU^2)
         self.ivar_adu = None
+        self.sky_mag = None
 
     def create_dq_mask(self):
         if self.bitmask is not None:
@@ -117,6 +118,7 @@ class CI_image:
         return np.median(self.image)
 
     def estimate_sky_mag(self):
+        # calculate sky brightness in mag per sq asec
         # this is meant to be run on the reduced image in ADU
 
         assert(self.are_pixels_calibrated())
@@ -128,5 +130,10 @@ class CI_image:
 
         sky_mag = sky.adu_to_surface_brightness(sky_adu_per_pixel, 
                                                 acttime, extname)
-        
+
+        print(self.header['EXTNAME'] + ' sky mag per square asec AB : ' +  
+              '{:.3f}'.format(sky_mag))
+
+        self.sky_mag = sky_mag
+
         return sky_mag

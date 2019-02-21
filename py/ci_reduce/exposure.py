@@ -87,3 +87,7 @@ class CI_exposure:
             hdulist.append(hdu)
 
         return fits.HDUList(hdulist)
+
+    def estimate_all_sky_mags(self):
+        for im in self.images.values():
+            im.estimate_sky_mag()
