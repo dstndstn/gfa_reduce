@@ -10,8 +10,12 @@ import os
 def loading_image_extension_message(extname):
     print('Attempting to load image extension : ' + extname)
 
-def load_image_from_hdu(hdu):
+def load_image_from_hdu(hdu, verbose=True):
     loading_image_extension_message(hdu.header['EXTNAME'])
+
+    if verbose:
+        print(repr(hdu.header))
+
     return CI_image(hdu.data, hdu.header)
 
 def load_image_from_filename(fname, extname):
@@ -23,7 +27,7 @@ def load_image_from_filename(fname, extname):
     data, header = fits.getdata(fname, extname=extname, header=True)
     return CI_image(data, header)
 
-def load_exposure(fname):
+def load_exposure(fname, verbose=True):
     assert(os.path.exists(fname))
 
     print('Attempting to load exposure : ' + fname)
@@ -39,7 +43,7 @@ def load_exposure(fname):
             dummy_fz_header = hdu.header
             hdul.remove(hdu)
 
-    imlist = [load_image_from_hdu(hdu) for hdu in hdul]
+    imlist = [load_image_from_hdu(hdu, verbose=verbose) for hdu in hdul]
 
     exp = CI_exposure(imlist, dummy_fz_header=dummy_fz_header)
 
