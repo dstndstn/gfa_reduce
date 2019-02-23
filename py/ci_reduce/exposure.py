@@ -1,5 +1,5 @@
 import ci_reduce.common as common
-import imred.load_calibs as load_calibs
+import ci_reduce.imred.load_calibs as load_calibs
 import ci_reduce.dark_current as dark_current
 import astropy.io.fits as fits
 
