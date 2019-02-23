@@ -1,6 +1,17 @@
 import ci_reduce.common as common
 import numpy as np
 
+def nominal_pixel_area_sq_asec(extname):
+    par = common.ci_misc_params()
+
+    if extname == 'CIC':
+        pixel_area_sq_asec = (par['nominal_cen_cd']*3600.0)**2
+    else:
+        pixel_area_sq_asec = \
+            (par['nominal_mer_cd']*3600.0)*(par['nominal_sag_cd']*3600.0)
+
+    return pixel_area_sq_asec
+
 def ci_pixel_xmax(pix_center=False):
     """
     "x" here is in CI pixel coordinates

@@ -1,5 +1,6 @@
 import ci_reduce.common as common
 import numpy as np
+import ci_reduce.analysis.util as util
 
 def adu_to_surface_brightness(sky_adu_1pixel, acttime, extname):
     """
@@ -15,11 +16,7 @@ def adu_to_surface_brightness(sky_adu_1pixel, acttime, extname):
 
     par = common.ci_misc_params()
 
-    if extname == 'CIC':
-        pixel_area_sq_asec = (par['nominal_cen_cd']*3600.0)**2
-    else:
-        pixel_area_sq_asec = \
-            (par['nominal_mer_cd']*3600.0)*(par['nominal_sag_cd']*3600.0)
+    pixel_area_sq_asec = util.nominal_pixel_area_sq_asec(extname)
 
     sky_adu_per_sq_asec = sky_adu_1pixel/pixel_area_sq_asec
 
