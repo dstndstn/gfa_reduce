@@ -1,6 +1,7 @@
 import ci_reduce.common as common
 import numpy as np
 
+
 def nominal_pixel_area_sq_asec(extname):
     par = common.ci_misc_params()
 
@@ -11,6 +12,23 @@ def nominal_pixel_area_sq_asec(extname):
             (par['nominal_mer_cd']*3600.0)*(par['nominal_sag_cd']*3600.0)
 
     return pixel_area_sq_asec
+
+def nominal_pixel_sidelen_arith(extname):
+    # calculate/return the nominal pixel sidelength in arcseconds
+    # using the arithmetic mean of the x and y platescales
+
+    par = common.ci_misc_params()
+
+    if extname == 'CIC':
+        return par['nominal_cen_cd']*3600.0
+    else:
+        return np.mean([par['nominal_mer_cd'], par['nominal_sag_cd']])*3600.0
+
+def nominal_pixel_sidelen_geom(extname):
+    # calculate/return the nominal pixel sidelength in arcseconds
+    # using the geometric mean of the x and y platescales
+
+    return np.sqrt(nominal_pixel_area_sq_asec(extname))
 
 def ci_pixel_xmax(pix_center=False):
     """
