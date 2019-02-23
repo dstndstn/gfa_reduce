@@ -97,4 +97,4 @@ class CI_exposure:
             im.set_empirical_bg_sigma()
             print('empirical ' + im.header['EXTNAME'] + 
                   ' background sigma = ' + 
-                  str(im.empirical_bg_sigma) + ' ADU')
+                  '{:.2f}'.format(im.empirical_bg_sigma) + ' ADU')
