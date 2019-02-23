@@ -285,3 +285,13 @@ def reduced_image_filename_label(flavor):
     label = '_' + flavor.lower()
 
     return label
+
+def reduced_flavor_to_bunit(flavor):
+    par = ci_misc_params()
+
+    assert(flavor in par['reduced_image_flavors'])
+
+    d = {'REDUCED' : 'ADU', 'INVVAR' : '1/ADU^2', 
+         'BITMASK' : 'dimensionless'}
+
+    return d[flavor]

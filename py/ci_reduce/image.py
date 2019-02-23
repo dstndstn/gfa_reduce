@@ -104,6 +104,7 @@ class CI_image:
             hdu = f(self.ivar_adu, header=self.header)
 
         hdu.header['FLAVOR'] = flavor
+        hdu.header['BUNIT'] = common.reduced_flavor_to_bunit(flavor)
 
         return hdu
 
