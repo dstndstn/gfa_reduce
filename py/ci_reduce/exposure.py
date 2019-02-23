@@ -91,3 +91,10 @@ class CI_exposure:
     def estimate_all_sky_mags(self):
         for im in self.images.values():
             im.estimate_sky_mag()
+
+    def estimate_all_sky_sigmas(self):
+        for im in self.images.values():
+            im.set_empirical_bg_sigma()
+            print('empirical ' + im.header['EXTNAME'] + 
+                  ' background sigma = ' + 
+                  str(im.empirical_bg_sigma) + ' ADU')

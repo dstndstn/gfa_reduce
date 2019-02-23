@@ -43,6 +43,7 @@ if __name__ == "__main__":
 
     # calculate sky brightness in mag per sq asec
     exp.estimate_all_sky_mags()
+    exp.estimate_all_sky_sigmas()
 
     # try to write image-level outputs if outdir is specified
     if write_outputs:

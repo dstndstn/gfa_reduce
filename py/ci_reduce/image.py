@@ -140,7 +140,11 @@ class CI_image:
 
         # this could go wrong in pathological case that
         # segmap is nonzero for all pixels
-        self.empirical_bg_sigma = mad_std(image[self.segmap.array == 0])
+        return mad_std(self.image[self.segmap.array == 0])
+
+    def set_empirical_bg_sigma(self):
+        if self.empirical_bg_sigma is None:
+            self.empirical_bg_sigma = self.compute_empirical_bg_sigma()
 
     def estimate_sky_mag(self):
         # calculate sky brightness in mag per sq asec
