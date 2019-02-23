@@ -24,6 +24,8 @@ if __name__ == "__main__":
 
     assert(os.path.exists(fname_in))
 
+    gitrev = io.retrieve_git_rev()
+
     if write_outputs:
         outdir = args.outdir
         if not os.path.exists(outdir):
