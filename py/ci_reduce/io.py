@@ -82,6 +82,19 @@ def check_image_level_outputs_exist(outdir, fname_in, gzip=True):
     for flavor in par['reduced_image_flavors']:
         _ = reduced_image_fname(outdir, fname_in, flavor, gzip=gzip)
 
+def retrieve_git_rev():
+    code_dir = os.path.dirname(os.path.realpath(__file__))
+    cwd = os.getcwd()
+    do_chdir = (cwd[0:len(code_dir)] != code_dir)
+    if do_chdir:
+        os.chdir(code_dir)
+    gitrev = os.popen("git rev-parse --short HEAD").read().replace('\n','')
+    if do_chdir:
+        os.chdir(cwd)
+    print('"git rev" version info:', gitrev)
+
+    return gitrev
+
 def write_image_level_outputs(exp, outdir, fname_in, gzip=True):
     # exp is a CI_exposure object
     # outdir is the output directory (string)
