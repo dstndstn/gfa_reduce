@@ -1,9 +1,11 @@
 import ci_reduce.common as common
 import ci_reduce.imred.dq_mask as dq_mask
 import ci_reduce.analysis.sky as sky
+import ci_reduce.analysis.segment as segment
 import numpy as np
 import astropy.io.fits as fits
 from astropy import wcs
+from astropy.stats import mad_std
 
 class CI_image:
     """Single CI image from one CI exposure"""
@@ -26,6 +28,8 @@ class CI_image:
         # the _adu in ivar_adu is meant to indicate the units are 1/(ADU^2)
         self.ivar_adu = None
         self.sky_mag = None
+        self.segmap = None
+        self.empirical_bg_sigma = None
 
     def create_dq_mask(self):
         if self.bitmask is not None:
@@ -115,7 +119,28 @@ class CI_image:
 
         assert(self.are_pixels_calibrated())
 
-        return np.median(self.image)
+        if self.segmap is None:
+            self.set_segmap()
+
+        return np.median(self.image[self.segmap.array == 0])
+
+    def compute_segmap(self):
+        print('Attempting to compute segmentation map for ' + 
+              self.header['EXTNAME'])
+
+        segmap = segment.segmentation_map(self.image, self.header['EXTNAME'])
+        return segmap
+
+    def set_segmap(self):
+        self.segmap = self.compute_segmap()
+
+    def compute_empirical_bg_sigma(self):
+        if self.segmap is None:
+            self.set_segmap()
+
+        # this could go wrong in pathological case that
+        # segmap is nonzero for all pixels
+        self.empirical_bg_sigma = mad_std(image[self.segmap.array == 0])
 
     def estimate_sky_mag(self):
         # calculate sky brightness in mag per sq asec
