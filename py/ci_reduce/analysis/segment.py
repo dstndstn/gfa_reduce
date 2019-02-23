@@ -1,20 +1,30 @@
 import ci_reduce.common as common
+import ci_reduce.analysis.util as util
 from photutils import detect_threshold
 from astropy.convolution import Gaussian2DKernel
+import numpy as np
 from astropy.stats import gaussian_fwhm_to_sigma
 from photutils import detect_sources
 
-def segmentation_map(image):
+def segmentation_map(image, extname):
     # in this context image means a 2D numpy array rather than a CI_image
     # object
 
-    threshold = detect_threshold(image, snr=2.)
+    par = common.ci_misc_params()
+
+    fwhm_pix = par['nominal_fwhm_asec'] / \
+        util.nominal_pixel_sidelen_arith(extname)
+
+    threshold = detect_threshold(image, snr=2.0)
     
-    # fwhm = 9.0 pixels
-    sigma = 9.0*gaussian_fwhm_to_sigma
-    kernel = Gaussian2DKernel(sigma, x_size=9, y_size=9)
+    sigma = fwhm_pix*gaussian_fwhm_to_sigma
+    kernel = Gaussian2DKernel(sigma, x_size=int(np.round(fwhm_pix)), 
+                                     y_size=int(np.round(fwhm_pix)))
     kernel.normalize()
 
     segm = detect_sources(image, threshold, npixels=5, filter_kernel=kernel)
+
+    # add my own dilation of segm.array ?
+    # incorporate masking based on master flat/bias in this analysis ?
 
     return segm

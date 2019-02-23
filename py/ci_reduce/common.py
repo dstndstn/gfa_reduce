@@ -25,6 +25,7 @@ def ci_misc_params():
            'nominal_mer_cd': 3.26627e-5,
            'nominal_cen_cd': 3.70303e-5,
            'full_well_electrons' : 100000.0,
+           'nominal_fwhm_asec' : 1.25,
            'reduced_image_flavors' : ['REDUCED', 'INVVAR', 'BITMASK']}
 
     return par
