@@ -5,6 +5,7 @@ import numpy as np
 import os
 from astropy.coordinates import SkyCoord
 from astropy import units as u
+from astropy.table import Table
 
 # this is intended to mirror how the DESI imaging surveys access
 # Gaia, namely through the HEALPix-elized full-sky catalog at:
@@ -61,7 +62,11 @@ def gaia_xmatch(ra, dec):
 
     idx, ang_sep_deg, _ = ci_catalog.match_to_catalog_sky(gaia_catalog)
 
-    return gaia_cat[idx]
+    gaia_matches = Table(gaia_cat[idx])
+
+    gaia_matches['ang_sep_deg'] = ang_sep_deg
+
+    return gaia_matches
 
 # ra = np.arange(180, 185, 0.1)
 # dec = np.arange(3, -2, -0.1)

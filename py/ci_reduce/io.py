@@ -1,8 +1,9 @@
 from ci_reduce.image import CI_image
 from ci_reduce.exposure import CI_exposure
 import ci_reduce.common as common
+import ci_reduce.xmatch.gaia as gaia
 import astropy.io.fits as fits
-from astropy.table import vstack
+from astropy.table import vstack, hstack
 import os
 
 # in the context of this file, "image" and "exposure" generally refer to 
@@ -162,3 +163,24 @@ def write_exposure_source_catalog(catalog, outdir, fname_in):
 
     print('Attempting to write source catalog to ' + outname)
     catalog.write(outname, format='fits')
+
+def gather_gaia_crossmatches(catalog):
+    gaia_matches = gaia.gaia_xmatch(catalog['ra'], catalog['dec'])
+
+    # avoid downstream conflict with 'ra', 'dec' columns that refer
+    # to the world coordinates of the CI detections
+    gaia_matches.rename_column('ra', 'ra_gaia')
+    gaia_matches.rename_column('dec', 'dec_gaia')
+
+    return gaia_matches
+
+def append_gaia_crossmatches(catalog):
+    gaia_matches = gather_gaia_crossmatches(catalog)
+
+    # I believe that there will always be a Gaia match for each
+    # detected source, but will need to see if that assumption breaks
+    # at any point
+
+    catalog = hstack([catalog, gaia_matches])
+    
+    return catalog
