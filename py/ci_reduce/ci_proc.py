@@ -13,7 +13,8 @@ if __name__ == "__main__":
     parser.add_argument('--outdir', default='', type=str,
                         help='directory to write outputs in')
 
-    parser.add_argument('--careful_sky', default=False, action='store_true')
+    parser.add_argument('--careful_sky', default=False, action='store_true',
+        help='use image segmentation when deriving sky quantities')
 
     args = parser.parse_args()
 
