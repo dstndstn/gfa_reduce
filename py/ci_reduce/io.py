@@ -143,3 +143,22 @@ def combine_per_camera_catalogs(catalogs):
     composite = strip_none_columns(composite)
 
     return composite
+
+def write_exposure_source_catalog(catalog, outdir, fname_in):
+
+    assert(os.path.exists(outdir))
+
+    outname = os.path.join(outdir, os.path.basename(fname_in))
+
+    # get rid of any ".fz" or ".gz" present in input filename
+    outname = outname.replace('.fz', '')
+    outname = outname.replace('.gz', '')
+
+    assert(outname[-5:] == '.fits')
+
+    outname = outname.replace('.fits', '_catalog.fits')
+
+    assert(not os.path.exists(outname))
+
+    print('Attempting to write source catalog to ' + outname)
+    catalog.write(outname, format='fits')
