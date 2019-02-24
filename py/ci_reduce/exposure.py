@@ -88,13 +88,13 @@ class CI_exposure:
 
         return fits.HDUList(hdulist)
 
-    def estimate_all_sky_mags(self):
+    def estimate_all_sky_mags(self, careful_sky=False):
         for im in self.images.values():
-            im.estimate_sky_mag()
+            im.estimate_sky_mag(careful_sky=careful_sky)
 
-    def estimate_all_sky_sigmas(self):
+    def estimate_all_sky_sigmas(self, careful_sky=False):
         for im in self.images.values():
-            im.set_empirical_bg_sigma()
+            im.set_empirical_bg_sigma(careful_sky=careful_sky)
             print('empirical ' + im.header['EXTNAME'] + 
                   ' background sigma = ' + 
                   '{:.2f}'.format(im.empirical_bg_sigma) + ' ADU')

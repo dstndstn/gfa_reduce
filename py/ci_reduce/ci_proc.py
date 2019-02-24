@@ -13,6 +13,8 @@ if __name__ == "__main__":
     parser.add_argument('--outdir', default='', type=str,
                         help='directory to write outputs in')
 
+    parser.add_argument('--careful_sky', default=False, action='store_true')
+
     args = parser.parse_args()
 
     print('Starting CI reduction pipeline at: ' + str(datetime.utcnow()) + 
@@ -42,8 +44,8 @@ if __name__ == "__main__":
     exp.calibrate_pixels()
 
     # calculate sky brightness in mag per sq asec
-    exp.estimate_all_sky_mags()
-    exp.estimate_all_sky_sigmas()
+    exp.estimate_all_sky_mags(careful_sky=args.careful_sky)
+    exp.estimate_all_sky_sigmas(careful_sky=args.careful_sky)
 
     # try to write image-level outputs if outdir is specified
     if write_outputs:

@@ -114,17 +114,20 @@ class CI_image:
                 self.flatfielded)
 
 
-    def estimate_sky_level(self):
+    def estimate_sky_level(self, careful_sky=False):
         # do something dumb for now, return to this later with something
         # more sophisticated, possibly involving segmentation
         # and/or finding the mode
 
         assert(self.are_pixels_calibrated())
 
-        if self.segmap is None:
-            self.set_segmap()
+        if careful_sky:
+            if self.segmap is None:
+                self.set_segmap()
 
-        self.sky_level_adu = np.median(self.image[self.segmap.array == 0])
+            self.sky_level_adu = np.median(self.image[self.segmap.array == 0])
+        else:
+            self.sky_level_adu = np.median(self.image)
 
         return self.sky_level_adu
 
@@ -138,25 +141,29 @@ class CI_image:
     def set_segmap(self):
         self.segmap = self.compute_segmap()
 
-    def compute_empirical_bg_sigma(self):
-        if self.segmap is None:
-            self.set_segmap()
+    def compute_empirical_bg_sigma(self, careful_sky=False):
 
-        # this could go wrong in pathological case that
-        # segmap is nonzero for all pixels
-        return mad_std(self.image[self.segmap.array == 0])
+        if careful_sky:
+            if self.segmap is None:
+                self.set_segmap()
 
-    def set_empirical_bg_sigma(self):
+            # this could go wrong in pathological case that
+            # segmap is nonzero for all pixels
+            return mad_std(self.image[self.segmap.array == 0])
+        else:
+            return mad_std(self.image)
+
+    def set_empirical_bg_sigma(self, careful_sky=False):
         if self.empirical_bg_sigma is None:
-            self.empirical_bg_sigma = self.compute_empirical_bg_sigma()
+            self.empirical_bg_sigma = self.compute_empirical_bg_sigma(careful_sky=careful_sky)
 
-    def estimate_sky_mag(self):
+    def estimate_sky_mag(self, careful_sky=False):
         # calculate sky brightness in mag per sq asec
         # this is meant to be run on the reduced image in ADU
 
         assert(self.are_pixels_calibrated())
 
-        sky_adu_per_pixel = self.estimate_sky_level()
+        sky_adu_per_pixel = self.estimate_sky_level(careful_sky=careful_sky)
 
         extname = self.header['EXTNAME']
         acttime = self.header['ACTTIME']
