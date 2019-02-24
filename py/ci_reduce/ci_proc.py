@@ -50,6 +50,7 @@ if __name__ == "__main__":
     catalogs = exp.all_source_catalogs()
     # reformat the output catalogs into a single merged astropy Table
     catalog = io.combine_per_camera_catalogs(catalogs)
+    catalog = io.append_gaia_crossmatches(catalog)
 
     # try to write image-level outputs if outdir is specified
     if write_outputs:
