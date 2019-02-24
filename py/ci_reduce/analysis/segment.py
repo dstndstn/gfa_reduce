@@ -6,7 +6,7 @@ import numpy as np
 from astropy.stats import gaussian_fwhm_to_sigma
 from photutils import detect_sources
 
-def segmentation_map(image, extname):
+def segmentation_map(image, extname, get_kernel=False):
     # in this context image means a 2D numpy array rather than a CI_image
     # object
 
@@ -27,4 +27,7 @@ def segmentation_map(image, extname):
     # add my own dilation of segm.array ?
     # incorporate masking based on master flat/bias in this analysis ?
 
-    return segm
+    if not get_kernel:
+        return segm
+    else:
+        return segm, kernel
