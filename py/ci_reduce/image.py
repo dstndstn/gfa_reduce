@@ -179,12 +179,27 @@ class CI_image:
 
         return sky_mag
 
+    def catalog_add_radec(self, catalog):
+        # use wcs attribute to convert from pixel to world coordinates
+        # be careful about 1-indexed versus 0-indexed convention
+        # also be careful about any swapping of x and y pixel coordinates
+        
+        ra, dec = self.wcs.all_pix2world(catalog['xcentroid'],
+                                         catalog['ycentroid'], 0)
+
+        catalog['ra'] = ra
+        catalog['dec'] = dec
+
+        return catalog
+
     def catalog_sources(self):
         print('Attempting to catalog sources in ' + self.header['EXTNAME'] +  
               ' image')
 
         tab = phot.get_source_list(self.image, self.bitmask, 
                                    self.header['EXTNAME'])
+
+        tab = self.catalog_add_radec(tab)
 
         print('Found ' + str(len(tab)) + ' sources in ' + 
               self.header['EXTNAME'] + ' image')
