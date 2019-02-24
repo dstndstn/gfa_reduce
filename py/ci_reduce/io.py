@@ -2,6 +2,7 @@ from ci_reduce.image import CI_image
 from ci_reduce.exposure import CI_exposure
 import ci_reduce.common as common
 import astropy.io.fits as fits
+from astropy.table import vstack
 import os
 
 # in the context of this file, "image" and "exposure" generally refer to 
@@ -114,3 +115,31 @@ def write_image_level_outputs(exp, outdir, fname_in, gzip=True):
 
         print('Successfully wrote ' + flavor + ' image output to ' + 
               outname)
+
+def strip_none_columns(table):
+    # can't write an astropy table to FITS if it has columns with None
+    # values
+
+    for c in table.colnames:
+        if table[c].dtype.str == '|O':
+            table.remove_column(c)
+
+    return table
+
+def combine_per_camera_catalogs(catalogs):
+    # catalogs is the output of CI_exposure's all_source_catalogs() method
+    # which is a dictionary of astropy QTable's, with the keys
+    # being the CI camera extension names
+
+    # want to add a column to each table giving the CI camera name, then
+    # append the all into one per-exposure table
+
+    assert(type(catalogs).__name__ == 'dict')
+
+    for extname, tab in catalogs.items():
+        tab['camera'] = extname
+
+    composite = vstack([tab for tab in catalogs.values()])
+    composite = strip_none_columns(composite)
+
+    return composite
