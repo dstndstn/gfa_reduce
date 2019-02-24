@@ -98,3 +98,13 @@ class CI_exposure:
             print('empirical ' + im.header['EXTNAME'] + 
                   ' background sigma = ' + 
                   '{:.2f}'.format(im.empirical_bg_sigma) + ' ADU')
+
+    def all_source_catalogs(self):
+        tables = dict(zip(self.images.keys(), len(self.images.keys())*[None]))
+
+        for extname, im in self.images.items():
+            tables[extname] = im.catalog_sources()
+
+        # do I also want to store the tables as an attribute belonging to
+        # this exposure object?
+        return tables

@@ -2,6 +2,7 @@ import ci_reduce.common as common
 import ci_reduce.imred.dq_mask as dq_mask
 import ci_reduce.analysis.sky as sky
 import ci_reduce.analysis.segment as segment
+import ci_reduce.analysis.photometry as phot
 import numpy as np
 import astropy.io.fits as fits
 from astropy import wcs
@@ -28,7 +29,7 @@ class CI_image:
         # the _adu in ivar_adu is meant to indicate the units are 1/(ADU^2)
         self.ivar_adu = None
         self.sky_mag = None
-        self.segmap = None
+        self.segmap = None # may want to get rid of this entirely
         self.empirical_bg_sigma = None
         self.sky_level_adu = None
 
@@ -177,3 +178,14 @@ class CI_image:
         self.sky_mag = sky_mag
 
         return sky_mag
+
+    def catalog_sources(self):
+        print('Attempting to catalog sources in ' + self.header['EXTNAME'] +  
+              ' image')
+
+        tab = phot.get_source_list(self.image, self.bitmask, 
+                                   self.header['EXTNAME'])
+
+        print('Found ' + str(len(tab)) + ' sources in ' + 
+              self.header['EXTNAME'] + ' image')
+        return tab
