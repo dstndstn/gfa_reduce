@@ -16,6 +16,9 @@ if __name__ == "__main__":
     parser.add_argument('--careful_sky', default=False, action='store_true',
         help='use image segmentation when deriving sky quantities')
 
+    parser.add_argument('--no_cataloging', default=False, action='store_true', 
+        help='reduce image without cataloging sources')
+
     args = parser.parse_args()
 
     print('Starting CI reduction pipeline at: ' + str(datetime.utcnow()) + 
@@ -47,10 +50,12 @@ if __name__ == "__main__":
     # calculate sky brightness in mag per sq asec
     exp.estimate_all_sky_mags(careful_sky=args.careful_sky)
     exp.estimate_all_sky_sigmas(careful_sky=args.careful_sky)
-    catalogs = exp.all_source_catalogs()
-    # reformat the output catalogs into a single merged astropy Table
-    catalog = io.combine_per_camera_catalogs(catalogs)
-    catalog = io.append_gaia_crossmatches(catalog)
+
+    if not args.no_cataloging:
+        catalogs = exp.all_source_catalogs()
+        # reformat the output catalogs into a single merged astropy Table
+        catalog = io.combine_per_camera_catalogs(catalogs)
+        catalog = io.append_gaia_crossmatches(catalog)
 
     # try to write image-level outputs if outdir is specified
     if write_outputs:
@@ -60,7 +65,8 @@ if __name__ == "__main__":
     if write_outputs:
         # could add command line arg for turning off gzip compression
         io.write_image_level_outputs(exp, outdir, fname_in, gzip=True)
-        io.write_exposure_source_catalog(catalog, outdir, fname_in)
+        if not args.no_cataloging:
+            io.write_exposure_source_catalog(catalog, outdir, fname_in)
 
     print('Succesfully finished reducing ' + fname_in)
 
