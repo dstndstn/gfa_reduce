@@ -30,6 +30,7 @@ class CI_image:
         self.sky_mag = None
         self.segmap = None
         self.empirical_bg_sigma = None
+        self.sky_level_adu = None
 
     def create_dq_mask(self):
         if self.bitmask is not None:
@@ -123,7 +124,9 @@ class CI_image:
         if self.segmap is None:
             self.set_segmap()
 
-        return np.median(self.image[self.segmap.array == 0])
+        self.sky_level_adu = np.median(self.image[self.segmap.array == 0])
+
+        return self.sky_level_adu
 
     def compute_segmap(self):
         print('Attempting to compute segmentation map for ' + 
