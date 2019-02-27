@@ -55,3 +55,5 @@ def add_dq_bitmask_header_cards(h):
 
         comment = 'Mask bit 2**' + str(v) + '=' + str(2**v) + ' meaning'
         h[card_name] = (card_value, comment)
+
+    return h

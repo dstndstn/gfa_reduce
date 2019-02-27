@@ -102,6 +102,7 @@ class CI_image:
             hdu = f(self.image, header=self.header)
         elif (flavor == 'BITMASK'):
             hdu = f(self.bitmask, header=self.header)
+            hdu.header = dq_mask.add_dq_bitmask_header_cards(hdu.header)
         elif (flavor == 'INVVAR'):
             hdu = f(self.ivar_adu, header=self.header)
 
