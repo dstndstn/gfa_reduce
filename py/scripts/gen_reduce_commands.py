@@ -41,6 +41,21 @@ def write_one_shell_script(n, cmds):
 
     f.close()
 
+    return outname
+
+def write_launch_script(script_names):
+    outname = 'launch.sh'
+
+    assert(not os.path.exists(outname))
+
+    f = open(outname, 'wb')
+
+    for script_name in script_names:
+        cmd = '. ' + script_name + ' &'
+        f.write((cmd + '\n').encode())
+
+    f.close()
+
 if __name__ == "__main__":
     descr = 'create Python commands to run ci_reduce pipeline'
     parser = argparse.ArgumentParser(description=descr)
@@ -61,6 +76,9 @@ if __name__ == "__main__":
     parser.add_argument('--chunksize', type=int, default=65,
                         help='commands per shell script')
 
+    parser.add_argument('--launch_script', default=False, action='store_true',
+                        help='also write out launch script')
+
     args = parser.parse_args()
 
     data_dir = args.data_dir[0]
@@ -76,6 +94,11 @@ if __name__ == "__main__":
     else:
         chunksize = args.chunksize
         nchunks = int(np.ceil(float(len(cmds))/chunksize))
-        print(nchunks)
+
+        script_names = []
         for i in range(nchunks):
-            write_one_shell_script(i, cmds[i*chunksize:(i+1)*chunksize])
+            script_name = write_one_shell_script(i, cmds[i*chunksize:(i+1)*chunksize])
+            script_names.append(script_name)
+
+        if args.launch_script:
+            write_launch_script(script_names)
