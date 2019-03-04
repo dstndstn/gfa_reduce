@@ -3,6 +3,7 @@
 import argparse
 import glob
 import os
+import numpy as np
 
 def ci_reduce_1command(fname_in, outdir, backgrounded=False):
     basename = os.path.basename(fname_in)
@@ -28,6 +29,18 @@ def ci_reduce_commands(data_dir, outdir, backgrounded=False):
 
     return cmds
 
+def write_one_shell_script(n, cmds):
+    outname = 'r' + str(n).zfill(3) + '.sh'
+
+    assert(not os.path.exists(outname))
+
+    f = open(outname, 'wb')
+
+    for cmd in cmds:
+        f.write((cmd + '\n').encode())
+
+    f.close()
+
 if __name__ == "__main__":
     descr = 'create Python commands to run ci_reduce pipeline'
     parser = argparse.ArgumentParser(description=descr)
@@ -42,12 +55,27 @@ if __name__ == "__main__":
     parser.add_argument('--backgrounded', default=False, action='store_true', 
                         help='add ampersand to the end of each command')
 
+    parser.add_argument('--write', default=False, action='store_true',
+                        help='write commands to output shell script(s)')
+
+    parser.add_argument('--chunksize', type=int, default=65,
+                        help='commands per shell script')
+
     args = parser.parse_args()
 
     data_dir = args.data_dir[0]
     outdir = args.outdir
     backgrounded = args.backgrounded
+    write = args.write
 
     cmds = ci_reduce_commands(data_dir, outdir, backgrounded=backgrounded)
-    for cmd in cmds:
-        print(cmd)
+
+    if not args.write:
+        for cmd in cmds:
+            print(cmd)
+    else:
+        chunksize = args.chunksize
+        nchunks = int(np.ceil(float(len(cmds))/chunksize))
+        print(nchunks)
+        for i in range(nchunks):
+            write_one_shell_script(i, cmds[i*chunksize:(i+1)*chunksize])
