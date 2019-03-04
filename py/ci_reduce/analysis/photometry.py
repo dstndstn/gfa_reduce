@@ -24,9 +24,14 @@ def get_segmentation_map(image, bitmask, extname, get_kernel=True):
 def do_deblend_sources(segmap, image, kernel):
 
     npixels = 5
-    segmap_deblend = deblend_sources(image, segmap, npixels,
-                                     filter_kernel=kernel, nlevels=32,
-                                     contrast=0.001)
+    try:
+        segmap_deblend = deblend_sources(image, segmap, npixels,
+                                         filter_kernel=kernel, nlevels=32,
+                                         contrast=0.001)
+    except:
+        print('Gave up on deblending!')
+        segmap_deblend = segmap
+
     return segmap_deblend
 
 def get_source_list(image, bitmask, extname):
