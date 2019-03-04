@@ -12,7 +12,7 @@ class CI_image:
     """Single CI image from one CI exposure"""
 
     def __init__(self, image, header):
-        self.image = image.astype('float')
+        self.image = image.astype('float32')
         self.header = header
         self.wcs = wcs.WCS(header)
 
