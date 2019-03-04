@@ -68,7 +68,7 @@ if __name__ == "__main__":
         if not args.no_cataloging:
             io.write_exposure_source_catalog(catalog, outdir, fname_in)
 
-    print('Succesfully finished reducing ' + fname_in)
+    print('Successfully finished reducing ' + fname_in)
 
     print('CI reduction pipeline completed at: ' + str(datetime.utcnow()) + 
           ' UTC')
