@@ -145,6 +145,7 @@ def write_master_flat():
 
     flat, ivar = create_master_flat()
 
+    flat = flat.astype('float32')
     ci_extnames = common.valid_image_extname_list()
 
     hdus = []
