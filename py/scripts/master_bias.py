@@ -75,6 +75,7 @@ def write_master_bias():
         print('Working on master bias for: ' + ci_extname)
         bias_image = \
           master_bias_1camera((ci_extname if (ci_extname != 'CIC') else 'CIN'))
+        bias_image = bias_image.astype('float32')
         if len(hdus) == 0:
             hdu = fits.PrimaryHDU(bias_image)
         else:
