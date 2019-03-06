@@ -2,7 +2,7 @@ import ci_reduce.common as common
 import ci_reduce.imred.dq_mask as dq_mask
 import ci_reduce.analysis.sky as sky
 import ci_reduce.analysis.segment as segment
-import ci_reduce.analysis.photometry as phot
+import ci_reduce.analysis.phot as phot
 import numpy as np
 import astropy.io.fits as fits
 from astropy import wcs
