@@ -11,7 +11,7 @@ def slices_to_table(slices, detsn, extname):
     xmax = []
     ymin = []
     ymax = []
-    detsn_value = []
+    detmap_peak = []
 
     for slc in slices:
         ycen.append( (float(slc[0].start) + float(slc[0].stop))/2.0)
@@ -20,7 +20,7 @@ def slices_to_table(slices, detsn, extname):
         xmax.append(slc[1].stop)
         ymin.append(slc[0].start)
         ymax.append(slc[0].stop)
-        detsn_value.append(np.max(detsn[slc]))
+        detmap_peak.append(np.max(detsn[slc]))
 
     xcen = np.array(xcen)
     ycen = np.array(ycen)
@@ -29,9 +29,9 @@ def slices_to_table(slices, detsn, extname):
     ymin = np.array(ymin)
     ymax = np.array(ymax)
     extname = [extname]*len(xcen)
-    detsn_value = np.array(detsn_value)
+    detmap_peak = np.array(detmap_peak)
 
-    tab = Table([extname, xcen, ycen, xmin, xmax, ymin, ymax, detsn_value], names=('extname', 'xcen', 'ycen', 'xmin', 'xmax', 'ymin', 'ymax', 'detsn_value'))
+    tab = Table([extname, xcen, ycen, xmin, xmax, ymin, ymax, detmap_peak], names=('extname', 'xcentroid', 'ycentroid', 'detmap_xmin', 'detmap_xmax', 'detmap_ymin', 'detmap_ymax', 'detmap_peak'))
 
     return tab
 
@@ -74,8 +74,5 @@ def get_source_list(image, bitmask, extname, thresh=5):
     slices = detect_sources(detsn, thresh)
 
     tab = slices_to_table(slices, detsn, extname)
-
-    tab.rename_column('xcen', 'xcentroid')
-    tab.rename_column('ycen', 'ycentroid')
 
     return tab
