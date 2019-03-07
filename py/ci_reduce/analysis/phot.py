@@ -5,33 +5,25 @@ from scipy.ndimage.measurements import label, find_objects
 from astropy.table import Table
 
 def slices_to_table(slices, detsn, extname):
-    xcen = []
-    ycen = []
-    xmin = []
-    xmax = []
-    ymin = []
-    ymax = []
-    detmap_peak = []
+    nslc = len(slices)
+    xcen = np.zeros(nslc)
+    ycen = np.zeros(nslc)
+    xmin = np.zeros(nslc, dtype='int')
+    xmax = np.zeros(nslc, dtype='int')
+    ymin = np.zeros(nslc, dtype='int')
+    ymax = np.zeros(nslc, dtype='int')
+    detmap_peak = np.zeros(nslc)
 
-    for slc in slices:
-        ycen.append( (float(slc[0].start) + float(slc[0].stop))/2.0)
-        xcen.append( (float(slc[1].start) + float(slc[1].stop))/2.0)
-        xmin.append(slc[1].start)
-        xmax.append(slc[1].stop)
-        ymin.append(slc[0].start)
-        ymax.append(slc[0].stop)
-        detmap_peak.append(np.max(detsn[slc]))
+    for i, slc in enumerate(slices):
+        ycen[i] = (float(slc[0].start) + float(slc[0].stop))/2.0
+        xcen[i] = (float(slc[1].start) + float(slc[1].stop))/2.0
+        xmin[i] = slc[1].start
+        xmax[i] = slc[1].stop
+        ymin[i] = slc[0].start
+        ymax[i] = slc[0].stop
+        detmap_peak[i] = np.max(detsn[slc])
 
-    xcen = np.array(xcen)
-    ycen = np.array(ycen)
-    xmin = np.array(xmin)
-    xmax = np.array(xmax)
-    ymin = np.array(ymin)
-    ymax = np.array(ymax)
-    extname = [extname]*len(xcen)
-    detmap_peak = np.array(detmap_peak)
-
-    tab = Table([extname, xcen, ycen, xmin, xmax, ymin, ymax, detmap_peak], names=('extname', 'xcentroid', 'ycentroid', 'detmap_xmin', 'detmap_xmax', 'detmap_ymin', 'detmap_ymax', 'detmap_peak'))
+    tab = Table([xcen, ycen, xmin, xmax, ymin, ymax, detmap_peak], names=('xcentroid', 'ycentroid', 'detmap_xmin', 'detmap_xmax', 'detmap_ymin', 'detmap_ymax', 'detmap_peak'))
 
     return tab
 
