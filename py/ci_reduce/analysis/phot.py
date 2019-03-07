@@ -53,6 +53,10 @@ def detect_sources(detsn, thresh):
     return slices
 
 def get_nominal_fwhm_pix(extname):
+    # this is a nominal FWHM for use as an initial guess
+    # when creating the detection map, when nothing is yet known
+    # about the FWHM of the particular data being analyzed
+    # could revisit this and/or clean it up later on
     nominal_fwhm_pix = (9.3766944 if (extname == 'CIC') else 10.192287)
 
     return nominal_fwhm_pix
