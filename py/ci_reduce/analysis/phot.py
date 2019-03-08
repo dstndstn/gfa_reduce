@@ -68,6 +68,9 @@ def refine_centroids(tab, image, bitmask):
     xcentroid = np.zeros(nobj)
     ycentroid = np.zeros(nobj)
 
+    no_centroid_refinement = np.zeros(nobj, dtype=bool)
+    centroid_refinement_fail = np.zeros(nobj, dtype=bool)
+
     for i in range(nobj):
         ix_guess = int(round(tab[i]['xcen_init']))
         iy_guess = int(round(tab[i]['ycen_init']))
@@ -78,13 +81,23 @@ def refine_centroids(tab, image, bitmask):
         if min_edge_dist < half:
             xcentroid[i] = tab[i]['xcen_init']
             ycentroid[i] = tab[i]['ycen_init']
-
-            print('skipping centroid refinement for source near edge')
+            no_centroid_refinement[i] = True
             continue
 
         _xcentroid, _ycentroid = centroid_2dg(image[(iy_guess-half):(iy_guess+half+1), (ix_guess-half):(ix_guess+half+1)] - med)
-        xcentroid[i] = _xcentroid + ix_guess - half
-        ycentroid[i] = _ycentroid + iy_guess - half
+        if (not np.isfinite(_xcentroid)) or (not np.isfinite(_ycentroid)):
+            xcentroid[i] = tab[i]['xcen_init']
+            ycentroid[i] = tab[i]['ycen_init']
+            centroid_refinement_fail[i] = True
+        else:
+            xcentroid[i] = _xcentroid + ix_guess - half
+            ycentroid[i] = _ycentroid + iy_guess - half
+
+    # it's silly how i modify the input table here but then
+    # pass xcentroid, ycentroid back for addition later on
+
+    tab['no_centroid_refinement'] = no_centroid_refinement.astype(int)
+    tab['centroid_refinement_fail'] = centroid_refinement_fail.astype(int)
 
     return xcentroid, ycentroid
 
