@@ -160,3 +160,16 @@ def ci_downbinned_shape(binfac):
 
     # note Python convention for (height, width)
     return int(height_downbinned), int(width_downbinned)
+
+def min_edge_dist_pix(x, y):
+    # minimum distance to any image edge
+    # for now inputs are meant to be scalar, not array/list
+
+    min_edge_dist = 10000
+
+    min_edge_dist = min(min_edge_dist, x-ci_pixel_xmin())
+    min_edge_dist = min(min_edge_dist, y-ci_pixel_ymin())
+    min_edge_dist = min(min_edge_dist, ci_pixel_xmax()-x)
+    min_edge_dist = min(min_edge_dist, ci_pixel_ymax()-y)
+
+    return min_edge_dist
