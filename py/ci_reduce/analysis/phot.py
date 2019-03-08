@@ -55,7 +55,7 @@ def get_nominal_fwhm_pix(extname):
 
     return nominal_fwhm_pix
 
-def refine_centroids(slices, tab, image, bitmask):
+def refine_centroids(tab, image, bitmask):
 
     # could scale this based on the typical size of the slices
     boxsize = 11
@@ -64,14 +64,11 @@ def refine_centroids(slices, tab, image, bitmask):
 
     med = np.median(image)
 
-    xcentroid = np.zeros(len(slices))
-    ycentroid = np.zeros(len(slices))
+    nobj = len(tab)
+    xcentroid = np.zeros(nobj)
+    ycentroid = np.zeros(nobj)
 
-    # do i even need "slices" variable anymore ?
-
-    for i, slc in enumerate(slices):
-        # make this iterative eventually ?
-        # need min edge_dist utility !!!
+    for i in range(nobj):
         ix_guess = int(round(tab[i]['xcen_init']))
         iy_guess = int(round(tab[i]['ycen_init']))
         min_edge_dist = util.min_edge_dist_pix(ix_guess, iy_guess)
@@ -105,7 +102,7 @@ def get_source_list(image, bitmask, extname, thresh=5):
 
     tab = slices_to_table(slices, detsn, extname)
 
-    xcentroid, ycentroid = refine_centroids(slices, tab, image, bitmask)
+    xcentroid, ycentroid = refine_centroids(tab, image, bitmask)
 
     tab['xcentroid'] = xcentroid
     tab['ycentroid'] = ycentroid
