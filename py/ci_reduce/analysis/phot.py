@@ -1,8 +1,10 @@
+import ci_reduce.analysis.util as util
 from astropy.stats import mad_std
 from scipy.ndimage.filters import gaussian_filter
 import numpy as np
 from scipy.ndimage.measurements import label, find_objects
 from astropy.table import Table
+from photutils import centroid_com, centroid_2dg
 
 def slices_to_table(slices, detsn, extname):
     nslc = len(slices)
@@ -23,7 +25,7 @@ def slices_to_table(slices, detsn, extname):
         ymax[i] = slc[0].stop
         detmap_peak[i] = np.max(detsn[slc])
 
-    tab = Table([xcen, ycen, xmin, xmax, ymin, ymax, detmap_peak], names=('xcentroid', 'ycentroid', 'detmap_xmin', 'detmap_xmax', 'detmap_ymin', 'detmap_ymax', 'detmap_peak'))
+    tab = Table([xcen, ycen, xmin, xmax, ymin, ymax, detmap_peak], names=('xcen_init', 'ycen_init', 'detmap_xmin', 'detmap_xmax', 'detmap_ymin', 'detmap_ymax', 'detmap_peak'))
 
     return tab
 
@@ -53,6 +55,42 @@ def get_nominal_fwhm_pix(extname):
 
     return nominal_fwhm_pix
 
+def refine_centroids(slices, tab, image, bitmask):
+
+    # could scale this based on the typical size of the slices
+    boxsize = 11
+
+    half = int(np.floor(boxsize/2))
+
+    med = np.median(image)
+
+    xcentroid = np.zeros(len(slices))
+    ycentroid = np.zeros(len(slices))
+
+    # do i even need "slices" variable anymore ?
+
+    for i, slc in enumerate(slices):
+        # make this iterative eventually ?
+        # need min edge_dist utility !!!
+        ix_guess = int(round(tab[i]['xcen_init']))
+        iy_guess = int(round(tab[i]['ycen_init']))
+        min_edge_dist = util.min_edge_dist_pix(ix_guess, iy_guess)
+
+        # if the centering box extends outside of image, don't
+        # try to do any refinement of the centroid
+        if min_edge_dist < half:
+            xcentroid[i] = tab[i]['xcen_init']
+            ycentroid[i] = tab[i]['ycen_init']
+
+            print('skipping centroid refinement for source near edge')
+            continue
+
+        _xcentroid, _ycentroid = centroid_2dg(image[(iy_guess-half):(iy_guess+half+1), (ix_guess-half):(ix_guess+half+1)] - med)
+        xcentroid[i] = _xcentroid + ix_guess - half
+        ycentroid[i] = _ycentroid + iy_guess - half
+
+    return xcentroid, ycentroid
+
 def get_source_list(image, bitmask, extname, thresh=5):
     filler_value = np.median(image)
 
@@ -66,5 +104,13 @@ def get_source_list(image, bitmask, extname, thresh=5):
     slices = detect_sources(detsn, thresh)
 
     tab = slices_to_table(slices, detsn, extname)
+
+    xcentroid, ycentroid = refine_centroids(slices, tab, image, bitmask)
+
+    tab['xcentroid'] = xcentroid
+    tab['ycentroid'] = ycentroid
+
+    min_edge_dist = [util.min_edge_dist_pix(c[0], c[1]) for c in zip(xcentroid, ycentroid)]
+    tab['min_edge_dist_pix'] = min_edge_dist
 
     return tab
