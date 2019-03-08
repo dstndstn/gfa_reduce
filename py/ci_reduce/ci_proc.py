@@ -19,6 +19,9 @@ if __name__ == "__main__":
     parser.add_argument('--no_cataloging', default=False, action='store_true', 
         help='reduce image without cataloging sources')
 
+    parser.add_argument('--no_gaia_xmatch', default=False, action='store_true',
+        help='skip Gaia cross-match')
+
     args = parser.parse_args()
 
     print('Starting CI reduction pipeline at: ' + str(datetime.utcnow()) + 
@@ -56,7 +59,8 @@ if __name__ == "__main__":
         # reformat the output catalogs into a single merged astropy Table
         catalog = io.combine_per_camera_catalogs(catalogs)
         print('Attempting to identify Gaia cross-matches')
-        catalog = io.append_gaia_crossmatches(catalog)
+        if not args.no_gaia_xmatch:
+            catalog = io.append_gaia_crossmatches(catalog)
 
     # try to write image-level outputs if outdir is specified
     if write_outputs:
