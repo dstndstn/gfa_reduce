@@ -99,11 +99,17 @@ def refine_centroids(tab, image, bitmask):
     tab['xcentroid'] = xcentroid
     tab['ycentroid'] = ycentroid
 
-def add_metadata_columns(tab):
+def add_metadata_columns(tab, bitmask):
     # input table tab gets modified
 
     min_edge_dist = [util.min_edge_dist_pix(c[0], c[1]) for c in zip(tab['xcentroid'], tab['ycentroid'])]
     tab['min_edge_dist_pix'] = min_edge_dist
+
+    # there's probably a scipy function for this but w/e
+    ixs = [int(np.round(t['xcentroid'])) for t in tab]
+    iys = [int(np.round(t['ycentroid'])) for t in tab]
+
+    tab['dq_flags'] = bitmask[iys, ixs]
 
 def get_source_list(image, bitmask, extname, thresh=5):
     filler_value = np.median(image)
@@ -121,6 +127,6 @@ def get_source_list(image, bitmask, extname, thresh=5):
 
     refine_centroids(tab, image, bitmask)
 
-    add_metadata_columns(tab)
+    add_metadata_columns(tab, bitmask)
 
     return tab
