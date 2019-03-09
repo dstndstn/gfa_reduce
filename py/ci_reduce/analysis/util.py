@@ -1,6 +1,6 @@
 import ci_reduce.common as common
 import numpy as np
-
+import os
 
 def nominal_pixel_area_sq_asec(extname):
     par = common.ci_misc_params()
@@ -173,3 +173,25 @@ def min_edge_dist_pix(x, y):
     min_edge_dist = min(min_edge_dist, ci_pixel_ymax()-y)
 
     return min_edge_dist
+
+def create_det_ids(catalog, extname, fname_in, add_col=True):
+    # catalog should be an astropy table
+    # catalog should pertain to just one **extension**
+    # watch out for case where there are no extracted sources in an
+    # image
+
+    basename = os.path.basename(fname_in)
+
+    # strip out file extension
+    basename = basename.replace('.fz', '')
+    basename = basename.replace('.gz', '')
+    basename = basename.replace('.fits', '')
+
+    det_ids = [('o' + str(i).zfill(6) + 'e' + extname) for i in range(len(catalog))]
+
+    det_ids = [(basename + det_id) for det_id in det_ids]
+
+    if add_col:
+        catalog['det_id'] = det_ids
+    else:
+        return det_ids

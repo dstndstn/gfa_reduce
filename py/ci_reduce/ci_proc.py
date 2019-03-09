@@ -4,6 +4,7 @@ import argparse
 import os
 import ci_reduce.io as io
 from datetime import datetime
+import ci_reduce.analysis.util as util
 
 if __name__ == "__main__":
     descr = 'run full ci_reduce pipeline on a CI exposure'
@@ -56,6 +57,10 @@ if __name__ == "__main__":
 
     if not args.no_cataloging:
         catalogs = exp.all_source_catalogs()
+
+        for extname, cat in catalogs.items():
+            util.create_det_ids(cat, extname, fname_in)
+
         # reformat the output catalogs into a single merged astropy Table
         catalog = io.combine_per_camera_catalogs(catalogs)
         print('Attempting to identify Gaia cross-matches')
