@@ -5,6 +5,9 @@ import numpy as np
 from scipy.ndimage.measurements import label, find_objects
 from astropy.table import Table
 from photutils import centroid_com, centroid_2dg
+from astropy.stats import sigma_clipped_stats
+from photutils import aperture_photometry
+from photutils import CircularAperture, CircularAnnulus
 
 def slices_to_table(slices, detsn, extname):
     nslc = len(slices)
@@ -45,6 +48,35 @@ def detect_sources(detsn, thresh):
     blobs, _ = label(peaks)
     slices = find_objects(blobs)
     return slices
+
+def do_aper_phot(data, catalog, extname):
+    # catalog should be the catalog with refined centroids 
+    # for **one CI camera**
+
+    print('Attempting to do aperture photometry')
+    positions = list(zip(catalog['xcentroid'], catalog['ycentroid']))
+    apertures = CircularAperture(positions, r=get_nominal_fwhm_pix(extname)/2.0)
+    annulus_apertures = CircularAnnulus(positions, r_in=30.0, r_out=40.0)
+    annulus_masks = annulus_apertures.to_mask(method='center')
+
+    bkg_median = []
+    for mask in annulus_masks:
+        annulus_data = mask.multiply(data)
+        annulus_data_1d = annulus_data[mask.data > 0]
+        _, median_sigclip, _ = sigma_clipped_stats(annulus_data_1d)
+        bkg_median.append(median_sigclip)
+
+    bkg_median = np.array(bkg_median)
+    phot = aperture_photometry(data, apertures)
+    phot['annulus_median'] = bkg_median
+    phot['aper_bkg'] = bkg_median * apertures.area()
+    phot['aper_sum_bkgsub'] = phot['aperture_sum'] - phot['aper_bkg']
+
+    # still need to actually append some of this aperture photometry
+    # info to the catalog in the form of new columns
+
+    catalog['aper_sum_bkgsub'] = phot['aper_sum_bkgsub']
+    catalog['aper_bkg'] = phot['aper_bkg']
 
 def get_nominal_fwhm_pix(extname):
     # this is a nominal FWHM for use as an initial guess
@@ -126,6 +158,8 @@ def get_source_list(image, bitmask, extname, thresh=5):
     tab = slices_to_table(slices, detsn, extname)
 
     refine_centroids(tab, image, bitmask)
+
+    do_aper_phot(image, tab, extname)
 
     add_metadata_columns(tab, bitmask)
 
