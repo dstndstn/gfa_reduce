@@ -56,6 +56,7 @@ def get_nominal_fwhm_pix(extname):
     return nominal_fwhm_pix
 
 def refine_centroids(tab, image, bitmask):
+    # input table tab gets augmented with additional columns
 
     # could scale this based on the typical size of the slices
     boxsize = 11
@@ -93,13 +94,10 @@ def refine_centroids(tab, image, bitmask):
             xcentroid[i] = _xcentroid + ix_guess - half
             ycentroid[i] = _ycentroid + iy_guess - half
 
-    # it's silly how i modify the input table here but then
-    # pass xcentroid, ycentroid back for addition later on
-
     tab['no_centroid_refinement'] = no_centroid_refinement.astype(int)
     tab['centroid_refinement_fail'] = centroid_refinement_fail.astype(int)
-
-    return xcentroid, ycentroid
+    tab['xcentroid'] = xcentroid
+    tab['ycentroid'] = ycentroid
 
 def get_source_list(image, bitmask, extname, thresh=5):
     filler_value = np.median(image)
@@ -115,12 +113,9 @@ def get_source_list(image, bitmask, extname, thresh=5):
 
     tab = slices_to_table(slices, detsn, extname)
 
-    xcentroid, ycentroid = refine_centroids(tab, image, bitmask)
+    refine_centroids(tab, image, bitmask)
 
-    tab['xcentroid'] = xcentroid
-    tab['ycentroid'] = ycentroid
-
-    min_edge_dist = [util.min_edge_dist_pix(c[0], c[1]) for c in zip(xcentroid, ycentroid)]
+    min_edge_dist = [util.min_edge_dist_pix(c[0], c[1]) for c in zip(tab['xcentroid'], tab['ycentroid'])]
     tab['min_edge_dist_pix'] = min_edge_dist
 
     return tab
