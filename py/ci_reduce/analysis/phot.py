@@ -138,8 +138,14 @@ def add_metadata_columns(tab, bitmask):
     tab['min_edge_dist_pix'] = min_edge_dist
 
     # there's probably a scipy function for this but w/e
-    ixs = [int(np.round(t['xcentroid'])) for t in tab]
-    iys = [int(np.round(t['ycentroid'])) for t in tab]
+
+    xmin = util.ci_pixel_xmin(pix_center=True)
+    xmax = util.ci_pixel_xmax(pix_center=True)
+    ymin = util.ci_pixel_ymin(pix_center=True)
+    ymax = util.ci_pixel_ymax(pix_center=True)
+
+    ixs = [int(min(max(np.round(t['xcentroid']), xmin), xmax)) for t in tab]
+    iys = [int(min(max(np.round(t['ycentroid']), ymin), ymax)) for t in tab]
 
     tab['dq_flags'] = bitmask[iys, ixs]
 
