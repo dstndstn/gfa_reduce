@@ -90,6 +90,7 @@ def get_nominal_fwhm_pix(extname):
 def refine_centroids(tab, image, bitmask):
     # input table tab gets augmented with additional columns
 
+    print('Attempting to refine initial centroids')
     # could scale this based on the typical size of the slices
     boxsize = 11
 
