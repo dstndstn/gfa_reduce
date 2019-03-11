@@ -49,7 +49,11 @@ def detect_sources(detsn, thresh):
     slices = find_objects(blobs)
     return slices
 
-def do_aper_phot(data, catalog, extname):
+def aper_phot_unc_map(ivar):
+    regfac = 0.01
+    return np.power(ivar + (ivar == 0)*regfac*np.mean(ivar), -0.5)
+
+def do_aper_phot(data, catalog, extname, ivar_adu):
     # catalog should be the catalog with refined centroids 
     # for **one CI camera**
 
@@ -63,11 +67,13 @@ def do_aper_phot(data, catalog, extname):
     for mask in annulus_masks:
         annulus_data = mask.multiply(data)
         annulus_data_1d = annulus_data[mask.data > 0]
-        _, median_sigclip, _ = sigma_clipped_stats(annulus_data_1d)
+        # this sigma_clipped_stats call is actually the slow part !!
+        _, median_sigclip, std_bg = sigma_clipped_stats(annulus_data_1d)
         bkg_median.append(median_sigclip)
 
     bkg_median = np.array(bkg_median)
-    phot = aperture_photometry(data, apertures)
+    phot = aperture_photometry(data, apertures, 
+                               error=aper_phot_unc_map(ivar_adu))
     phot['annulus_median'] = bkg_median
     phot['aper_bkg'] = bkg_median * apertures.area()
     phot['aper_sum_bkgsub'] = phot['aperture_sum'] - phot['aper_bkg']
@@ -77,6 +83,9 @@ def do_aper_phot(data, catalog, extname):
 
     catalog['aper_sum_bkgsub'] = phot['aper_sum_bkgsub']
     catalog['aper_bkg'] = phot['aper_bkg']
+    catalog['aperture_sum_err'] = phot['aperture_sum_err']
+    # is .area() result a vector or scalar ??
+    catalog['annulus_area_pix'] = annulus_apertures.area()
 
 def get_nominal_fwhm_pix(extname):
     # this is a nominal FWHM for use as an initial guess
@@ -150,7 +159,7 @@ def add_metadata_columns(tab, bitmask):
 
     tab['dq_flags'] = bitmask[iys, ixs]
 
-def get_source_list(image, bitmask, extname, thresh=5):
+def get_source_list(image, bitmask, extname, ivar_adu, thresh=5):
     filler_value = np.median(image)
 
     # should do something like djs_maskinterp instead
@@ -166,7 +175,7 @@ def get_source_list(image, bitmask, extname, thresh=5):
 
     refine_centroids(tab, image, bitmask)
 
-    do_aper_phot(image, tab, extname)
+    do_aper_phot(image, tab, extname, ivar_adu)
 
     add_metadata_columns(tab, bitmask)
 

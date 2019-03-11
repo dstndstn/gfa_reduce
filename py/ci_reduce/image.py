@@ -198,7 +198,7 @@ class CI_image:
               ' image')
 
         tab = phot.get_source_list(self.image, self.bitmask, 
-                                   self.header['EXTNAME'])
+                                   self.header['EXTNAME'], self.ivar_adu)
 
         tab = self.catalog_add_radec(tab)
 
