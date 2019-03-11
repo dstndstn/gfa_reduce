@@ -1,5 +1,5 @@
 import ci_reduce.common as common
-import fitsio
+import astropy.io.fits as fits
 import healpy
 import numpy as np
 import os
@@ -44,7 +44,7 @@ def read_gaia_cat(ra, dec):
     tablist = []
     for f in flist:
         print('READING : ', f)
-        tab = fitsio.read(f)
+        tab = fits.getdata(f)
         tablist.append(tab)
 
     return np.hstack(tuple(tablist))
