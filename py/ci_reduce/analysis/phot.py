@@ -4,7 +4,7 @@ from scipy.ndimage.filters import gaussian_filter
 import numpy as np
 from scipy.ndimage.measurements import label, find_objects
 from astropy.table import Table
-from photutils import centroid_com, centroid_2dg
+from photutils.centroids.core import fit_2dgaussian
 from astropy.stats import sigma_clipped_stats
 from photutils import aperture_photometry
 from photutils import CircularAperture, CircularAnnulus
@@ -127,7 +127,13 @@ def refine_centroids(tab, image, bitmask):
             no_centroid_refinement[i] = True
             continue
 
-        _xcentroid, _ycentroid = centroid_2dg(image[(iy_guess-half):(iy_guess+half+1), (ix_guess-half):(ix_guess+half+1)] - med)
+        cutout = image[(iy_guess-half):(iy_guess+half+1), (ix_guess-half):(ix_guess+half+1)] - med
+
+        gfit = fit_2dgaussian(cutout)
+
+        _xcentroid = gfit.x_mean.value
+        _ycentroid = gfit.y_mean.value
+
         if (not np.isfinite(_xcentroid)) or (not np.isfinite(_ycentroid)):
             xcentroid[i] = tab[i]['xcen_init']
             ycentroid[i] = tab[i]['ycen_init']
