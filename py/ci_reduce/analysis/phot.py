@@ -112,6 +112,7 @@ def refine_centroids(tab, image, bitmask):
     ycentroid = np.zeros(nobj)
     sig_major_pix = np.zeros(nobj)
     sig_minor_pix = np.zeros(nobj)
+    ellipticity = np.zeros(nobj)
 
     no_centroid_refinement = np.zeros(nobj, dtype=bool)
     centroid_refinement_fail = np.zeros(nobj, dtype=bool)
@@ -128,6 +129,7 @@ def refine_centroids(tab, image, bitmask):
             ycentroid[i] = tab[i]['ycen_init']
             sig_major_pix[i] = -1 # dummy value
             sig_minor_pix[i] = -1 # dummy value
+            ellipticity[i] = -1
             no_centroid_refinement[i] = True
             continue
 
@@ -143,6 +145,7 @@ def refine_centroids(tab, image, bitmask):
             ycentroid[i] = tab[i]['ycen_init']
             sig_major_pix[i] = -1
             sig_minor_pix[i] = -1
+            ellipticity[i] = -1
             centroid_refinement_fail[i] = True
         else:
             xcentroid[i] = _xcentroid + ix_guess - half
@@ -151,6 +154,10 @@ def refine_centroids(tab, image, bitmask):
             # but that's actually how they're defined ...
             sig_major_pix[i] = gfit.x_stddev.value
             sig_minor_pix[i] = gfit.y_stddev.value
+            if (gfit.x_stddev.value <= 0) or (gfit.y_stddev.value <= 0):
+                ellipticity[i] = -1
+            else:
+                ellipticity[i] = 1.0 - gfit.y_stddev.value/gfit.x_stddev.value
 
     tab['no_centroid_refinement'] = no_centroid_refinement.astype(int)
     tab['centroid_refinement_fail'] = centroid_refinement_fail.astype(int)
@@ -158,6 +165,7 @@ def refine_centroids(tab, image, bitmask):
     tab['ycentroid'] = ycentroid
     tab['sig_major_pix'] = sig_major_pix
     tab['sig_minor_pix'] = sig_minor_pix
+    tab['ellipticity'] = ellipticity
 
 def add_metadata_columns(tab, bitmask):
     # input table tab gets modified
