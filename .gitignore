@@ -5,3 +5,4 @@ py/scripts/__pycache__/
 py/ci_reduce/imred/__pycache__/
 py/ci_reduce/analysis/__pycache__/
 *~
+*.png
