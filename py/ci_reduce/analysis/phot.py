@@ -113,6 +113,8 @@ def refine_centroids(tab, image, bitmask):
     sig_major_pix = np.zeros(nobj)
     sig_minor_pix = np.zeros(nobj)
     ellipticity = np.zeros(nobj)
+    # deg CC from +X, in the range -90 deg to +90 deg
+    pos_angle = np.zeros(nobj)
 
     no_centroid_refinement = np.zeros(nobj, dtype=bool)
     centroid_refinement_fail = np.zeros(nobj, dtype=bool)
@@ -131,6 +133,7 @@ def refine_centroids(tab, image, bitmask):
             sig_minor_pix[i] = -1 # dummy value
             ellipticity[i] = -1
             no_centroid_refinement[i] = True
+            pos_angle[i] = np.nan
             continue
 
         cutout = image[(iy_guess-half):(iy_guess+half+1), (ix_guess-half):(ix_guess+half+1)] - med
@@ -146,6 +149,7 @@ def refine_centroids(tab, image, bitmask):
             sig_major_pix[i] = -1
             sig_minor_pix[i] = -1
             ellipticity[i] = -1
+            pos_angle[i] = np.nan
             centroid_refinement_fail[i] = True
         else:
             xcentroid[i] = _xcentroid + ix_guess - half
@@ -158,6 +162,9 @@ def refine_centroids(tab, image, bitmask):
                 ellipticity[i] = -1
             else:
                 ellipticity[i] = 1.0 - gfit.y_stddev.value/gfit.x_stddev.value
+            # gfit pos angle is in radians CC from +X
+            # use atan to confine output pos_angle value to [-90, 90] deg
+            pos_angle[i] = (180.0/np.pi)*np.arctan(np.tan(gfit.theta.value))
 
     tab['no_centroid_refinement'] = no_centroid_refinement.astype(int)
     tab['centroid_refinement_fail'] = centroid_refinement_fail.astype(int)
@@ -166,6 +173,7 @@ def refine_centroids(tab, image, bitmask):
     tab['sig_major_pix'] = sig_major_pix
     tab['sig_minor_pix'] = sig_minor_pix
     tab['ellipticity'] = ellipticity
+    tab['pos_angle'] = pos_angle
 
 def add_metadata_columns(tab, bitmask):
     # input table tab gets modified
