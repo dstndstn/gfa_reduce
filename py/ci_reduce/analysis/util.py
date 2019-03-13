@@ -213,3 +213,12 @@ def create_det_ids(catalog, extname, fname_in, add_col=True):
         catalog['det_id'] = det_ids
     else:
         return det_ids
+
+def slice_indices_for_quadrant(quadrant):
+
+    xmin = int(ci_pixel_xmin(pix_center=True, quadrant=quadrant))
+    xmax = int(ci_pixel_xmax(pix_center=True, quadrant=quadrant)) + 1
+    ymin = int(ci_pixel_ymin(pix_center=True, quadrant=quadrant))
+    ymax = int(ci_pixel_ymax(pix_center=True, quadrant=quadrant)) + 1
+
+    return xmin, xmax, ymin, ymax

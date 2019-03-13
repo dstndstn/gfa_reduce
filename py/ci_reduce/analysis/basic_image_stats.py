@@ -3,61 +3,49 @@ import numpy as np
 from astropy.stats import mad_std
 from astropy.table import Table, hstack
 
-# add quadrant kw args to allow computation of each statistic not only
-# on each full CCD but also on each quadrant separately
-
 # for now compute these stats on the *raw* image, could consider
 # switching to the reduced image, or doing both in the future
 
-def slice_indices_for_quadrant(quadrant):
-
-    xmin = int(util.ci_pixel_xmin(pix_center=True, quadrant=quadrant))
-    xmax = int(util.ci_pixel_xmax(pix_center=True, quadrant=quadrant)) + 1
-    ymin = int(util.ci_pixel_ymin(pix_center=True, quadrant=quadrant))
-    ymax = int(util.ci_pixel_ymax(pix_center=True, quadrant=quadrant)) + 1
-
-    return xmin, xmax, ymin, ymax
-
 def compute_image_median(image, quadrant=None):
 
-    xmin, xmax, ymin, ymax = slice_indices_for_quadrant(quadrant)
+    xmin, xmax, ymin, ymax = util.slice_indices_for_quadrant(quadrant)
 
     return np.median(image[ymin:ymax, xmin:xmax])
 
 def compute_image_mean(image, quadrant=None):
 
-    xmin, xmax, ymin, ymax = slice_indices_for_quadrant(quadrant)
+    xmin, xmax, ymin, ymax = util.slice_indices_for_quadrant(quadrant)
 
     return np.mean(image[ymin:ymax, xmin:xmax])
 
 def n_non_finite(image, quadrant=None):
 
-    xmin, xmax, ymin, ymax = slice_indices_for_quadrant(quadrant)
+    xmin, xmax, ymin, ymax = util.slice_indices_for_quadrant(quadrant)
 
     return np.sum(np.logical_not(np.isfinite(image[ymin:ymax, xmin:xmax])))
 
 def compute_image_max(image, quadrant=None):
 
-    xmin, xmax, ymin, ymax = slice_indices_for_quadrant(quadrant)
+    xmin, xmax, ymin, ymax = util.slice_indices_for_quadrant(quadrant)
 
     return np.max(image[ymin:ymax, xmin:xmax])
 
 def compute_image_min(image, quadrant=None):
 
-    xmin, xmax, ymin, ymax = slice_indices_for_quadrant(quadrant)
+    xmin, xmax, ymin, ymax = util.slice_indices_for_quadrant(quadrant)
 
     return np.min(image[ymin:ymax, xmin:xmax])
 
 def compute_mad_std(image, quadrant=None):
 
-    xmin, xmax, ymin, ymax = slice_indices_for_quadrant(quadrant)
+    xmin, xmax, ymin, ymax = util.slice_indices_for_quadrant(quadrant)
 
     return mad_std(image[ymin:ymax, xmin:xmax])
 
 def compute_std(image, quadrant=None):
     # non-robust standard deviation
 
-    xmin, xmax, ymin, ymax = slice_indices_for_quadrant(quadrant)
+    xmin, xmax, ymin, ymax = util.slice_indices_for_quadrant(quadrant)
 
     return mad_std(image[ymin:ymax, xmin:xmax])
 
