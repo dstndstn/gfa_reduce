@@ -80,10 +80,7 @@ def compute_all_stats(image, skip_quadrants=False, extname=None):
                     'sig_robust', 'sig']
 
         if q is not None:
-             colnames = [(colname + '_q' + str(q)) for colname in colnames]
-
-        if extname is not None:
-            colnames = [(colname + '_' + extname) for colname in colnames]
+            colnames = [(colname + '_q' + str(q)) for colname in colnames]
 
         row = Table([med, avg, nbad, _max, _min, sig_robust, sig], names=tuple(colnames))
 
@@ -92,5 +89,8 @@ def compute_all_stats(image, skip_quadrants=False, extname=None):
         else:
             # hstack the tables
             t = hstack([t, row])
+
+    if extname is not None:
+        t['camera'] = extname
 
     return t
