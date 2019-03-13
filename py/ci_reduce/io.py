@@ -209,6 +209,7 @@ def high_level_ccds_metrics(tab, catalog):
     fwhm_minor_pix = np.zeros(nrows)
     fwhm_pix = np.zeros(nrows)
     fwhm_asec = np.zeros(nrows)
+    n_sources = np.zeros(nrows, dtype=int)
 
     for i, row in enumerate(tab):
         fwhm_stats = bcs.overall_image_fwhm(catalog[catalog['camera'] == row['camera']])
@@ -216,11 +217,13 @@ def high_level_ccds_metrics(tab, catalog):
         fwhm_minor_pix[i] = fwhm_stats[1]
         fwhm_pix[i] = fwhm_stats[2]
         fwhm_asec[i] = fwhm_stats[3]
+        n_sources[i] = int(np.sum(catalog['camera'] == row['camera']))
 
     tab['fwhm_major_pix'] = fwhm_major_pix
     tab['fwhm_minor_pix'] = fwhm_minor_pix
     tab['fwhm_pix'] = fwhm_pix
     tab['fwhm_asec'] = fwhm_asec
+    tab['n_sources'] = n_sources
 
 def write_ccds_table(tab, catalog, exp, outdir, fname_in):
 
