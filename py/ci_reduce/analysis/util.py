@@ -30,7 +30,7 @@ def nominal_pixel_sidelen_geom(extname):
 
     return np.sqrt(nominal_pixel_area_sq_asec(extname))
 
-def ci_pixel_xmax(pix_center=False):
+def ci_pixel_xmax(pix_center=False, quadrant=None):
     """
     "x" here is in CI pixel coordinates
     could imagine adding a "binfac" keyword here for use in processing
@@ -44,9 +44,13 @@ def ci_pixel_xmax(pix_center=False):
     if pix_center:
         xmax -= 0.5 # center of rightmost pixel
 
+    if (quadrant == 2) or (quadrant == 3):
+        # haven't thought about whether assumption of even width matters here
+        xmax -= par['width_pix_native']/2
+
     return xmax
 
-def ci_pixel_ymax(pix_center=False):
+def ci_pixel_ymax(pix_center=False, quadrant=None):
     """
     "y" here is in CI pixel coordinates
     """
@@ -58,9 +62,13 @@ def ci_pixel_ymax(pix_center=False):
     if pix_center:
         ymax -= 0.5 # center of rightmost pixel
 
+    if (quadrant == 3) or (quadrant == 4):
+        # haven't thought about whether assumption of even width matters here
+        ymax -= par['height_pix_native']/2
+
     return ymax
 
-def ci_pixel_xmin(pix_center=False):
+def ci_pixel_xmin(pix_center=False, quadrant=None):
     """
     "x" here is in CI pixel coordinates
     """
@@ -71,9 +79,14 @@ def ci_pixel_xmin(pix_center=False):
     if pix_center:
         xmin += 0.5 # center of leftmost pixel
 
+    if (quadrant == 1) or (quadrant == 4):
+        par = common.ci_misc_params()
+        # haven't thought about whether assumption of even width matters here
+        xmin += par['width_pix_native']/2
+
     return xmin
 
-def ci_pixel_ymin(pix_center=False):
+def ci_pixel_ymin(pix_center=False, quadrant=None):
     """
     "y" here is in CI pixel coordinates
     """
@@ -83,6 +96,11 @@ def ci_pixel_ymin(pix_center=False):
 
     if pix_center:
         ymin += 0.5 # center of leftmost pixel
+
+    if (quadrant == 1) or (quadrant == 2):
+        par = common.ci_misc_params()
+        # haven't thought about whether assumption of even width matters here
+        ymin += par['height_pix_native']/2
 
     return ymin
 
