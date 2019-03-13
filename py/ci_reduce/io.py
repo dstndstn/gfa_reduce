@@ -5,6 +5,7 @@ import ci_reduce.xmatch.gaia as gaia
 import astropy.io.fits as fits
 from astropy.table import vstack, hstack
 import os
+import ci_reduce.analysis.basic_image_stats as bis
 
 # in the context of this file, "image" and "exposure" generally refer to 
 # CI_image and CI_exposure objects
@@ -184,3 +185,35 @@ def append_gaia_crossmatches(catalog):
     catalog = hstack([catalog, gaia_matches])
     
     return catalog
+
+def gather_pixel_stats(exp):
+
+    t = None
+    for extname, im in exp.images.items():
+        print('Computing pixels statistics for ' + extname)
+        t_im = bis.compute_all_stats(im.image, extname=extname)
+        if t is None:
+            t = t_im
+        else:
+            t = vstack([t, t_im])
+
+    return t
+
+def write_ccds_table(tab, outdir, fname_in):
+
+    assert(os.path.exists(outdir))
+
+    outname = os.path.join(outdir, os.path.basename(fname_in))
+
+    # get rid of any ".fz" or ".gz" present in input filename
+    outname = outname.replace('.fz', '')
+    outname = outname.replace('.gz', '')
+
+    assert(outname[-5:] == '.fits')
+
+    outname = outname.replace('.fits', '_ccds.fits')
+
+    assert(not os.path.exists(outname))
+
+    print('Attempting to write CCDs table to ' + outname)
+    tab.write(outname, format='fits')

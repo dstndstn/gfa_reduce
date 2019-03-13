@@ -45,6 +45,9 @@ if __name__ == "__main__":
 
     exp = io.load_exposure(fname_in)
 
+    print('Attempting to compute basic statistics of raw pixel data')
+    imstats = io.gather_pixel_stats(exp)
+
     # create data quality bitmasks
     exp.create_all_bitmasks()
 
@@ -68,15 +71,15 @@ if __name__ == "__main__":
             catalog = io.append_gaia_crossmatches(catalog)
 
     # try to write image-level outputs if outdir is specified
+
     if write_outputs:
         print('Attempting to write image-level outputs to directory : ' + 
               outdir)
-
-    if write_outputs:
         # could add command line arg for turning off gzip compression
         io.write_image_level_outputs(exp, outdir, fname_in, gzip=True)
         if not args.no_cataloging:
             io.write_exposure_source_catalog(catalog, outdir, fname_in)
+        io.write_ccds_table(imstats, outdir, fname_in)
 
     print('Successfully finished reducing ' + fname_in)
 
