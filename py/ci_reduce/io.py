@@ -199,7 +199,7 @@ def gather_pixel_stats(exp):
 
     return t
 
-def write_ccds_table(tab, outdir, fname_in):
+def write_ccds_table(tab, exp, outdir, fname_in):
 
     assert(os.path.exists(outdir))
 
@@ -214,6 +214,8 @@ def write_ccds_table(tab, outdir, fname_in):
     outname = outname.replace('.fits', '_ccds.fits')
 
     assert(not os.path.exists(outname))
+
+    tab['sky_mag_ab'] = [im.sky_mag for im in exp.images.values()]
 
     print('Attempting to write CCDs table to ' + outname)
     tab.write(outname, format='fits')

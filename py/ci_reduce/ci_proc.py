@@ -79,7 +79,7 @@ if __name__ == "__main__":
         io.write_image_level_outputs(exp, outdir, fname_in, gzip=True)
         if not args.no_cataloging:
             io.write_exposure_source_catalog(catalog, outdir, fname_in)
-        io.write_ccds_table(imstats, outdir, fname_in)
+        io.write_ccds_table(imstats, exp, outdir, fname_in)
 
     print('Successfully finished reducing ' + fname_in)
 
