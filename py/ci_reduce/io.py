@@ -192,7 +192,7 @@ def gather_pixel_stats(exp):
 
     t = None
     for extname, im in exp.images.items():
-        print('Computing pixels statistics for ' + extname)
+        print('Computing pixel statistics for ' + extname)
         t_im = bis.compute_all_stats(im.image, extname=extname)
         if t is None:
             t = t_im
