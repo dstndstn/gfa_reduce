@@ -107,6 +107,11 @@ class CI_image:
             hdu = f(self.ivar_adu, header=self.header)
 
         hdu.header['FLAVOR'] = flavor
+
+        ci_extname = self.header['EXTNAME']
+        gain = common.ci_camera_gain(ci_extname)
+        hdu.header['GAINA'] = (gain, '[e-/ADU] assumed gain')
+
         hdu.header['BUNIT'] = common.reduced_flavor_to_bunit(flavor)
 
         return hdu
