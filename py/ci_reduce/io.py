@@ -6,6 +6,8 @@ import astropy.io.fits as fits
 from astropy.table import vstack, hstack
 import os
 import ci_reduce.analysis.basic_image_stats as bis
+import ci_reduce.analysis.basic_catalog_stats as bcs
+import numpy as np
 
 # in the context of this file, "image" and "exposure" generally refer to 
 # CI_image and CI_exposure objects
@@ -199,7 +201,28 @@ def gather_pixel_stats(exp):
 
     return t
 
-def write_ccds_table(tab, exp, outdir, fname_in):
+def high_level_ccds_metrics(tab, catalog):
+
+    nrows = len(tab)
+
+    fwhm_major_pix = np.zeros(nrows)
+    fwhm_minor_pix = np.zeros(nrows)
+    fwhm_pix = np.zeros(nrows)
+    fwhm_asec = np.zeros(nrows)
+
+    for i, row in enumerate(tab):
+        fwhm_stats = bcs.overall_image_fwhm(catalog[catalog['camera'] == row['camera']])
+        fwhm_major_pix[i] = fwhm_stats[0]
+        fwhm_minor_pix[i] = fwhm_stats[1]
+        fwhm_pix[i] = fwhm_stats[2]
+        fwhm_asec[i] = fwhm_stats[3]
+
+    tab['fwhm_major_pix'] = fwhm_major_pix
+    tab['fwhm_minor_pix'] = fwhm_minor_pix
+    tab['fwhm_pix'] = fwhm_pix
+    tab['fwhm_asec'] = fwhm_asec
+
+def write_ccds_table(tab, catalog, exp, outdir, fname_in):
 
     assert(os.path.exists(outdir))
 
@@ -216,6 +239,7 @@ def write_ccds_table(tab, exp, outdir, fname_in):
     assert(not os.path.exists(outname))
 
     tab['sky_mag_ab'] = [im.sky_mag for im in exp.images.values()]
+    high_level_ccds_metrics(tab, catalog)
 
     print('Attempting to write CCDs table to ' + outname)
     tab.write(outname, format='fits')
