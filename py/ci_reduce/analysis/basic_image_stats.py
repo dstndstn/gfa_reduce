@@ -61,20 +61,6 @@ def compute_std(image, quadrant=None):
 
     return mad_std(image[ymin:ymax, xmin:xmax])
 
-# do a meta-analysis of the per-object FWHM values, 
-# presumably restricting to relative high s/n sources
-# if no good sources are available, then need to return some dummy
-# value 
-def overall_image_fwhm(tab):
-    print('stub')
-
-# do a meta-analysis of the per-object ellipticity values, 
-# presumably restricting to relative high s/n sources
-# if no good sources are available, then need to return some dummy
-# value 
-def overall_image_ellipticity(tab):
-    print('stub')
-
 def compute_all_stats(image, skip_quadrants=False, extname=None):
     sectors = [None]
     if not skip_quadrants:
