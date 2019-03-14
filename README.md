@@ -1,7 +1,7 @@
 # directories
 
 ## py/scripts/
-miscellaneous scripts not intended to be used as part of production pipeline; includes code that generates calibration files in etc/, such as master biases, master flats, static bad pixel masks
+miscellaneous scripts not intended to be used as part of production pipeline; includes code that generates calibration files in `CI_REDUCE_ETC`, such as master biases, master flats, static bad pixel masks
 
 ## py/ci_reduce/analysis/
 core image analysis such as source detection, centroid measurements, flux measurements
@@ -48,7 +48,7 @@ Throughout the codebase, pixel coordinate (0, 0) will be the **center** of the l
 Throughout the codebase, the CI camera names CIE, CIN, CIS, and CIW refer to sky directions (not geographic directions).
 
 # environment
-* to access auxiliary calibration files, it will be necessary to set the `CI_REDUCE_ETC` environment variable to the location of the etc/ directory
+* to access auxiliary calibration files, it will be necessary to set the `CI_REDUCE_ETC` environment variable to their directory's location
   * examples of auxiliary calibration files include master biases, master flats, static bad pixel masks, master dark images
   * these files will not be checked in to git due to the file sizes involved
   * the authoritative copy of this directory can be found at `/project/projectdirs/desi/users/ameisner/CI/ci_reduce_etc`
