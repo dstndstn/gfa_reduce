@@ -96,7 +96,7 @@ def get_nominal_fwhm_pix(extname):
 
     return nominal_fwhm_pix
 
-def refine_centroids(tab, image, bitmask):
+def refine_centroids(tab, image, bitmask, ivar_adu):
     # input table tab gets augmented with additional columns
 
     print('Attempting to refine initial centroids')
@@ -115,9 +115,13 @@ def refine_centroids(tab, image, bitmask):
     ellipticity = np.zeros(nobj)
     # deg CC from +X, in the range -90 deg to +90 deg
     pos_angle = np.zeros(nobj)
+    dxcentroid = np.zeros(nobj)
+    dycentroid = np.zeros(nobj)
 
     no_centroid_refinement = np.zeros(nobj, dtype=bool)
     centroid_refinement_fail = np.zeros(nobj, dtype=bool)
+
+    sig_adu = aper_phot_unc_map(ivar_adu)
 
     for i in range(nobj):
         ix_guess = int(round(tab[i]['xcen_init']))
@@ -129,6 +133,8 @@ def refine_centroids(tab, image, bitmask):
         if min_edge_dist < half:
             xcentroid[i] = tab[i]['xcen_init']
             ycentroid[i] = tab[i]['ycen_init']
+            dxcentroid[i] = np.nan
+            dycentroid[i] = np.nan
             sig_major_pix[i] = -1 # dummy value
             sig_minor_pix[i] = -1 # dummy value
             ellipticity[i] = -1
@@ -142,10 +148,23 @@ def refine_centroids(tab, image, bitmask):
 
         _xcentroid = gfit.x_mean.value
         _ycentroid = gfit.y_mean.value
+        
+        ph, pw = cutout.shape
+        px, py = np.meshgrid(np.arange(pw), np.arange(ph))
+
+        var_cutout = np.power(sig_adu[(iy_guess-half):(iy_guess+half+1), (ix_guess-half):(ix_guess+half+1)], 2)
+
+        var_xcen = np.sum(var_cutout*np.power(px - _xcentroid, 2))/(np.sum(cutout)**2)*(2.5**2)
+        var_ycen = np.sum(var_cutout*np.power(py - _ycentroid, 2))/(np.sum(cutout)**2)*(2.5**2)
+
+        sig_xcen = np.sqrt(var_xcen)
+        sig_ycen = np.sqrt(var_ycen)
 
         if (not np.isfinite(_xcentroid)) or (not np.isfinite(_ycentroid)):
             xcentroid[i] = tab[i]['xcen_init']
             ycentroid[i] = tab[i]['ycen_init']
+            dxcentroid[i] = np.nan
+            dycentroid[i] = np.nan
             sig_major_pix[i] = -1
             sig_minor_pix[i] = -1
             ellipticity[i] = -1
@@ -158,6 +177,8 @@ def refine_centroids(tab, image, bitmask):
             # but that's actually how they're defined ...
             sig_major_pix[i] = gfit.x_stddev.value
             sig_minor_pix[i] = gfit.y_stddev.value
+            dxcentroid[i] = sig_xcen
+            dycentroid[i] = sig_ycen
             if (gfit.x_stddev.value <= 0) or (gfit.y_stddev.value <= 0):
                 ellipticity[i] = -1
             else:
@@ -174,6 +195,8 @@ def refine_centroids(tab, image, bitmask):
     tab['sig_minor_pix'] = sig_minor_pix
     tab['ellipticity'] = ellipticity
     tab['pos_angle'] = pos_angle
+    tab['dxcentroid'] = dxcentroid
+    tab['dycentroid'] = dycentroid
 
 def add_metadata_columns(tab, bitmask):
     # input table tab gets modified
@@ -207,7 +230,7 @@ def get_source_list(image, bitmask, extname, ivar_adu, thresh=5):
 
     tab = slices_to_table(slices, detsn, extname)
 
-    refine_centroids(tab, image, bitmask)
+    refine_centroids(tab, image, bitmask, ivar_adu)
 
     do_aper_phot(image, tab, extname, ivar_adu)
 
