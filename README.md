@@ -43,6 +43,10 @@ unless otherwise stated in a particular portion of the code...
 
 Throughout the codebase, pixel coordinate (0, 0) will be the **center** of the lower left pixel (where "lower left" applies in the context of the IDL/DS9 convention for 2D image display). "x" will refer to the "AXIS1" coordinate (long axis for CI cameras, a.k.a. "width"), and "y" will refer to the "AXIS2" coordinate (short axis for CI cameras, a.k.a. "height").
 
+# CI camera naming convention
+
+Throughout the codebase, the CI camera names CIE, CIN, CIS, and CIW refer to sky directions (not geographic directions).
+
 # environment
 * to access auxiliary calibration files, it will be necessary to set the `CI_REDUCE_ETC` environment variable to the location of the etc/ directory
   * examples of auxiliary calibration files include master biases, master flats, static bad pixel masks, master dark images
