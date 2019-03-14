@@ -114,6 +114,9 @@ class CI_image:
 
         hdu.header['BUNIT'] = common.reduced_flavor_to_bunit(flavor)
 
+        ci_num = common.ci_extname_to_ci_number(ci_extname)
+        hdu.header['CINUM'] = (ci_num, 'CI# number from DESI-3347')
+
         return hdu
 
     def are_pixels_calibrated(self):
