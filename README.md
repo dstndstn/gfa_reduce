@@ -20,6 +20,9 @@ cross-matching utilities, such as for matching to Gaia or other external catalog
 ## py/ci_reduce/ci_proc.py
 primary driver that gets called to run the CI reduction pipeline end to end
 
+## py/ci_reduce/ci_wcs.py
+WCS-related utilities
+
 ## py/ci_reduce/common.py
 miscellaneous utilities, such as conversions between CI numbering/labeling schemes
 
