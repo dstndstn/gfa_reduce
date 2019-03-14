@@ -245,6 +245,8 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in):
     assert(not os.path.exists(outname))
 
     tab['sky_mag_ab'] = [im.sky_mag for im in exp.images.values()]
+    tab['ci_number'] = [common.ci_extname_to_ci_number(extname) for extname in tab['camera']]
+
     high_level_ccds_metrics(tab, catalog)
 
     print('Attempting to write CCDs table to ' + outname)
