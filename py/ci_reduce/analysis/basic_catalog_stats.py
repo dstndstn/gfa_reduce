@@ -35,16 +35,3 @@ def overall_image_fwhm(tab, snr_thresh=20):
     fwhm_asec= asec_per_pix*fwhm_pix
 
     return fwhm_major_pix, fwhm_minor_pix, fwhm_pix, fwhm_asec
-
-# do a meta-analysis of the per-object ellipticity values, 
-# presumably restricting to relative high s/n sources
-# if no good sources are available, then need to return some dummy
-# value 
-def overall_image_ellipticity(tab, snr_thresh=50):
-    # remove bad/dummy FWHM values
-    # remove sources that are near image boundaries
-    # could remove sources that aren't isolated, but might be fine
-    # to leave this as an optimization for the future
-
-    print('stub')
-
