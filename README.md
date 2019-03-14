@@ -35,9 +35,6 @@ class that encapsulates a single-camera image (and its metadata) drawn from a si
 ## py/ci_reduce/io.py
 input/output utilities
 
-## py/ci_reduce/platescale.py
-utility for retrieving desimodel platescale as a function of CI pixel coordinates
-
 # convention for pixel coordinates
 unless otherwise stated in a particular portion of the code...
 
