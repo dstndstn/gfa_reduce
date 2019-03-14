@@ -49,9 +49,9 @@ Throughout the codebase, the CI camera names CIE, CIN, CIS, and CIW refer to sky
 
 # environment
 * to access auxiliary calibration files, it will be necessary to set the `CI_REDUCE_ETC` environment variable to their directory's location
-  * examples of auxiliary calibration files include master biases, master flats, static bad pixel masks, master dark images
-  * these files will not be checked in to git due to the file sizes involved
-  * the authoritative copy of this directory can be found at `/project/projectdirs/desi/users/ameisner/CI/ci_reduce_etc`
+  * examples of auxiliary calibration files include master biases, master flats, static bad pixel masks
+  * these auxiliary files will not be checked in to git due to the file sizes involved
+  * the authoritative copy of this directory can be found on NERSC at `/project/projectdirs/desi/users/ameisner/CI/ci_reduce_etc`
 * to enable Gaia cross-matching, the `GAIA_CAT_DIR` environment variable must be set to the full path of "chunks-gaia-dr2-astrom"
   * the recommended path at NERSC is `/project/projectdirs/cosmo/work/gaia/chunks-gaia-dr2-astrom`
   * this directory contains a full-sky set of 12,288 FITS "chunk" files, one per nside = 32 HEALPix pixel, with ring-ordered indexing in equatorial coordinates
