@@ -3,6 +3,7 @@ import ci_reduce.imred.dq_mask as dq_mask
 import ci_reduce.analysis.sky as sky
 import ci_reduce.analysis.segment as segment
 import ci_reduce.analysis.phot as phot
+from ci_reduce.ci_wcs import nominal_tan_wcs
 import numpy as np
 import astropy.io.fits as fits
 from astropy import wcs
@@ -14,7 +15,7 @@ class CI_image:
     def __init__(self, image, header):
         self.image = image.astype('float32')
         self.header = header
-        self.wcs = wcs.WCS(header)
+        self.initialize_wcs()
 
         # lazily compute bitmask image only as requested
         self.bitmask = None
@@ -213,3 +214,10 @@ class CI_image:
         print('Found ' + str(len(tab)) + ' sources in ' + 
               self.header['EXTNAME'] + ' image')
         return tab
+
+    def initialize_wcs(self):
+        telra = self.header['SKYRA']
+        teldec = self.header['SKYDEC']
+        extname = self.header['EXTNAME']
+
+        self.wcs = nominal_tan_wcs(telra, teldec, extname)
