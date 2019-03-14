@@ -1,16 +1,16 @@
 # directories
 
 ## py/scripts/
-miscellaneous scripts not intended to be used as part of production pipeline; includes code that generates calibration files in etc/, such as master biases, master flats, static bad pixel masks, dark images
+miscellaneous scripts not intended to be used as part of production pipeline; includes code that generates calibration files in etc/, such as master biases, master flats, static bad pixel masks
 
 ## py/ci_reduce/analysis/
-core image analysis such as source detection, centroid measurements, PSF fitting, flux measurements
+core image analysis such as source detection, centroid measurements, flux measurements
 
 ## py/ci_reduce/imred/
-convert raw images to reduced images
+utilities for converting raw images to reduced images
 
 ## py/ci_reduce/plotting/
-plotting utilities, for example overplotting circles at the locations of Gaia stars
+plotting utilities
 
 ## py/ci_reduce/xmatch/
 cross-matching utilities, such as for matching to Gaia or other external catalogs
@@ -18,7 +18,7 @@ cross-matching utilities, such as for matching to Gaia or other external catalog
 # top-level py/ci_reduce Python files
 
 ## py/ci_reduce/ci_proc.py
-primary driver that gets called to run the reduction pipeline end-to-end
+primary driver that gets called to run the CI reduction pipeline end to end
 
 ## py/ci_reduce/common.py
 miscellaneous utilities, such as conversions between CI numbering/labeling schemes
