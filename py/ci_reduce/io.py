@@ -142,6 +142,7 @@ def combine_per_camera_catalogs(catalogs):
 
     for extname, tab in catalogs.items():
         tab['camera'] = extname
+        tab['ci_number'] = [common.ci_extname_to_ci_number(extname) for extname in tab['camera']]
 
     composite = vstack([tab for tab in catalogs.values()])
     composite = strip_none_columns(composite)
