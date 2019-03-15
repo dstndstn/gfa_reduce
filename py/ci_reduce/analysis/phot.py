@@ -7,7 +7,8 @@ from astropy.table import Table
 from photutils.centroids.core import fit_2dgaussian
 from astropy.stats import sigma_clipped_stats
 from photutils import aperture_photometry
-from photutils import CircularAperture, CircularAnnulus
+from photutils import CircularAperture, CircularAnnulus, EllipticalAperture
+import ci_reduce.common as common
 
 def slices_to_table(slices, detsn, extname):
     nslc = len(slices)
@@ -80,6 +81,14 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
     annulus_apertures = CircularAnnulus(positions, r_in=60.0, r_out=65.0)
     annulus_masks = annulus_apertures.to_mask(method='center')
 
+    par = common.ci_misc_params()
+
+    b_over_a = (1.0 if (extname == 'CIC') else par['nominal_mer_cd']/par['nominal_sag_cd'])
+
+    # the long axis of elliptical aperture (in terms of pixels) needs to
+    # be in the CI pixel Y direction
+    apertures_ell = [EllipticalAperture(positions, a, a*b_over_a, theta=np.pi/2) for a in radii]
+
     bkg_median = []
     for mask in annulus_masks:
         annulus_data = mask.multiply(data)
@@ -98,6 +107,18 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
 
         catalog['aper_bkg_' + str(i)] = aper_bkg_tot
         catalog['aperture_sum_err_' + str(i)] = phot['aperture_sum_err_' + str(i)]
+
+    ###
+    del phot
+    phot = aperture_photometry(data, apertures_ell, 
+                               error=aper_phot_unc_map(ivar_adu))
+    for i, aperture in enumerate(apertures_ell):
+        aper_bkg_tot = bkg_median*aperture.area()
+        catalog['aper_ell_sum_bkgsub_' + str(i)] = phot['aperture_sum_' + str(i)] - aper_bkg_tot
+
+        catalog['aper_ell_bkg_' + str(i)] = aper_bkg_tot
+        catalog['aperture_ell_sum_err_' + str(i)] = phot['aperture_sum_err_' + str(i)]
+    ###
 
     # is .area() result a vector or scalar ??
     catalog['sky_annulus_area_pix'] = annulus_apertures.area()
