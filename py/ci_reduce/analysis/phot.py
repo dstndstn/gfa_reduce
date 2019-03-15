@@ -89,6 +89,11 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
     # be in the CI pixel Y direction
     apertures_ell = [EllipticalAperture(positions, a, a*b_over_a, theta=np.pi/2) for a in radii]
 
+    # 107 um fiber diam, 9 um on a side for a pixel
+    # fiber diam from Table 4.1 of https://arxiv.org/abs/1611.00037
+    rad_fiber_pix = (107.0/9.0)/2.0
+    aper_fib = CircularAperture(positions, r=rad_fiber_pix)
+
     bkg_median = []
     for mask in annulus_masks:
         annulus_data = mask.multiply(data)
@@ -119,6 +124,19 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
         catalog['aper_ell_bkg_' + str(i)] = aper_bkg_tot
         catalog['aperture_ell_sum_err_' + str(i)] = phot['aperture_sum_err_' + str(i)]
     ###
+
+    ###
+    del phot
+    phot = aperture_photometry(data, aper_fib, 
+                               error=aper_phot_unc_map(ivar_adu))
+
+    aper_bkg_tot = bkg_median*aper_fib.area()
+    catalog['aper_sum_bkgsub_fib'] = phot['aperture_sum'] - aper_bkg_tot
+
+    catalog['aper_bkg_fib'] = aper_bkg_tot
+    catalog['aperture_sum_err_fib'] = phot['aperture_sum_err']
+
+    ####
 
     # is .area() result a vector or scalar ??
     catalog['sky_annulus_area_pix'] = annulus_apertures.area()
