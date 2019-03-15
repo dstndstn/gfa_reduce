@@ -91,8 +91,14 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
 
     # 107 um fiber diam, 9 um on a side for a pixel
     # fiber diam from Table 4.1 of https://arxiv.org/abs/1611.00037
-    rad_fiber_pix = (107.0/9.0)/2.0
-    aper_fib = CircularAperture(positions, r=rad_fiber_pix)
+    rad_fiber_pix_sag = (107.0/9.0)/2.0
+    deg_to_normal = 5.43 # [desi-commiss 522]
+    if extname != 'CIC':
+        rad_fiber_pix_mer = rad_fiber_pix_sag*np.sin(deg_to_normal/(180.0/np.pi))
+    else:
+        rad_fiber_pix_mer = rad_fiber_pix_sag
+
+    aper_fib = EllipticalAperture(positions, rad_fiber_pix_sag, rad_fiber_pix_mer, theta=np.pi/2)
 
     bkg_median = []
     for mask in annulus_masks:
