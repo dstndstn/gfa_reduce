@@ -59,7 +59,9 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
 
     print('Attempting to do aperture photometry')
     positions = list(zip(catalog['xcentroid'], catalog['ycentroid']))
-    apertures = CircularAperture(positions, r=get_nominal_fwhm_pix(extname)/2.0)
+    radii = [get_nominal_fwhm_pix(extname)/2.0, 
+             1.1*get_nominal_fwhm_pix(extname)/2.0]
+    apertures = [CircularAperture(positions, r=r) for r in radii]
     annulus_apertures = CircularAnnulus(positions, r_in=60.0, r_out=65.0)
     annulus_masks = annulus_apertures.to_mask(method='center')
 
@@ -74,18 +76,17 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
     bkg_median = np.array(bkg_median)
     phot = aperture_photometry(data, apertures, 
                                error=aper_phot_unc_map(ivar_adu))
-    phot['annulus_median'] = bkg_median
-    phot['aper_bkg'] = bkg_median * apertures.area()
-    phot['aper_sum_bkgsub'] = phot['aperture_sum'] - phot['aper_bkg']
 
-    # still need to actually append some of this aperture photometry
-    # info to the catalog in the form of new columns
+    for i, aperture in enumerate(apertures):
+        aper_bkg_tot = bkg_median*aperture.area()
+        catalog['aper_sum_bkgsub_' + str(i)] = phot['aperture_sum_' + str(i)] - aper_bkg_tot
 
-    catalog['aper_sum_bkgsub'] = phot['aper_sum_bkgsub']
-    catalog['aper_bkg'] = phot['aper_bkg']
-    catalog['aperture_sum_err'] = phot['aperture_sum_err']
+        catalog['aper_bkg_' + str(i)] = aper_bkg_tot
+        catalog['aperture_sum_err_' + str(i)] = phot['aperture_sum_err_' + str(i)]
+
     # is .area() result a vector or scalar ??
-    catalog['annulus_area_pix'] = annulus_apertures.area()
+    catalog['sky_annulus_area_pix'] = annulus_apertures.area()
+    catalog['sky_annulus_median'] = bkg_median
 
 def get_nominal_fwhm_pix(extname):
     # this is a nominal FWHM for use as an initial guess
