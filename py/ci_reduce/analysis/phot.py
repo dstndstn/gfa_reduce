@@ -53,14 +53,29 @@ def aper_phot_unc_map(ivar):
     regfac = 0.01
     return np.power(ivar + (ivar == 0)*regfac*np.mean(ivar), -0.5)
 
+def aper_rad_pix(extname):
+    # list of aperture radii in pixels
+    # list in asec comes from http://legacysurvey.org/dr7/catalogs
+
+    # eventually may want to store this somewhere more useful rather
+    # than hardcoding right here
+    rad_asec = [0.5, 0.75, 1.0, 1.5, 2.0, 3.5, 5.0, 7.0]
+
+    asec_per_pix = util.nominal_pixel_sidelen_arith(extname)
+
+    rad_pix = [r/asec_per_pix for r in rad_asec]
+
+    return rad_pix
+
 def do_aper_phot(data, catalog, extname, ivar_adu):
     # catalog should be the catalog with refined centroids 
     # for **one CI camera**
 
     print('Attempting to do aperture photometry')
     positions = list(zip(catalog['xcentroid'], catalog['ycentroid']))
-    radii = [get_nominal_fwhm_pix(extname)/2.0, 
-             1.1*get_nominal_fwhm_pix(extname)/2.0]
+
+    radii = aper_rad_pix(extname)
+
     apertures = [CircularAperture(positions, r=r) for r in radii]
     annulus_apertures = CircularAnnulus(positions, r_in=60.0, r_out=65.0)
     annulus_masks = annulus_apertures.to_mask(method='center')
