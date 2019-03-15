@@ -60,7 +60,7 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
     print('Attempting to do aperture photometry')
     positions = list(zip(catalog['xcentroid'], catalog['ycentroid']))
     apertures = CircularAperture(positions, r=get_nominal_fwhm_pix(extname)/2.0)
-    annulus_apertures = CircularAnnulus(positions, r_in=30.0, r_out=40.0)
+    annulus_apertures = CircularAnnulus(positions, r_in=60.0, r_out=65.0)
     annulus_masks = annulus_apertures.to_mask(method='center')
 
     bkg_median = []
