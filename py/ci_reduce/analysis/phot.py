@@ -248,8 +248,10 @@ def get_source_list(image, bitmask, extname, ivar_adu, thresh=5):
 
     refine_centroids(tab, image, bitmask, ivar_adu)
 
-    do_aper_phot(image, tab, extname, ivar_adu)
-
     add_metadata_columns(tab, bitmask)
+
+    tab = tab[(tab['min_edge_dist_pix'] > -5)]
+
+    do_aper_phot(image, tab, extname, ivar_adu)
 
     return tab
