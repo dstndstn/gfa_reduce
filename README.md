@@ -1,7 +1,7 @@
 # directories
 
 ## py/scripts/
-miscellaneous scripts not intended to be used as part of production pipeline; includes code that generates calibration files in `CI_REDUCE_ETC`, such as master biases, master flats, static bad pixel masks
+miscellaneous scripts not intended to be used as part of the production pipeline; includes code that generates calibration files in `CI_REDUCE_ETC`, such as master biases, master flats, static bad pixel masks
 
 ## py/ci_reduce/analysis/
 core image analysis such as source detection, centroid measurements, flux measurements

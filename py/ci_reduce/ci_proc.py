@@ -5,6 +5,7 @@ import os
 import ci_reduce.io as io
 from datetime import datetime
 import ci_reduce.analysis.util as util
+import ci_reduce.common as common
 
 if __name__ == "__main__":
     descr = 'run full ci_reduce pipeline on a CI exposure'
@@ -58,6 +59,8 @@ if __name__ == "__main__":
     exp.estimate_all_sky_mags(careful_sky=args.careful_sky)
     exp.estimate_all_sky_sigmas(careful_sky=args.careful_sky)
 
+    par = common.ci_misc_params()
+
     if not args.no_cataloging:
         catalogs = exp.all_source_catalogs()
 
@@ -66,8 +69,8 @@ if __name__ == "__main__":
 
         # reformat the output catalogs into a single merged astropy Table
         catalog = io.combine_per_camera_catalogs(catalogs)
-        print('Attempting to identify Gaia cross-matches')
-        if not args.no_gaia_xmatch:
+        if (not args.no_gaia_xmatch) and (par['gaia_env_var'] in os.environ):
+            print('Attempting to identify Gaia cross-matches')
             catalog = io.append_gaia_crossmatches(catalog)
 
     # try to write image-level outputs if outdir is specified
