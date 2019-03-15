@@ -220,4 +220,5 @@ class CI_image:
         teldec = self.header['SKYDEC']
         extname = self.header['EXTNAME']
 
+        print('Attempting to initialize WCS guess for ' + extname)
         self.wcs = nominal_tan_wcs(telra, teldec, extname)
