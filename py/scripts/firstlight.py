@@ -16,7 +16,7 @@ im[im > 60000] = 60000
 
 _im = np.log10(im)
 
-plt.imshow(_im, cmap='magma')
+plt.imshow(_im, cmap='viridis')
 
 plt.gca().get_xaxis().set_visible(False)
 plt.gca().get_yaxis().set_visible(False)
@@ -29,6 +29,6 @@ plt.margins(0,0)
 plt.gca().xaxis.set_major_locator(plt.NullLocator())
 plt.gca().yaxis.set_major_locator(plt.NullLocator())
 
-dpi = 175
+dpi = 400
 
-plt.savefig('/project/projectdirs/cosmo/www/temp/ameisner/DESI_CI_firstlight-'+ str(dpi) + 'dpi.png', dpi=dpi, bbox_inches='tight', pad_inches=-0.02)
+plt.savefig('/project/projectdirs/cosmo/www/temp/ameisner/DESI_CI_firstlight-viridis-'+ str(dpi) + 'dpi.png', dpi=dpi, bbox_inches='tight', pad_inches=-0.02)
