@@ -3,6 +3,8 @@ import astropy.io.fits as fits
 import glob
 import numpy as np
 import os
+import matplotlib.pyplot as plt
+from scipy.stats import scoreatpercentile
 
 # currently I have access to 4 independent bias exposures for each of
 # CIE, CIN, CIS, and CIW, and none for CIC
@@ -84,3 +86,45 @@ def write_master_bias(outname=None):
     hdul = fits.HDUList(hdus)
 
     hdul.writeto(outname)
+
+def plot_master_biases():
+    # compare biases based on forDK samples to those post-installation
+
+    ci_extnames = common.valid_image_extname_list()
+
+    for ci_extname in ci_extnames:
+        if ci_extname == 'CIC':
+            continue
+        bias_new = fits.getdata('/global/cscratch1/sd/ameisner/CI_master_bias.fits', extname=ci_extname)
+
+        bias_old = fits.getdata('/project/projectdirs/desi/users/ameisner/CI/ci_reduce_etc/CI_master_bias.fits.gz', extname=ci_extname)
+
+        print(ci_extname)
+        print(np.median(bias_new), 'new')
+        print(np.median(bias_old), 'old')
+
+        bias_old -= np.median(bias_old)
+        bias_new -= np.median(bias_new)
+
+        vmax = max(scoreatpercentile(bias_old, 97.5), scoreatpercentile(bias_new, 97.5))
+        vmin = max(scoreatpercentile(bias_old, 2.5), scoreatpercentile(bias_old, 2.5))
+
+        print(vmin, vmax)
+        print('~'*30)
+        plt.imshow(bias_old, vmin=vmin, vmax=vmax, cmap='gray')
+        outname = '/global/cscratch1/sd/ameisner/old_bias_' + ci_extname + '.png'
+        plt.gca().get_xaxis().set_visible(False)
+        plt.gca().get_yaxis().set_visible(False)
+
+        dpi = 300
+        plt.savefig(outname, dpi=dpi, bbox_inches='tight')
+
+        plt.cla()
+
+        plt.imshow(bias_new, vmin=vmin, vmax=vmax, cmap='gray', origin='lower')
+        outname = outname.replace('old', 'new')
+
+        plt.gca().get_xaxis().set_visible(False)
+        plt.gca().get_yaxis().set_visible(False)
+
+        plt.savefig(outname, dpi=dpi, bbox_inches='tight')
