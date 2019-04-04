@@ -43,12 +43,20 @@ def load_exposure(fname, verbose=True):
 
     dummy_fz_header = None
 
-    for hdu in hdul:
+    is_image_hdu = np.zeros(len(hdul), dtype=bool)
+    for i, hdu in enumerate(hdul):
+        # real data has another dummy extension added with no EXTNAME
+        keywords = [c[0] for c in hdu.header.cards]
+        if not ('EXTNAME' in keywords):
+            continue
         if (hdu.header['EXTNAME']).strip() == par['fz_dummy_extname']:
             dummy_fz_header = hdu.header
-            hdul.remove(hdu)
+            continue
+        is_image_hdu[i] = True
 
-    imlist = [load_image_from_hdu(hdu, verbose=verbose) for hdu in hdul]
+    w_im = np.where(is_image_hdu)[0]
+
+    imlist = [load_image_from_hdu(hdul[ind], verbose=verbose) for ind in w_im]
 
     exp = CI_exposure(imlist, dummy_fz_header=dummy_fz_header)
 
@@ -193,6 +201,9 @@ def gather_pixel_stats(exp):
 
     t = None
     for extname, im in exp.images.items():
+        if im is None:
+            continue
+
         print('Computing pixel statistics for ' + extname)
         t_im = bis.compute_all_stats(im.image, extname=extname)
         if t is None:
