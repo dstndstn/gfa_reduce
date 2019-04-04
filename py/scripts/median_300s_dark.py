@@ -60,9 +60,18 @@ def master_dark_header_cards(hdu, ci_extname):
     h['EXTNAME'] = ci_extname
     h['BUNIT'] = 'ADU'
     h['EXPTIME'] = (1, 'seconds')
+    # this is just a placeholder guess; CCDTEMP was not available
+    # when the 300 s darks were taken, and as of April 3, 2019 various
+    # problems seems to remain with CCDTEMP
+    # this nominal temperature should definitely be re-evaluated
+    # in the future
+    # Ashley has informed me that the CI cameras are operating a mode
+    # where they try to cool themselves to 7.5 Celsius, so that's where 7.5 
+    # comes from
+
+    h['CCDTEMP'] = (7.5, '[deg] Camera temperature (Celsius)')
 
     return h
-
 
 def write_master_dark(outname=None):
 
