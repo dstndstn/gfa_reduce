@@ -8,6 +8,7 @@ import os
 import ci_reduce.analysis.basic_image_stats as bis
 import ci_reduce.analysis.basic_catalog_stats as bcs
 import numpy as np
+import time
 
 # in the context of this file, "image" and "exposure" generally refer to 
 # CI_image and CI_exposure objects
@@ -32,14 +33,44 @@ def load_image_from_filename(fname, extname):
     data, header = fits.getdata(fname, extname=extname, header=True)
     return CI_image(data, header)
 
-def load_exposure(fname, verbose=True):
+def realtime_raw_read(fname, delay=2.0, max_attempts=5):
+    """
+    attempt to avoid getting burned by partially written files when
+    trying to analyze data in real time
+
+    delay is in seconds
+    """
+
+    # something has gone badly wrong if the filename doesn't even exist
+    # that's not the scenario I'm trying to address here
+    assert(os.path.exists(fname))
+
+    hdul = None
+    for i in range(max_attempts):
+        try:
+            hdul = fits.open(fname)
+        except:
+            print('encountered problem reading ' + fname)
+            time.sleep(delay)
+        if hdul is not None:
+            break
+
+    # die if unable to read file after max_attempts attempts
+    assert(hdul is not None)
+
+    return hdul
+
+def load_exposure(fname, verbose=True, realtime=False):
     assert(os.path.exists(fname))
 
     print('Attempting to load exposure : ' + fname)
 
     par = common.ci_misc_params()
 
-    hdul = fits.open(fname)
+    if not realtime:
+        hdul = fits.open(fname)
+    else:
+        hdul = realtime_raw_read(fname)
 
     dummy_fz_header = None
 
