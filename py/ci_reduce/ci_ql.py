@@ -6,7 +6,7 @@ import ci_reduce.io as io
 import glob
 
 def ql_stats_1exp(fname_in):
-    exp = io.load_exposure(fname_in)
+    exp = io.load_exposure(fname_in, realtime=True)
     imstats = io.gather_pixel_stats(exp)
 
     colnames = imstats.colnames
