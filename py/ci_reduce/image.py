@@ -177,7 +177,7 @@ class CI_image:
         sky_adu_per_pixel = self.estimate_sky_level(careful_sky=careful_sky)
 
         extname = self.header['EXTNAME']
-        acttime = self.header['ACTTIME']
+        acttime = self.header['EXPTIME']
 
         sky_mag = sky.adu_to_surface_brightness(sky_adu_per_pixel, 
                                                 acttime, extname)

@@ -18,15 +18,16 @@ def ci_misc_params():
            'n_cameras': 5,
            'nominal_zeropoint': 26.56,
            'fz_dummy_extname': 'CI',
-           'master_bias_filename': 'CI_master_bias.fits.gz', 
+           'master_bias_filename': 'CI_master_bias.fits', 
            'master_flat_filename': 'CI_master_flat.fits.gz',
-           'static_mask_filename': 'CI_static_badpixels.fits.gz',
+           'master_dark_filename' : 'CI_master_dark.fits',
+           'static_mask_filename': 'CI_static_badpixels.fits',
            'nominal_sag_cd': 3.55978e-5, 
            'nominal_mer_cd': 3.26627e-5,
            'nominal_cen_cd': 3.70303e-5,
            'full_well_electrons' : 100000.0,
            'nominal_fwhm_asec' : 1.25,
-           'headers_dummy_filename' : 'dummy_with_headers.bigtan.fits.gz',
+           'headers_dummy_filename' : 'dummy_with_headers-as_built.bigtan.fits.gz',
            'reduced_image_flavors' : ['REDUCED', 'INVVAR', 'BITMASK']}
 
     return par
