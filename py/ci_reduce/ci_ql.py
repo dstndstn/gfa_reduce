@@ -5,7 +5,19 @@ import os
 import ci_reduce.io as io
 import glob
 
-def ql_stats_1exp(fname_in):
+def print_imstats_1exp(imstats, fname_in, verbose=False):
+
+    if verbose:
+        for row in imstats:
+            print(row['camera'], fname_in)
+            for c in row.colnames:
+                print(' '*5, '{:16}'.format(c), ' : ', row[c])
+
+    cols = ['camera', 'median', 'mean', 'max', 'min', 'sig_robust']
+
+    print(imstats[cols])
+
+def ql_stats_1exp(fname_in, verbose=False):
     exp = io.load_exposure(fname_in, realtime=True)
     imstats = io.gather_pixel_stats(exp)
 
@@ -13,7 +25,7 @@ def ql_stats_1exp(fname_in):
     colnames.insert(0, colnames.pop())
 
     imstats = imstats[colnames]
-    print(imstats)
+    print_imstats_1exp(imstats, fname_in, verbose=verbose)
 
 
 if __name__=="__main__":
