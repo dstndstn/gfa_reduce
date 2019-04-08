@@ -38,7 +38,10 @@ class CI_exposure:
         print('Attempting to subtract dark current...')
         for extname in self.images.keys():
             acttime = self.images[extname].header['EXPTIME']
-            t_c = self.images[extname].header['CCDTEMP']
+            try:
+                t_c = self.images[extname].header['CCDTEMP']
+            except:
+                t_c = 7.5 # HACK !!!!
             self.images[extname].image = self.images[extname].image - \
                 dark_current.total_dark_current_adu(extname, acttime, t_c)
             self.images[extname].dark_subtracted = True
