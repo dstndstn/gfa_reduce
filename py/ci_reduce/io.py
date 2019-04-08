@@ -50,6 +50,8 @@ def realtime_raw_read(fname, delay=2.0, max_attempts=5):
         try:
             hdul = fits.open(fname, lazy_load_hdus=False)
             hdul.verify(option='exception')
+            for hdu in hdul:
+                _, __ = hdu.data, hdu.header
         except:
             print('encountered problem reading ' + fname)
             time.sleep(delay)
