@@ -4,6 +4,7 @@ import argparse
 import os
 import ci_reduce.io as io
 import glob
+import time
 
 def print_imstats_1exp(imstats, fname_in, verbose=False):
 
@@ -18,7 +19,14 @@ def print_imstats_1exp(imstats, fname_in, verbose=False):
     print(imstats[cols])
 
 def ql_stats_1exp(fname_in, verbose=False):
-    exp = io.load_exposure(fname_in, realtime=True)
+
+    for i in range(5):
+        exp = io.load_exposure(fname_in, realtime=True)
+        if exp is not None:
+            break
+        else:
+            time.sleep(2.0)
+
     imstats = io.gather_pixel_stats(exp)
 
     colnames = imstats.colnames

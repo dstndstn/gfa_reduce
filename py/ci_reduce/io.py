@@ -90,7 +90,11 @@ def load_exposure(fname, verbose=True, realtime=False):
 
     w_im = np.where(is_image_hdu)[0]
 
-    imlist = [load_image_from_hdu(hdul[ind], verbose=verbose) for ind in w_im]
+    try:
+        imlist = [load_image_from_hdu(hdul[ind], verbose=verbose) for ind in w_im]
+    except:
+        print('failed to load exposure at image list creation stage')
+        return None
 
     exp = CI_exposure(imlist, dummy_fz_header=dummy_fz_header)
 
