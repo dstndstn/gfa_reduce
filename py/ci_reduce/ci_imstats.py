@@ -16,7 +16,7 @@ def print_imstats_1exp(imstats, fname_in, verbose=False):
             for c in row.colnames:
                 print(' '*5, '{:16}'.format(c), ' : ', row[c])
 
-    cols = ['camera', 'median', 'max', 'min', 'sig_robust']
+    cols = ['camera', 'median', 'max', 'min', 'sigma']
 
     _imstats = copy.deepcopy(imstats)
 
@@ -24,9 +24,11 @@ def print_imstats_1exp(imstats, fname_in, verbose=False):
     _imstats['median'] = np.round(_imstats['median']).astype('int')
     _imstats['min'] = np.round(_imstats['min']).astype('int')
     _imstats['max'] = np.round(_imstats['max']).astype('int')
-    _imstats['sig_robust'] = np.round(_imstats['sig_robust']).astype('int')
+    _imstats['sigma'] = np.round(_imstats['sig_robust']).astype('int')
 
     print(_imstats[cols])
+    print('*sigma column is a robust standard deviation measurement')
+    print('**all pixel values quoted are in ADU')
 
 def imstats_1exp(fname_in, verbose=False):
 
