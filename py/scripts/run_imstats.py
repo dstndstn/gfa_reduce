@@ -4,7 +4,7 @@ import sys, os, time
 import multiprocessing as mp
 import argparse
 import glob
-from ci_reduce.ci_ql import ql_stats_1exp
+from ci_reduce.ci_imstats import imstats_1exp
 
 # using Stephen Bailey's "multirunner" template as the basis for this script
 # https://raw.githubusercontent.com/sbailey/multirunner/master/multirunner.py
@@ -27,7 +27,7 @@ def run(workerid, q):
         print('Worker {} processing {}'.format(workerid, filename))
         sys.stdout.flush()
         #- Do something with that filename; in this case just sleep
-        ql_stats_1exp(filename)
+        imstats_1exp(filename)
         print('Worker {} done with {}'.format(workerid, filename))
         sys.stdout.flush()
 

@@ -18,7 +18,7 @@ def print_imstats_1exp(imstats, fname_in, verbose=False):
 
     print(imstats[cols])
 
-def ql_stats_1exp(fname_in, verbose=False):
+def imstats_1exp(fname_in, verbose=False):
 
     for i in range(5):
         exp = io.load_exposure(fname_in, realtime=True)
@@ -46,7 +46,7 @@ if __name__=="__main__":
     flist = glob.glob('/project/projectdirs/desi/spectro/data/20190330/*/ci*.fits.fz')
 
     for f in flist:
-        ql_stats_1exp(f)
+        imstats_1exp(f)
 
     #fname = '/project/projectdirs/desi/spectro/data/20190403/00003746/ci-00003746.fits.fz'
-    #ql_stats_1exp(fname)
+    imstats_1exp(fname)
