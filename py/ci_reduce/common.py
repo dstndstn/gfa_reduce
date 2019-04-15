@@ -311,3 +311,17 @@ def expid_from_filename(fname):
     expid = int(f[3:11])
 
     return expid
+
+def get_median_bias_adu(extname):
+    # using CI_master_bias.fits with md5sum:
+    #     5c48bef5923647ac9646d9462af88032
+    # see py/scripts/median_bias_per_camera.py
+    # result in in ADU
+    bias_med_dict = {'CIE' : 991.0, 
+                     'CIN' : 1013.0, 
+                     'CIC' : 1020.0, 
+                     'CIS' : 984.0, 
+                     'CIW' : 990.0}
+
+    assert(extname in bias_med_dict.keys())
+    return bias_med_dict[extname]
