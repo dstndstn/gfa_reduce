@@ -12,7 +12,7 @@ for hdu in hdul:
 
     hdu.data = image
 
-outname = '/project/projectdirs/desi/users/ameisner/CI/ci_reduce_etc/fake_unfiorm_flat.fits'
+outname = '/project/projectdirs/desi/users/ameisner/CI/ci_reduce_etc/fake_uniform_flat.fits'
 
 assert(not os.path.exists(outname))
 

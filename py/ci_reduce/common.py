@@ -19,7 +19,7 @@ def ci_misc_params():
            'nominal_zeropoint': 26.56,
            'fz_dummy_extname': 'CI',
            'master_bias_filename': 'CI_master_bias.fits', 
-           'master_flat_filename': 'fake_unfiorm_flat.fits',
+           'master_flat_filename': 'fake_uniform_flat.fits',
            'master_dark_filename' : 'CI_master_dark.fits',
            'static_mask_filename': 'CI_static_badpixels.fits',
            'nominal_sag_cd': 3.55978e-5, 
