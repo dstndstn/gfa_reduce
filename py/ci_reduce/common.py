@@ -1,4 +1,5 @@
 import numpy as np
+import os
 
 # could add utilities re: rotation relative to CS5
 
@@ -297,3 +298,16 @@ def reduced_flavor_to_bunit(flavor):
          'BITMASK' : 'dimensionless'}
 
     return d[flavor]
+
+def expid_from_filename(fname):
+    # assumes ci-????????.fits.fz pattern
+    # this is meant to be run on an input fname that is a single string
+    # as opposed to an array/list of strings
+
+    assert(isinstance(fname, str))
+
+    f = os.path.basename(fname)
+
+    expid = int(f[3:11])
+
+    return expid
