@@ -17,7 +17,7 @@ def print_imstats_1exp(imstats, fname_in, verbose=False):
             for c in row.colnames:
                 print(' '*5, '{:16}'.format(c), ' : ', row[c])
 
-    cols = ['expid', 'camera', 'median', 'max', 'min', 'sigma']
+    cols = ['expid', 'camera', 'median', 'max', 'min', 'sigma', 'med-bias']
 
     _imstats = copy.deepcopy(imstats)
 
@@ -27,6 +27,12 @@ def print_imstats_1exp(imstats, fname_in, verbose=False):
     _imstats['max'] = np.round(_imstats['max']).astype('int')
     _imstats['sigma'] = np.round(_imstats['sig_robust']).astype('int')
     _imstats['expid'] = common.expid_from_filename(fname_in)
+
+    median_minus_bias = np.zeros(len(_imstats))
+    for i in range(len(_imstats)):
+        median_minus_bias[i] = np.round(imstats['median'][i] - common.get_median_bias_adu(_imstats['camera'][i])).astype(int)
+
+    _imstats['med-bias'] = median_minus_bias
 
     print(_imstats[cols])
     print('*sigma column is a robust standard deviation measurement')
