@@ -5,6 +5,7 @@ import os
 import ci_reduce.io as io
 import glob
 import time
+import numpy as np
 
 def print_imstats_1exp(imstats, fname_in, verbose=False):
 
@@ -14,7 +15,13 @@ def print_imstats_1exp(imstats, fname_in, verbose=False):
             for c in row.colnames:
                 print(' '*5, '{:16}'.format(c), ' : ', row[c])
 
-    cols = ['camera', 'median', 'mean', 'max', 'min', 'sig_robust']
+    cols = ['camera', 'median', 'max', 'min', 'sig_robust']
+
+    # save horizntal space on printouts
+    imstats['median'] = np.round(imstats['median']).astype('int')
+    imstats['min'] = np.round(imstats['min']).astype('int')
+    imstats['max'] = np.round(imstats['max']).astype('int')
+    imstats['sig_robust'] = np.round(imstats['sig_robust']).astype('int')
 
     print(imstats[cols])
 
