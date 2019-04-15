@@ -7,6 +7,7 @@ import glob
 import time
 import numpy as np
 import copy
+import ci_reduce.common as common
 
 def print_imstats_1exp(imstats, fname_in, verbose=False):
 
@@ -16,7 +17,7 @@ def print_imstats_1exp(imstats, fname_in, verbose=False):
             for c in row.colnames:
                 print(' '*5, '{:16}'.format(c), ' : ', row[c])
 
-    cols = ['camera', 'median', 'max', 'min', 'sigma']
+    cols = ['expid', 'camera', 'median', 'max', 'min', 'sigma']
 
     _imstats = copy.deepcopy(imstats)
 
@@ -25,6 +26,7 @@ def print_imstats_1exp(imstats, fname_in, verbose=False):
     _imstats['min'] = np.round(_imstats['min']).astype('int')
     _imstats['max'] = np.round(_imstats['max']).astype('int')
     _imstats['sigma'] = np.round(_imstats['sig_robust']).astype('int')
+    _imstats['expid'] = common.expid_from_filename(fname_in)
 
     print(_imstats[cols])
     print('*sigma column is a robust standard deviation measurement')
