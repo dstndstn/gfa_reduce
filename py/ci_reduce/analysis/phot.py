@@ -9,6 +9,7 @@ from astropy.stats import sigma_clipped_stats
 from photutils import aperture_photometry
 from photutils import CircularAperture, CircularAnnulus, EllipticalAperture
 import ci_reduce.common as common
+import ci_reduce.analysis.djs_maskinterp as djs_maskinterp
 
 def slices_to_table(slices, detsn, extname):
     nslc = len(slices)
@@ -278,11 +279,9 @@ def add_metadata_columns(tab, bitmask):
     tab['dq_flags'] = bitmask[iys, ixs]
 
 def get_source_list(image, bitmask, extname, ivar_adu, thresh=5):
-    filler_value = np.median(image)
-
-    # should do something like djs_maskinterp instead
-    image[bitmask != 0] = filler_value
  
+    image = djs_maskinterp.average_bilinear(image, (bitmask != 0))
+
     nominal_fwhm_pix = get_nominal_fwhm_pix(extname)
 
     detsn = detection_map(image, nominal_fwhm_pix)
