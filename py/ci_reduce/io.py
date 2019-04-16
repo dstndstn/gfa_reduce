@@ -301,3 +301,22 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in):
 
     print('Attempting to write CCDs table to ' + outname)
     tab.write(outname, format='fits')
+
+def get_temperature_celsius(fname_in, extname):
+    # try to get CCDTEMP if it's available
+    # otherwise use the average of CI-T[1-5] from EXTNAME = 'CI' header
+
+    assert(os.path.exists(fname_in))
+    h = fits.getheader(fname_in, extname=extname)
+
+    try:
+        ccdtemp = h['CCDTEMP']
+    except:
+        # this is just a placeholder/guess -- the CCD temperature situation
+        # is a complete zoo
+        hh = fits.getheader(fname_in, extname='CI')
+        t_kw_list = ['CI-T' + str(i) for i in np.arange(1, 6)]
+
+        ccdtemp = np.mean([hh[kw] for kw in t_kw_list])
+
+    return ccdtemp

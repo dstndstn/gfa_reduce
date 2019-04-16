@@ -8,8 +8,16 @@ import time
 import numpy as np
 import copy
 import ci_reduce.common as common
+import astropy.io.fits as fits
+import ci_reduce.dark_current as dark_current
+from ci_reduce.analysis.sky import adu_to_surface_brightness
 
 def print_imstats_1exp(imstats, fname_in, verbose=False):
+
+    # this is a small amount of unnecessary I/O but whatever
+    h = fits.getheader(fname_in, extname='CI')
+
+    exptime = h['EXPTIME']
 
     if verbose:
         for row in imstats:
@@ -17,7 +25,8 @@ def print_imstats_1exp(imstats, fname_in, verbose=False):
             for c in row.colnames:
                 print(' '*5, '{:16}'.format(c), ' : ', row[c])
 
-    cols = ['expid', 'camera', 'median', 'max', 'min', 'sigma', 'med-bias']
+    cols = ['expid', 'camera', 'median', 'max', 'min', 'sigma', 'med-bias',
+            'dark_tot_adu', 'sky_ab']
 
     _imstats = copy.deepcopy(imstats)
 
@@ -29,10 +38,18 @@ def print_imstats_1exp(imstats, fname_in, verbose=False):
     _imstats['expid'] = common.expid_from_filename(fname_in)
 
     median_minus_bias = np.zeros(len(_imstats))
+    total_dark_adu = np.zeros(len(_imstats))
+    sky_mag_ab = np.zeros(len(_imstats))
     for i in range(len(_imstats)):
         median_minus_bias[i] = np.round(imstats['median'][i] - common.get_median_bias_adu(_imstats['camera'][i])).astype(int)
+        ccdtemp = io.get_temperature_celsius(fname_in, _imstats['camera'][i])
+        # should really get rid of the hardcoding of 7.5 Celsius below !!!
+        total_dark_adu[i] = exptime*common.get_median_dark_current(_imstats['camera'][i])*dark_current.dark_current_rate(ccdtemp)/dark_current.dark_current_rate(7.5)
+        sky_mag_ab[i] = adu_to_surface_brightness(median_minus_bias[i]-total_dark_adu[i], exptime,_imstats['camera'][i])
 
     _imstats['med-bias'] = median_minus_bias
+    _imstats['dark_tot_adu'] = total_dark_adu
+    _imstats['sky_ab'] = sky_mag_ab
 
     print(_imstats[cols])
     print('*sigma column is a robust standard deviation measurement')

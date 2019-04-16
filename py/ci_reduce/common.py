@@ -325,3 +325,21 @@ def get_median_bias_adu(extname):
 
     assert(extname in bias_med_dict.keys())
     return bias_med_dict[extname]
+
+def get_median_dark_current(extname):
+    # return values are in ADU/s at a nominal temperature of 7.5 Celsius
+    # the nominal temperature is just a guess since the dark frames
+    # that my master dark are based on don't have CCDTEMP available
+
+    # using CI_master_bias.fits with md5sum:
+    #     dab062d6f06cc09429efc0f600f44baa
+    # see py/scripts/median_dark_current_per_camera.py
+
+    dark_med_dict = {'CIE' : 0.128333, 
+                     'CIN' : 0.161667,
+                     'CIC' : 0.143333,
+                     'CIS' : 0.153333,
+                     'CIW' : 0.143333}
+
+    assert(extname in dark_med_dict.keys())
+    return dark_med_dict[extname]
