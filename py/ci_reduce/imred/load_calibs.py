@@ -51,3 +51,19 @@ def read_static_mask_image(ci_extname):
     mask = fits.getdata(mask_fname, extname=ci_extname)
 
     return mask
+
+def read_dark_image(ci_extname):
+    assert(common.is_valid_extname(ci_extname))
+
+    par = common.ci_misc_params()
+    dark_fname = os.path.join(os.environ[par['etc_env_var']], \
+                              par['master_dark_filename'])
+
+    print('Attempting to read master dark : ' + dark_fname + 
+          ', extension name : ' + ci_extname)
+
+    assert(os.path.exists(dark_fname))
+
+    dark = fits.getdata(dark_fname, extname=ci_extname)
+
+    return dark
