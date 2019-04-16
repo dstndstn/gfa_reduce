@@ -154,7 +154,8 @@ def write_image_level_outputs(exp, outdir, fname_in, gzip=True):
     par = common.ci_misc_params()
 
     for flavor in par['reduced_image_flavors']:
-        outname = reduced_image_fname(outdir, fname_in, flavor, gzip=gzip)
+        _gzip = (gzip if (flavor != 'REDUCED') else False)
+        outname = reduced_image_fname(outdir, fname_in, flavor, gzip=_gzip)
 
         hdulist = exp.to_hdulist(flavor=flavor)
 
