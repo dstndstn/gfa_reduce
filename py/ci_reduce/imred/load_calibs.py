@@ -64,6 +64,6 @@ def read_dark_image(ci_extname):
 
     assert(os.path.exists(dark_fname))
 
-    dark = fits.getdata(dark_fname, extname=ci_extname)
+    dark, hdark = fits.getdata(dark_fname, extname=ci_extname, header=True)
 
-    return dark
+    return dark, hdark

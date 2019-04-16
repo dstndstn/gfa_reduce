@@ -43,7 +43,7 @@ class CI_exposure:
             except:
                 t_c = 7.5 # HACK !!!!
             self.images[extname].image = self.images[extname].image - \
-                dark_current.total_dark_current_adu(extname, acttime, t_c)
+                dark_current.total_dark_image_adu(extname, acttime, t_c)
             self.images[extname].dark_subtracted = True
 
     def apply_flatfield(self):

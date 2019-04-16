@@ -1,6 +1,7 @@
 import ci_reduce.common as common
 import numpy as np
 import matplotlib.pyplot as plt
+import ci_reduce.imred.load_calibs as load_calibs
 
 # return dark current rate in e-/pix/sec as a function of temperature
 # based on DESI-3358 slide 9, or else my own dark current measurements once 
@@ -78,3 +79,21 @@ def total_dark_current_adu(ci_extname, acttime, t_celsius):
     dark_adu_per_pix = dark_e_per_pix/gain
 
     return dark_adu_per_pix
+
+
+def dark_rescaling_factor(t_celsius, t_reference):
+    return dark_current_rate(t_celsius)/dark_current_rate(t_reference)
+
+def total_dark_image_adu(extname, exptime, t_celsius):
+    # return a predicted image of the total dark current in
+    # a CI image by scaling the master dark image to account 
+    # for the exposure time and temperature
+    # return value will be in ADU !!!
+
+    dark_image, hdark = load_calibs.read_dark_image(extname)
+
+    dark_image *= dark_rescaling_factor(t_celsius, hdark['CCDTEMP'])
+
+    dark_image *= exptime
+
+    return dark_image
