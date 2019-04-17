@@ -213,6 +213,8 @@ class CI_image:
 
         print('Found ' + str(len(tab)) + ' sources in ' + 
               self.header['EXTNAME'] + ' image')
+
+        tab['MJD_OBS'] = self.header['MJD-OBS']
         return tab
 
     def initialize_wcs(self):
