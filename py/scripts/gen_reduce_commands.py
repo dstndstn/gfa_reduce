@@ -23,7 +23,7 @@ def ci_reduce_1command(fname_in, outdir, backgrounded=False):
     return cmd
 
 def ci_reduce_commands(data_dir, outdir, backgrounded=False):
-    flist = glob.glob(data_dir + '/dci-?????.fits')
+    flist = glob.glob(data_dir + '/*/ci-????????.fits.fz')
 
     cmds = [ci_reduce_1command(f, outdir, backgrounded=backgrounded) for f in flist]
 
