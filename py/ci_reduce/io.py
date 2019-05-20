@@ -187,11 +187,14 @@ def combine_per_camera_catalogs(catalogs):
 
     assert(type(catalogs).__name__ == 'dict')
 
+    composite_list = []
     for extname, tab in catalogs.items():
-        tab['camera'] = extname
-        tab['ci_number'] = [common.ci_extname_to_ci_number(extname) for extname in tab['camera']]
+        if tab is not None:
+            tab['camera'] = extname
+            tab['ci_number'] = [common.ci_extname_to_ci_number(extname) for extname in tab['camera']]
+            composite_list.append(tab)
 
-    composite = vstack([tab for tab in catalogs.values()])
+    composite = vstack(composite_list)
     composite = strip_none_columns(composite)
 
     return composite
@@ -295,7 +298,8 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in):
 
     assert(not os.path.exists(outname))
 
-    tab['sky_mag_ab'] = [im.sky_mag for im in exp.images.values()]
+    tab['sky_mag_ab'] = [exp.images[extname].sky_mag for extname in tab['camera']]
+
     tab['ci_number'] = [common.ci_extname_to_ci_number(extname) for extname in tab['camera']]
 
     high_level_ccds_metrics(tab, catalog)

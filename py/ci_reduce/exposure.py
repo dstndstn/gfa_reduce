@@ -37,14 +37,15 @@ class CI_exposure:
     def subtract_dark_current(self):
         print('Attempting to subtract dark current...')
         for extname in self.images.keys():
-            acttime = self.images[extname].header['EXPTIME']
-            try:
-                t_c = self.images[extname].header['CCDTEMP']
-            except:
-                t_c = 7.5 # HACK !!!!
-            self.images[extname].image = self.images[extname].image - \
-                dark_current.total_dark_image_adu(extname, acttime, t_c)
-            self.images[extname].dark_subtracted = True
+            if self.images[extname] is not None:
+                acttime = self.images[extname].header['EXPTIME']
+                try:
+                    t_c = self.images[extname].header['CCDTEMP']
+                except:
+                    t_c = 7.5 # HACK !!!!
+                self.images[extname].image = self.images[extname].image - \
+                    dark_current.total_dark_image_adu(extname, acttime, t_c)
+                self.images[extname].dark_subtracted = True
 
     def apply_flatfield(self):
         print('Attempting to apply flat field...')
@@ -85,28 +86,32 @@ class CI_exposure:
         hdulist = []
         for extnum in extnum_list:
             extname = common.ci_extnum_to_extname(extnum, fz=fz)
-            hdu = self.images[extname].to_hdu(primary=(extnum == 0), 
-                                              flavor=flavor)
-            hdulist.append(hdu)
+            if self.images[extname] is not None:
+                hdu = self.images[extname].to_hdu(primary=(len(hdulist) == 0), 
+                                                  flavor=flavor)
+                hdulist.append(hdu)
 
         return fits.HDUList(hdulist)
 
     def estimate_all_sky_mags(self, careful_sky=False):
         for im in self.images.values():
-            im.estimate_sky_mag(careful_sky=careful_sky)
+            if im is not None:
+                im.estimate_sky_mag(careful_sky=careful_sky)
 
     def estimate_all_sky_sigmas(self, careful_sky=False):
         for im in self.images.values():
-            im.set_empirical_bg_sigma(careful_sky=careful_sky)
-            print('empirical ' + im.header['EXTNAME'] + 
-                  ' background sigma = ' + 
-                  '{:.2f}'.format(im.empirical_bg_sigma) + ' ADU')
+            if im is not None:
+                im.set_empirical_bg_sigma(careful_sky=careful_sky)
+                print('empirical ' + im.header['EXTNAME'] + 
+                      ' background sigma = ' + 
+                      '{:.2f}'.format(im.empirical_bg_sigma) + ' ADU')
 
     def all_source_catalogs(self):
         tables = dict(zip(self.images.keys(), len(self.images.keys())*[None]))
 
         for extname, im in self.images.items():
-            tables[extname] = im.catalog_sources()
+            if im is not None:
+                tables[extname] = im.catalog_sources()
 
         # do I also want to store the tables as an attribute belonging to
         # this exposure object?
