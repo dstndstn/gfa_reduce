@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     tab = fits.getdata(args.index_file)
 
-    tab = tab[((tab['FLAVOR'] == 'SCIENCE') | (tab['FLAVOR'] == 'science')) & (tab['NIGHT'].replace(' ', '') >= '20190401')]
+    tab = tab[((tab['FLAVOR'] == 'SCIENCE') | (tab['FLAVOR'] == 'science')) & (tab['NIGHT'].replace(' ', '') > '20190401')]
 
     print(len(tab))
 
@@ -72,4 +72,4 @@ if __name__ == "__main__":
             script_names.append(script_name)
 
         if args.launch_script:
-            write_launch_script(script_names)
+            gen_reduce_commands.write_launch_script(script_names)
