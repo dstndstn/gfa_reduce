@@ -267,6 +267,8 @@ def high_level_ccds_metrics(tab, catalog):
     n_sources_for_shape = np.zeros(nrows, dtype=int)
 
     for i, row in enumerate(tab):
+        if np.sum(catalog['camera'] == row['camera']) == 0:
+            continue
         fwhm_stats = bcs.overall_image_fwhm(catalog[catalog['camera'] == row['camera']])
         fwhm_major_pix[i] = fwhm_stats[0]
         fwhm_minor_pix[i] = fwhm_stats[1]

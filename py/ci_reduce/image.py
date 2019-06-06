@@ -209,10 +209,15 @@ class CI_image:
         tab = phot.get_source_list(self.image, self.bitmask, 
                                    self.header['EXTNAME'], self.ivar_adu)
 
-        tab = self.catalog_add_radec(tab)
+        n_sources = (len(tab) if tab is not None else 0)
 
-        print('Found ' + str(len(tab)) + ' sources in ' + 
+        print('Found ' + str(n_sources) + ' sources in ' +
               self.header['EXTNAME'] + ' image')
+
+        if tab is None:
+            return tab
+
+        tab = self.catalog_add_radec(tab)
 
         tab['MJD_OBS'] = self.header['MJD-OBS']
         return tab

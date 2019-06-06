@@ -296,6 +296,9 @@ def get_source_list(image, bitmask, extname, ivar_adu, thresh=5):
 
     tab = tab[(tab['min_edge_dist_pix'] > -5)]
 
+    if len(tab) == 0:
+        return None
+
     do_aper_phot(image, tab, extname, ivar_adu)
 
     return tab
