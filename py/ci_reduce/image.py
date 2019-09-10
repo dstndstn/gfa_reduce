@@ -12,8 +12,12 @@ from astropy.stats import mad_std
 class CI_image:
     """Single CI image from one CI exposure"""
 
-    def __init__(self, image, header):
-        self.image = image.astype('float32')
+    def __init__(self, image, header, cube_index=None):
+        if cube_index is None:
+            self.image = image.astype('float32')
+        else:
+            self.image = image[cube_index, :, :].astype('float32')
+
         self.header = header
         self.initialize_wcs()
 
@@ -177,8 +181,13 @@ class CI_image:
         sky_adu_per_pixel = self.estimate_sky_level(careful_sky=careful_sky)
 
         extname = self.header['EXTNAME']
-        acttime = self.header['EXPTIME']
 
+        try:
+            acttime = self.header['EXPTIME']
+        except:
+            print('could not find EXPTIME keyword !!!!')
+            acttime = self.header['REQTIME']
+        
         sky_mag = sky.adu_to_surface_brightness(sky_adu_per_pixel, 
                                                 acttime, extname)
 
@@ -219,7 +228,11 @@ class CI_image:
 
         tab = self.catalog_add_radec(tab)
 
-        tab['MJD_OBS'] = self.header['MJD-OBS']
+        try:
+            tab['MJD_OBS'] = self.header['MJD-OBS']
+        except:
+            print('could not find MJD-OBS header keyword !!!')
+
         return tab
 
     def initialize_wcs(self):

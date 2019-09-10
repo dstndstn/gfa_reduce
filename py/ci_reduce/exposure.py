@@ -38,7 +38,12 @@ class CI_exposure:
         print('Attempting to subtract dark current...')
         for extname in self.images.keys():
             if self.images[extname] is not None:
-                acttime = self.images[extname].header['EXPTIME']
+                try:
+                    acttime = self.images[extname].header['EXPTIME']
+                except:
+                    print('could not find EXPTIME keyword !!!!')
+                    acttime = self.images[extname].header['REQTIME']
+
                 try:
                     t_c = self.images[extname].header['CCDTEMP']
                 except:

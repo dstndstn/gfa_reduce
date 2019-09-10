@@ -16,13 +16,13 @@ import time
 def loading_image_extension_message(extname):
     print('Attempting to load image extension : ' + extname)
 
-def load_image_from_hdu(hdu, verbose=True):
+def load_image_from_hdu(hdu, verbose=True, cube_index=None):
     loading_image_extension_message(hdu.header['EXTNAME'])
 
     if verbose:
         print(repr(hdu.header))
 
-    return CI_image(hdu.data, hdu.header)
+    return CI_image(hdu.data, hdu.header, cube_index=cube_index)
 
 def load_image_from_filename(fname, extname):
     assert(os.path.exists(fname))
@@ -63,7 +63,7 @@ def realtime_raw_read(fname, delay=2.0, max_attempts=5):
 
     return hdul
 
-def load_exposure(fname, verbose=True, realtime=False):
+def load_exposure(fname, verbose=True, realtime=False, cube_index=None):
     assert(os.path.exists(fname))
 
     print('Attempting to load exposure : ' + fname)
@@ -83,6 +83,8 @@ def load_exposure(fname, verbose=True, realtime=False):
         keywords = [c[0] for c in hdu.header.cards]
         if not ('EXTNAME' in keywords):
             continue
+        if hdu.header['EXTNAME'] not in common.valid_extname_list():
+            continue
         if (hdu.header['EXTNAME']).strip() == par['fz_dummy_extname']:
             dummy_fz_header = hdu.header
             continue
@@ -90,8 +92,13 @@ def load_exposure(fname, verbose=True, realtime=False):
 
     w_im = np.where(is_image_hdu)[0]
 
+    is_cube = (len(hdul[w_im[0]].data.shape) == 3)
+
+    assert((is_cube and (cube_index is None)) == False)
+    assert(((not is_cube) and (cube_index is not None)) == False)
+    
     try:
-        imlist = [load_image_from_hdu(hdul[ind], verbose=verbose) for ind in w_im]
+        imlist = [load_image_from_hdu(hdul[ind], verbose=verbose, cube_index=cube_index) for ind in w_im]
     except:
         print('failed to load exposure at image list creation stage')
         return None

@@ -24,13 +24,17 @@ if __name__ == "__main__":
     parser.add_argument('--no_gaia_xmatch', default=False, action='store_true',
         help='skip Gaia cross-match')
 
+    parser.add_argument('--cube_index', default=None, type=int,
+                        help='guide cube index')
+    
     args = parser.parse_args()
 
     print('Starting CI reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
 
     fname_in = args.fname_in[0]
-
+    cube_index = args.cube_index
+    
     write_outputs = (len(args.outdir) > 0)
 
     assert(os.path.exists(fname_in))
@@ -44,7 +48,7 @@ if __name__ == "__main__":
         # fail if ANY of expected outputs already exist
         io.check_image_level_outputs_exist(outdir, fname_in, gzip=True)
 
-    exp = io.load_exposure(fname_in)
+    exp = io.load_exposure(fname_in, cube_index=cube_index)
 
     print('Attempting to compute basic statistics of raw pixel data')
     imstats = io.gather_pixel_stats(exp)
