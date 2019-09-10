@@ -192,7 +192,7 @@ def min_edge_dist_pix(x, y):
 
     return min_edge_dist
 
-def create_det_ids(catalog, extname, fname_in, add_col=True):
+def create_det_ids(catalog, extname, fname_in, add_col=True, cube_index=None):
     # catalog should be an astropy table
     # catalog should pertain to just one **extension**
     # watch out for case where there are no extracted sources in an
@@ -209,6 +209,9 @@ def create_det_ids(catalog, extname, fname_in, add_col=True):
 
     det_ids = [(basename + det_id) for det_id in det_ids]
 
+    if cube_index is not None:
+        det_ids = [(det_id + 'g' + str(cube_index).zfill(5)) for det_id in det_ids]
+    
     if add_col:
         catalog['det_id'] = det_ids
     else:

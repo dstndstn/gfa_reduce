@@ -71,7 +71,8 @@ if __name__ == "__main__":
 
         for extname, cat in catalogs.items():
             if cat is not None:
-                util.create_det_ids(cat, extname, fname_in)
+                util.create_det_ids(cat, extname, fname_in,
+                                    cube_index=cube_index)
 
         # reformat the output catalogs into a single merged astropy Table
         catalog = io.combine_per_camera_catalogs(catalogs)
