@@ -46,7 +46,8 @@ if __name__ == "__main__":
         if not os.path.exists(outdir):
             os.mkdir(outdir)
         # fail if ANY of expected outputs already exist
-        io.check_image_level_outputs_exist(outdir, fname_in, gzip=True)
+        io.check_image_level_outputs_exist(outdir, fname_in, gzip=True,
+                                           cube_index=cube_index)
 
     exp = io.load_exposure(fname_in, cube_index=cube_index)
 
@@ -84,11 +85,13 @@ if __name__ == "__main__":
         print('Attempting to write image-level outputs to directory : ' + 
               outdir)
         # could add command line arg for turning off gzip compression
-        io.write_image_level_outputs(exp, outdir, fname_in, gzip=True)
+        io.write_image_level_outputs(exp, outdir, fname_in, gzip=True,
+                                     cube_index=cube_index)
         if not args.no_cataloging:
             io.write_exposure_source_catalog(catalog, outdir, fname_in)
         # make this work correctly in the case that --no_cataloging is set
-        io.write_ccds_table(imstats, catalog, exp, outdir, fname_in)
+        io.write_ccds_table(imstats, catalog, exp, outdir, fname_in,
+                            cube_index=cube_index)
 
     print('Successfully finished reducing ' + fname_in)
 

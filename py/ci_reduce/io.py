@@ -113,7 +113,7 @@ def load_exposure(fname, verbose=True, realtime=False, cube_index=None):
 
     return exp
 
-def reduced_image_fname(outdir, fname_in, flavor, gzip=True):
+def reduced_image_fname(outdir, fname_in, flavor, gzip=True, cube_index=None):
     assert(os.path.exists(outdir))
 
     outname = os.path.join(outdir, os.path.basename(fname_in))
@@ -130,15 +130,21 @@ def reduced_image_fname(outdir, fname_in, flavor, gzip=True):
     if gzip:
         outname += '.gz'
 
+    if cube_index is not None:
+        outname = outname.replace('.fits',
+                                  '-' + str(cube_index).zfill(5) + '.fits')
+
     assert(not os.path.exists(outname))
 
     return outname
 
-def check_image_level_outputs_exist(outdir, fname_in, gzip=True):
+def check_image_level_outputs_exist(outdir, fname_in, gzip=True,
+                                    cube_index=None):
     par = common.ci_misc_params()
 
     for flavor in par['reduced_image_flavors']:
-        _ = reduced_image_fname(outdir, fname_in, flavor, gzip=gzip)
+        _ = reduced_image_fname(outdir, fname_in, flavor, gzip=gzip,
+                                cube_index=cube_index)
 
 def retrieve_git_rev():
     code_dir = os.path.dirname(os.path.realpath(__file__))
@@ -153,7 +159,8 @@ def retrieve_git_rev():
 
     return gitrev
 
-def write_image_level_outputs(exp, outdir, fname_in, gzip=True):
+def write_image_level_outputs(exp, outdir, fname_in, gzip=True,
+                              cube_index=None):
     # exp is a CI_exposure object
     # outdir is the output directory (string)
     # fname_in is the input filename (string)
@@ -162,7 +169,8 @@ def write_image_level_outputs(exp, outdir, fname_in, gzip=True):
 
     for flavor in par['reduced_image_flavors']:
         _gzip = (gzip if (flavor != 'REDUCED') else False)
-        outname = reduced_image_fname(outdir, fname_in, flavor, gzip=_gzip)
+        outname = reduced_image_fname(outdir, fname_in, flavor, gzip=_gzip,
+                                      cube_index=cube_index)
 
         hdulist = exp.to_hdulist(flavor=flavor)
 
@@ -291,7 +299,7 @@ def high_level_ccds_metrics(tab, catalog):
     tab['n_sources'] = n_sources
     tab['n_sources_for_shape'] = n_sources_for_shape
 
-def write_ccds_table(tab, catalog, exp, outdir, fname_in):
+def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
     assert(os.path.exists(outdir))
 
@@ -305,6 +313,10 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in):
 
     outname = outname.replace('.fits', '_ccds.fits')
 
+    if cube_index is not None:
+        outname = outname.replace('.fits',
+                                  '-' + str(cube_index).zfill(5) + '.fits')
+    
     assert(not os.path.exists(outname))
 
     tab['sky_mag_ab'] = [exp.images[extname].sky_mag for extname in tab['camera']]
