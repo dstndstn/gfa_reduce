@@ -214,7 +214,8 @@ def combine_per_camera_catalogs(catalogs):
 
     return composite
 
-def write_exposure_source_catalog(catalog, outdir, fname_in):
+def write_exposure_source_catalog(catalog, outdir, fname_in,
+                                  cube_index=None):
 
     assert(os.path.exists(outdir))
 
@@ -228,6 +229,10 @@ def write_exposure_source_catalog(catalog, outdir, fname_in):
 
     outname = outname.replace('.fits', '_catalog.fits')
 
+    if cube_index is not None:
+        outname = outname.replace('.fits',
+                                  '-' + str(cube_index).zfill(5) + '.fits')
+    
     assert(not os.path.exists(outname))
 
     print('Attempting to write source catalog to ' + outname)
