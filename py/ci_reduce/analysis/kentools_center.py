@@ -110,6 +110,7 @@ def kentools_center(fname_cat, extname='CIC', arcmin_max=2.0):
     assert(len(dx_all) == len(dy_all))
     print(np.min(dy_all), np.max(dy_all))
 
+    # 0.128 value is tailored to the CI -- revisit for GFAs !!
     axlim = max(np.round(arcmin_max*60.0/0.128), 1000.0)
 
     print(axlim)
@@ -123,6 +124,7 @@ def kentools_center(fname_cat, extname='CIC', arcmin_max=2.0):
 
     counts = counts.astype(float)
 
+    # 7.5 value is tailored to the CI -- revisit for GFAs !!
     smth = gaussian_filter(counts, 7.5, mode='constant')
 
     counts_shape = counts.shape
