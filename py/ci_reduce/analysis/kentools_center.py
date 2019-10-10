@@ -134,9 +134,14 @@ def kentools_center(fname_cat, extname='CIC', arcmin_max=2.0):
     indx = (indmax // sidelen).astype(int)
     indy = (indmax % sidelen).astype(int)
 
-    print(indmax, indx, indy, counts_shape, x_edges_left[indx],
-          y_edges_left[indy])
+    #print(indmax, indx, indy, counts_shape, x_edges_left[indx],
+    #      y_edges_left[indy])
     #print(x_edges_left[indx], y_edges_left[indy], ' ~~~~~~~~~~~~~~~~')
+
+    xshift_best = x_edges_left[indx] + 0.5*dx
+    yshift_best = y_edges_left[indy] + 0.5*dy
+
+    print(xshift_best, yshift_best)
     
     return smth
 
