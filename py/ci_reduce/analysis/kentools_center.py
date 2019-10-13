@@ -10,6 +10,7 @@ from astropy import wcs
 from amm_2dhist import amm_2dhist
 from scipy.ndimage import gaussian_filter
 from center_contrast import center_contrast
+#import fitsio # for testing
 
 def downselected_star_sample(cat, n_desi_max):
     assert(len(np.unique(cat['CAMERA'])) == 1)
@@ -146,12 +147,39 @@ def kentools_center(fname_cat, extname='CIC', arcmin_max=2.0):
     xshift_best = x_edges_left[indx] + 0.5*dx
     yshift_best = y_edges_left[indy] + 0.5*dy
 
+# assumes dx = dy = 1 !!
+    ycen_grid, xcen_grid = np.meshgrid(x_edges_left[0:(len(x_edges_left)-1)] + 0.5*dx, y_edges_left[0:(len(y_edges_left)-1)] + 0.5*dy)
+    
+    d = np.sqrt(np.power(xcen_grid - xshift_best, 2) + np.power(ycen_grid - yshift_best, 2))
+
+    #fitsio.write('/global/cscratch1/sd/ameisner/smth.fits', smth)
+    #fitsio.write('/global/cscratch1/sd/ameisner/d.fits', d)
+    
+    r_max = 4*7.5 # roughly 4 asec radius for the CI
+
+    sind = np.argsort(np.ravel(smth))
+
+    val_90 = np.ravel(smth)[sind[int(np.round(0.925*len(sind)))]]
+
+    high = [(d < r_max) & ((smth == np.max(smth)) | (smth > val_90))]
+
+    assert(np.sum(high) > 0)
+    
+    print(val_90, '^^^^^^^^^^^^^^^^^^^^^^^^^^', np.sum(high))
+    
     print(xshift_best, yshift_best)
 
+    wt = np.sum(high*smth)
+    xshift_best = np.sum(high*xcen_grid*smth)/wt
+    yshift_best = np.sum(high*ycen_grid*smth)/wt
+
+    print(xshift_best, yshift_best)
     contrast = center_contrast(smth)
 
     print(contrast, ' $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-    
+
+    print(xcen_grid.shape)
+    print(counts.shape, smth.shape)
     return smth
 
 def _test(extname='CIC', arcmin_max=3.5):
