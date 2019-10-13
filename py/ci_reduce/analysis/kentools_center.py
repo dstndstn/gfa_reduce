@@ -184,7 +184,15 @@ def kentools_center(fname_cat, extname='CIC', arcmin_max=3.5):
 
     print(xcen_grid.shape)
     print(counts.shape, smth.shape)
-    return smth
+
+    result = {'xshift_best': xshift_best,
+              'yshift_best': yshift_best,
+              'contrast': contrast,
+              'expid': expid,
+              'extname': extname,
+              'astr_guess': astrom}
+
+    return result
 
 def _test(extname='CIC', arcmin_max=3.5):
     fname_cat = '/project/projectdirs/desi/users/ameisner/CI/reduced/v0001/20190403/ci-00003697/ci-00003697_catalog.fits'
@@ -196,7 +204,7 @@ def _test(extname='CIC', arcmin_max=3.5):
 
 def _loop():
     tab = fits.getdata('/global/homes/a/ameisner/ci/pro/ci_quality_summary.fits')
-    tab = tab[tab['GOOD'] == 0]
+    tab = tab[tab['GOOD'] == 1]
 
     for i, t in enumerate(tab):
         fname_cat = t['FNAME'].replace('_psf-a', '_catalog')
