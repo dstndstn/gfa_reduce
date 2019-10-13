@@ -25,7 +25,7 @@ def downselected_star_sample(cat, n_desi_max):
 
     return result
     
-def kentools_center(fname_cat, extname='CIC', arcmin_max=2.0):
+def kentools_center(fname_cat, extname='CIC', arcmin_max=3.5):
     assert(os.path.exists(fname_cat))
 
     # output needs to include, at a minimum:
@@ -48,6 +48,10 @@ def kentools_center(fname_cat, extname='CIC', arcmin_max=2.0):
     racen = h['SKYRA']
     deccen = h['SKYDEC']
 
+    # this apparently happened for the CI in some cases...
+    if isinstance(racen, str) or isinstance(deccen, str):
+        return None
+    
     nside = 32
     ipix = healpy.pixelfunc.get_all_neighbours(nside, racen, phi=deccen,
                                                lonlat=True)
@@ -189,3 +193,13 @@ def _test(extname='CIC', arcmin_max=3.5):
     gaia = kentools_center(fname_cat, extname=extname, arcmin_max=arcmin_max)
 
     return gaia
+
+def _loop():
+    tab = fits.getdata('/global/homes/a/ameisner/ci/pro/ci_quality_summary.fits')
+    tab = tab[tab['GOOD'] == 0]
+
+    for i, t in enumerate(tab):
+        fname_cat = t['FNAME'].replace('_psf-a', '_catalog')
+        extname = t['EXTNAME']
+        print(i, '   ', fname_cat, '   ', extname)
+        _ = kentools_center(fname_cat, extname=extname, arcmin_max=3.5)
