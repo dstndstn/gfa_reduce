@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from astropy import wcs
 from amm_2dhist import amm_2dhist
 from scipy.ndimage import gaussian_filter
+from center_contrast import center_contrast
 
 def downselected_star_sample(cat, n_desi_max):
     assert(len(np.unique(cat['CAMERA'])) == 1)
@@ -125,7 +126,9 @@ def kentools_center(fname_cat, extname='CIC', arcmin_max=2.0):
     counts = counts.astype(float)
 
     # 7.5 value is tailored to the CI -- revisit for GFAs !!
-    smth = gaussian_filter(counts, 7.5, mode='constant')
+    fwhm_pix = 7.5
+    sigma_pix = fwhm_pix/(2*np.sqrt(2*np.log(2)))
+    smth = gaussian_filter(counts, sigma_pix, mode='constant')
 
     counts_shape = counts.shape
     sidelen = counts_shape[0]
@@ -144,6 +147,10 @@ def kentools_center(fname_cat, extname='CIC', arcmin_max=2.0):
     yshift_best = y_edges_left[indy] + 0.5*dy
 
     print(xshift_best, yshift_best)
+
+    contrast = center_contrast(smth)
+
+    print(contrast, ' $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
     
     return smth
 
