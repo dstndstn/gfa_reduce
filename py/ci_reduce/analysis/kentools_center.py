@@ -56,13 +56,19 @@ def kentools_center(fname_cat, extname='CIC', arcmin_max=3.5):
     ipix = healpy.pixelfunc.get_all_neighbours(nside, racen, phi=deccen,
                                                lonlat=True)
 
+    # remove dummy -1 values from ipix
+
+    ipix = ipix[ipix >= 0]
+    
     # probably also want to include the neighbors to the neighbors
     ipix_all = []
     for _ipix in ipix:
         ipix_all.append(healpy.pixelfunc.get_all_neighbours(nside,
                                                             _ipix))
-
+    
     ipix = np.unique(ipix_all)
+
+    ipix = ipix[ipix >= 0]
     
     ra_pixcenters, dec_pixcenters = healpy.pixelfunc.pix2ang(nside, ipix,
                                                               lonlat=True)
@@ -190,7 +196,8 @@ def kentools_center(fname_cat, extname='CIC', arcmin_max=3.5):
               'contrast': contrast,
               'expid': expid,
               'extname': extname,
-              'astr_guess': astrom}
+              'astr_guess': astrom,
+              'fname_cat': fname_cat}
 
     return result
 
@@ -202,12 +209,30 @@ def _test(extname='CIC', arcmin_max=3.5):
 
     return gaia
 
-def _loop():
+def _loop(indstart, nproc):
     tab = fits.getdata('/global/homes/a/ameisner/ci/pro/ci_quality_summary.fits')
-    tab = tab[tab['GOOD'] == 1]
+    # tab = tab[tab['GOOD'] == 1]
 
-    for i, t in enumerate(tab):
+    # shuffle
+    np.random.seed(seed=99)
+    sind = np.argsort(np.random.rand(len(tab)))
+
+    tab = tab[sind]
+
+    results = []
+
+    indend = min(indstart + nproc, len(tab))
+    for i in range(indstart, indend):
+        t = tab[i]
         fname_cat = t['FNAME'].replace('_psf-a', '_catalog')
         extname = t['EXTNAME']
-        print(i, '   ', fname_cat, '   ', extname)
-        _ = kentools_center(fname_cat, extname=extname, arcmin_max=3.5)
+        print('WORKING ON: ', i, '   ', fname_cat, '   ', extname)
+        result = kentools_center(fname_cat, extname=extname, arcmin_max=3.5)
+        results.append(result)
+
+    # then write out the results to a pickle file
+    # need to construct the output file name first
+    outname = 'center_' + str(indstart).zfill(5) + '_' + str(indend-1).zfill(5) + '.pkl'
+    assert(not os.path.exists(outname))
+    import pickle
+    pickle.dump(results, open(outname, 'wb'))
