@@ -1,6 +1,16 @@
 import ci_reduce.common as common
 import astropy.io.fits as fits
 import os
+import numpy as np
+
+def remove_overscan(image):
+    sh = image.shape
+    if sh[1] == 2248:
+        _image = np.zeros((1032, 2048), dtype=float)
+        _image[:, 0:1024] = image[:, 50:1074]
+        _image[:, 1024:2048] = image[:, 1174:2198]
+    return _image
+
 
 def read_bias_image(ci_extname):
     assert(common.is_valid_extname(ci_extname))
@@ -16,6 +26,7 @@ def read_bias_image(ci_extname):
 
     bias = fits.getdata(bias_fname, extname=ci_extname)
 
+    bias = remove_overscan(bias)
     return bias
 
 def read_flat_image(ci_extname):
@@ -34,6 +45,7 @@ def read_flat_image(ci_extname):
 
     flat = fits.getdata(flat_fname, extname=ci_extname)
 
+    flat = remove_overscan(flat)
     return flat
 
 def read_static_mask_image(ci_extname):
@@ -50,6 +62,7 @@ def read_static_mask_image(ci_extname):
 
     mask = fits.getdata(mask_fname, extname=ci_extname)
 
+    mask = remove_overscan(mask)
     return mask
 
 def read_dark_image(ci_extname):
@@ -66,4 +79,5 @@ def read_dark_image(ci_extname):
 
     dark, hdark = fits.getdata(dark_fname, extname=ci_extname, header=True)
 
+    dark = remove_overscan(dark)
     return dark, hdark

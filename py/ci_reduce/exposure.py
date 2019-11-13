@@ -45,9 +45,9 @@ class CI_exposure:
                     acttime = self.images[extname].header['REQTIME']
 
                 try:
-                    t_c = self.images[extname].header['CCDTEMP']
+                    t_c = self.images[extname].header['GCCDTEMP']
                 except:
-                    t_c = 7.5 # HACK !!!!
+                    t_c = 11.0 # HACK !!!!
                 self.images[extname].image = self.images[extname].image - \
                     dark_current.total_dark_image_adu(extname, acttime, t_c)
                 self.images[extname].dark_subtracted = True
@@ -86,11 +86,9 @@ class CI_exposure:
         # I don't plan on writing fpack'ed outputs
         fz = False
 
-        extnum_list = common.valid_image_extnum_list(fz=fz)
-
+        extname_list = common.valid_extname_list(fz=False)
         hdulist = []
-        for extnum in extnum_list:
-            extname = common.ci_extnum_to_extname(extnum, fz=fz)
+        for extname in extname_list:
             if self.images[extname] is not None:
                 hdu = self.images[extname].to_hdu(primary=(len(hdulist) == 0), 
                                                   flavor=flavor)

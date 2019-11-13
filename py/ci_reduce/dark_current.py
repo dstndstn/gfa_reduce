@@ -92,7 +92,7 @@ def total_dark_image_adu(extname, exptime, t_celsius):
 
     dark_image, hdark = load_calibs.read_dark_image(extname)
 
-    dark_image *= dark_rescaling_factor(t_celsius, hdark['CCDTEMP'])
+    dark_image *= dark_rescaling_factor(t_celsius, hdark['GCCDTEMP'])
 
     dark_image *= exptime
 

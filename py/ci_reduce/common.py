@@ -9,36 +9,38 @@ def ci_misc_params():
     end up hardcoding in various places throughout the code base
     """
 
-    width_pix_native = 3072
-    height_pix_native = 2048
+    width_pix_native = 2048
+    height_pix_native = 1032
 
-    par = {'etc_env_var': 'CI_REDUCE_ETC',
+    par = {'etc_env_var': 'GFA_REDUCE_ETC',
            'gaia_env_var': 'GAIA_CAT_DIR',
            'width_pix_native': width_pix_native,
            'height_pix_native': height_pix_native,
            'n_cameras': 5,
            'nominal_zeropoint': 26.56,
            'fz_dummy_extname': 'CI',
-           'master_bias_filename': 'CI_master_bias.fits', 
-           'master_flat_filename': 'fake_uniform_flat.fits',
-           'master_dark_filename' : 'CI_master_dark.fits',
-           'static_mask_filename': 'CI_static_badpixels.fits',
+           'master_bias_filename': 'GFA_master_bias.fits', 
+           'master_flat_filename': 'GFA_master_flat.fits',
+           'master_dark_filename' : 'GFA_master_dark.fits',
+           'static_mask_filename': 'GFA_static_badpixels.fits',
            'nominal_sag_cd': 3.55978e-5, 
            'nominal_mer_cd': 3.26627e-5,
            'nominal_cen_cd': 3.70303e-5,
            'full_well_electrons' : 100000.0,
            'nominal_fwhm_asec' : 1.25,
-           'headers_dummy_filename' : 'dummy_with_headers-as_built.bigtan.fits.gz',
+           'headers_dummy_filename' : 'dummy_with_headers.bigtan.fits.gz',
            'reduced_image_flavors' : ['REDUCED', 'INVVAR', 'BITMASK']}
 
     return par
 
 def ci_camera_gain_dict():
-    gains = {'CIE': 1.64,
-             'CIN': 1.65,
-             'CIC': 1.64, 
-             'CIS': 1.61,
-             'CIW': 1.67}
+    # HACK !!
+    gains = {'GUIDE0': 3.9,
+             'GUIDE2': 3.9,
+             'GUIDE3': 3.9, 
+             'GUIDE5': 3.9,
+             'GUIDE7': 3.9,
+             'GUIDE8': 3.9}
     return gains
 
 def ci_camera_gain(extname):
@@ -50,11 +52,13 @@ def ci_camera_gain(extname):
 
 def ci_camera_readnoise_dict():
     # units are electrons per pixel
-    readnoise_electrons = {'CIE': 12.8,
-                           'CIN': 13.3,
-                           'CIC': 13.7,
-                           'CIS': 13.2,
-                           'CIW': 14.2}
+    # HACK !!
+    readnoise_electrons = {'GUIDE0': 20.0,
+                           'GUIDE2': 20.0,
+                           'GUIDE3': 20.0,
+                           'GUIDE5': 20.0,
+                           'GUIDE7': 20.0,
+                           'GUIDE8': 20.0}
 
     return readnoise_electrons
 
@@ -109,7 +113,7 @@ def valid_image_extnum_list(fz=True):
 def valid_extname_list(fz=True):
     """ returned list is in order of CI# in DESI-3347 """
 
-    extnames = ['CIE', 'CIN', 'CIC', 'CIS', 'CIW']
+    extnames = ['GUIDE0', 'GUIDE2', 'GUIDE3', 'GUIDE5', 'GUIDE7', 'GUIDE8']
 
     par = ci_misc_params()
     if fz:
@@ -123,7 +127,7 @@ def valid_image_extname_list():
 def valid_ci_number_list():
     """ from DESI-3347 page 2 CI# labels """
 
-    return np.arange(1, 6)
+    return [0, 2, 3, 5, 7, 8]
 
 def ci_extname_to_extnum_dict(fz=True):
     """

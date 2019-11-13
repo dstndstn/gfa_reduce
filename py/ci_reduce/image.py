@@ -18,6 +18,8 @@ class CI_image:
         else:
             self.image = image[cube_index, :, :].astype('float32')
 
+        self.remove_overscan()
+            
         self.header = header
         self.initialize_wcs()
 
@@ -242,3 +244,11 @@ class CI_image:
 
         print('Attempting to initialize WCS guess for ' + extname)
         self.wcs = nominal_tan_wcs(telra, teldec, extname)
+
+    def remove_overscan(self):
+        sh = self.image.shape
+        if sh[1] == 2248:
+            _image = np.zeros((1032, 2048), dtype=float)
+            _image[:, 0:1024] = self.image[:, 50:1074]
+            _image[:, 1024:2048] = self.image[:, 1174:2198]
+            self.image = _image
