@@ -158,7 +158,7 @@ def kentools_center(fname_cat, extname='CIC', arcmin_max=3.5):
     yshift_best = y_edges_left[indy] + 0.5*dy
 
 # assumes dx = dy = 1 !!
-    ycen_grid, xcen_grid = np.meshgrid(x_edges_left[0:(len(x_edges_left)-1)] + 0.5*dx, y_edges_left[0:(len(y_edges_left)-1)] + 0.5*dy)
+    ycen_grid, xcen_grid = np.meshgrid(x_edges_left[0:(len(x_edges_left)-1)], y_edges_left[0:(len(y_edges_left)-1)])
     
     d = np.sqrt(np.power(xcen_grid - xshift_best, 2) + np.power(ycen_grid - yshift_best, 2))
 
