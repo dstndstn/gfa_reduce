@@ -28,7 +28,7 @@ def ci_misc_params():
            'nominal_cen_cd': 3.70303e-5,
            'full_well_electrons' : 100000.0,
            'nominal_fwhm_asec' : 1.25,
-           'headers_dummy_filename' : 'dummy_with_headers.bigtan.fits.gz',
+           'headers_dummy_filename' : 'dummy_with_headers_gaia.bigtan.fits.gz',
            'reduced_image_flavors' : ['REDUCED', 'INVVAR', 'BITMASK']}
 
     return par
