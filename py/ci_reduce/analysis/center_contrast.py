@@ -18,7 +18,7 @@ def peak_flux(density_image):
 
     assert(density_image[ix, iy] == np.max(density_image))
 
-    half = 5
+    half = 3
 
     xmin = max(ix - half, 0)
     xmax = min(ix + half + 1, nx)
@@ -36,7 +36,7 @@ def center_contrast(density_image):
     _density_image = copy.deepcopy(density_image)
 
     # may need tweaking for GFA's !!!!
-    half = 15 # ~2 asec for the CI
+    half = 10 # ~2 asec for the GFA's
 
     xmin = max(ix - half, 0)
     xmax = min(ix + half + 1, nx)

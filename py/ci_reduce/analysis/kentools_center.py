@@ -10,6 +10,7 @@ from astropy import wcs
 from amm_2dhist import amm_2dhist
 from scipy.ndimage import gaussian_filter
 from center_contrast import center_contrast
+import ci_reduce.common as common
 #import fitsio # for testing
 
 def downselected_star_sample(cat, n_desi_max):
@@ -25,7 +26,7 @@ def downselected_star_sample(cat, n_desi_max):
 
     return result
     
-def kentools_center(fname_cat, extname='CIC', arcmin_max=3.5):
+def kentools_center(fname_cat, extname='GUIDE0', arcmin_max=3.5):
     assert(os.path.exists(fname_cat))
 
     # output needs to include, at a minimum:
@@ -92,7 +93,12 @@ def kentools_center(fname_cat, extname='CIC', arcmin_max=3.5):
     if len(cat) > n_desi_max:
         cat = downselected_star_sample(cat, n_desi_max)
 
-    h = fits.getheader('/project/projectdirs/desi/users/ameisner/CI/ci_reduce_etc/dummy_with_headers-as_built.bigtan.fits.gz', extname=extname)
+    par = common.ci_misc_params()
+    fname_wcs_templates = os.environ['GFA_REDUCE_ETC'] + '/' + par['headers_dummy_filename']
+
+    assert(os.path.exists(fname_wcs_templates))
+
+    h = fits.getheader(fname_wcs_templates, extname=extname)
 
     assert(h['EXTNAME'] == extname)
     
@@ -122,8 +128,7 @@ def kentools_center(fname_cat, extname='CIC', arcmin_max=3.5):
     assert(len(dx_all) == len(dy_all))
     print(np.min(dy_all), np.max(dy_all))
 
-    # 0.128 value is tailored to the CI -- revisit for GFAs !!
-    axlim = max(np.round(arcmin_max*60.0/0.128), 1000.0)
+    axlim = max(np.round(arcmin_max*60.0/0.214), 1000.0)
 
     print(axlim)
 
@@ -137,7 +142,7 @@ def kentools_center(fname_cat, extname='CIC', arcmin_max=3.5):
     counts = counts.astype(float)
 
     # 7.5 value is tailored to the CI -- revisit for GFAs !!
-    fwhm_pix = 7.5
+    fwhm_pix = 4.7
     sigma_pix = fwhm_pix/(2*np.sqrt(2*np.log(2)))
     smth = gaussian_filter(counts, sigma_pix, mode='constant')
 
@@ -165,7 +170,7 @@ def kentools_center(fname_cat, extname='CIC', arcmin_max=3.5):
     #fitsio.write('/global/cscratch1/sd/ameisner/smth.fits', smth)
     #fitsio.write('/global/cscratch1/sd/ameisner/d.fits', d)
     
-    r_max = 4*7.5 # roughly 4 asec radius for the CI
+    r_max = 4*4.7 # roughly 4 asec radius for the CI
 
     sind = np.argsort(np.ravel(smth))
 
@@ -208,6 +213,13 @@ def _test(extname='CIC', arcmin_max=3.5):
     gaia = kentools_center(fname_cat, extname=extname, arcmin_max=arcmin_max)
 
     return gaia
+
+def _test_gfa():
+    fname_cat = '/project/projectdirs/desi/users/ameisner/GFA/reduced/v0000/20191116/00028537/gfa-00028537_catalog.fits'
+
+    result = kentools_center(fname_cat, extname='GUIDE2')
+
+    return result
 
 def _loop(indstart, nproc):
     tab = fits.getdata('/global/homes/a/ameisner/ci/pro/ci_quality_summary.fits')
