@@ -225,3 +225,12 @@ def slice_indices_for_quadrant(quadrant):
     ymax = int(ci_pixel_ymax(pix_center=True, quadrant=quadrant)) + 1
 
     return xmin, xmax, ymin, ymax
+
+def expid_from_raw_filename(fname):
+    # fname should be a single string not a list/array of strings
+    
+    f = os.path.split(fname)[-1]
+
+    f = f.split('-', 1)[1]
+
+    return int(f[0:8])
