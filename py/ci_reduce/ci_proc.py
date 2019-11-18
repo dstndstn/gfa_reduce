@@ -8,7 +8,7 @@ import ci_reduce.analysis.util as util
 import ci_reduce.common as common
 
 if __name__ == "__main__":
-    descr = 'run full ci_reduce pipeline on a CI exposure'
+    descr = 'run full gfa_reduce pipeline on a GFA exposure'
     parser = argparse.ArgumentParser(description=descr)
     parser.add_argument('fname_in', type=str, nargs=1)
 
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-    print('Starting CI reduction pipeline at: ' + str(datetime.utcnow()) + 
+    print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
 
     fname_in = args.fname_in[0]
@@ -97,5 +97,5 @@ if __name__ == "__main__":
 
     print('Successfully finished reducing ' + fname_in)
 
-    print('CI reduction pipeline completed at: ' + str(datetime.utcnow()) + 
+    print('GFA reduction pipeline completed at: ' + str(datetime.utcnow()) + 
           ' UTC')
