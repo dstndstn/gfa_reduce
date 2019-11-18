@@ -236,6 +236,7 @@ def write_exposure_source_catalog(catalog, outdir, fname_in,
     
     assert(not os.path.exists(outname))
 
+    catalog['fname_in'] = fname_in
     expid = util.expid_from_raw_filename(fname_in)
     catalog['expid'] = expid
     
