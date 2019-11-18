@@ -26,8 +26,14 @@ def downselected_star_sample(cat, n_desi_max):
 
     return result
     
-def kentools_center(fname_cat, extname='GUIDE0', arcmin_max=3.5):
-    assert(os.path.exists(fname_cat))
+def kentools_center(cat, skyra, skydec, extname='GUIDE0', arcmin_max=3.5):
+
+    # cat needs to have fields xcentroid and ycentroid
+    # skyra, skydec are the initial guesses of the 
+    # actual center of the field of view; these need to be within
+    # arcmin_max of the true FOV center for this routine to succeed
+    
+    #assert(os.path.exists(fname_cat))
 
     # output needs to include, at a minimum:
     #     xshift_best
@@ -37,17 +43,18 @@ def kentools_center(fname_cat, extname='GUIDE0', arcmin_max=3.5):
     # probably also want
     #     expid retrieved from the catalog table
 
-    fname_reduced = fname_cat.replace('_catalog', '_reduced')
+    #fname_reduced = fname_cat.replace('_catalog', '_reduced')
 
-    assert(os.path.exists(fname_reduced))
+    #assert(os.path.exists(fname_reduced))
 
-    h = fits.getheader(fname_reduced, extname=extname)
+    #h = fits.getheader(fname_reduced, extname=extname)
 
-    expid = h['EXPID']
+    #expid = h['EXPID']
 
-    cat = fits.getdata(fname_cat)
-    racen = h['SKYRA']
-    deccen = h['SKYDEC']
+    #cat = fits.getdata(fname_cat)
+ # should just entirely rename racen, deccen to skyr, skydec ...
+    racen = skyra
+    deccen = skydec
 
     # this apparently happened for the CI in some cases...
     if isinstance(racen, str) or isinstance(deccen, str):
@@ -199,10 +206,8 @@ def kentools_center(fname_cat, extname='GUIDE0', arcmin_max=3.5):
     result = {'xshift_best': xshift_best,
               'yshift_best': yshift_best,
               'contrast': contrast,
-              'expid': expid,
               'extname': extname,
-              'astr_guess': astrom,
-              'fname_cat': fname_cat}
+              'astr_guess': astrom}
 
     return result
 
@@ -218,6 +223,19 @@ def _test_gfa():
     fname_cat = '/project/projectdirs/desi/users/ameisner/GFA/reduced/v0000/20191116/00028537/gfa-00028537_catalog.fits'
 
     result = kentools_center(fname_cat, extname='GUIDE2')
+
+    return result
+
+def __test_gfa():
+    fname_cat = '/project/projectdirs/desi/users/ameisner/GFA/reduced/v0000/20191116/00028537/gfa-00028537_catalog.fits'
+
+    fname_raw = '/project/projectdirs/desi/spectro/data/20191116/00028537/gfa-00028537.fits.fz'
+
+    h = fits.getheader(fname_raw, extname='GFA')
+    
+    cat = fits.getdata(fname_cat)
+
+    result = kentools_center(cat, h['SKYRA'], h['SKYDEC'], extname='GUIDE2')
 
     return result
 
