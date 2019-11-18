@@ -7,6 +7,7 @@ from astropy.table import vstack, hstack
 import os
 import ci_reduce.analysis.basic_image_stats as bis
 import ci_reduce.analysis.basic_catalog_stats as bcs
+import ci_reduce.analysis.util as util
 import numpy as np
 import time
 
@@ -235,6 +236,9 @@ def write_exposure_source_catalog(catalog, outdir, fname_in,
     
     assert(not os.path.exists(outname))
 
+    expid = util.expid_from_raw_filename(fname_in)
+    catalog['expid'] = expid
+    
     print('Attempting to write source catalog to ' + outname)
     catalog.write(outname, format='fits')
 
