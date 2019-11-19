@@ -2,6 +2,7 @@ import ci_reduce.common as common
 import ci_reduce.imred.load_calibs as load_calibs
 import ci_reduce.dark_current as dark_current
 import astropy.io.fits as fits
+import numpy as np
 
 class CI_exposure:
     """Object encapsulating the contents of a single CI exposure"""
@@ -125,3 +126,10 @@ class CI_exposure:
         for a in astr:
             extname = a['extname']
             self.images[extname].update_wcs(a)
+
+    def recompute_catalog_radec(self, cat):
+
+        extnames = np.unique(cat['camera'])
+
+        for extname in extnames:
+            cat[cat['camera'] == extname] = self.images[extname].catalog_add_radec(cat[cat['camera'] == extname])

@@ -82,7 +82,8 @@ if __name__ == "__main__":
         print('Attempting astrometric recalibration relative to Gaia DR2')
         astr = wcs.recalib_astrom(catalog, fname_in)
         exp.update_wcs(astr)
-
+        exp.recompute_catalog_radec(catalog)
+        
         if (not args.no_gaia_xmatch) and (par['gaia_env_var'] in os.environ):
             print('Attempting to identify Gaia cross-matches')
             catalog = io.append_gaia_crossmatches(catalog)
