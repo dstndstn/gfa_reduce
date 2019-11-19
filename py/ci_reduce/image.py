@@ -252,3 +252,33 @@ class CI_image:
             _image[:, 0:1024] = self.image[:, 50:1074]
             _image[:, 1024:2048] = self.image[:, 1174:2198]
             self.image = _image
+
+    def update_wcs(self, d):
+        # d is a dictionary with xshift_best, yshift_best, astr_guess
+        # for this EXTNAME
+
+        assert(d['extname'] == self.header['EXTNAME'])
+
+        wcs = d['astr_guess']
+        wcs.wcs.crpix = wcs.wcs.crpix + np.array([d['xshift_best'], d['yshift_best']])
+        self.wcs = wcs
+
+        # also want to update the header
+
+        new_wcs_header_cards = wcs.to_header()
+        new_wcs_header_cards['CONTRAST'] = d['contrast']
+
+        for k,v in new_wcs_header_cards.items():
+            if k == 'LATPOLE':
+                continue
+            self.header[k] = v
+
+        self.header['CD1_1'] = self.header['PC1_1']
+        self.header['CD2_1'] = self.header['PC2_1']
+        self.header['CD1_2'] = self.header['PC1_2']
+        self.header['CD2_2'] = self.header['PC2_2']
+
+        del self.header['PC1_1']
+        del self.header['PC2_1']
+        del self.header['PC1_2']
+        del self.header['PC2_2']

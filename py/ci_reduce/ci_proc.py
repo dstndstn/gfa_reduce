@@ -6,6 +6,7 @@ import ci_reduce.io as io
 from datetime import datetime
 import ci_reduce.analysis.util as util
 import ci_reduce.common as common
+import ci_reduce.analysis.recalib_astrom as wcs
 
 if __name__ == "__main__":
     descr = 'run full gfa_reduce pipeline on a GFA exposure'
@@ -80,6 +81,11 @@ if __name__ == "__main__":
             print('Attempting to identify Gaia cross-matches')
             catalog = io.append_gaia_crossmatches(catalog)
 
+        # run astrometric recalibration
+        print('Attempting astrometric recalibration relative to Gaia DR2')
+        astr = wcs.recalib_astrom(catalog, fname_in)
+        exp.update_wcs(astr)
+        
     # try to write image-level outputs if outdir is specified
 
     if write_outputs:

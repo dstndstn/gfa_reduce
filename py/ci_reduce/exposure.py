@@ -119,3 +119,9 @@ class CI_exposure:
         # do I also want to store the tables as an attribute belonging to
         # this exposure object?
         return tables
+
+    def update_wcs(self, astr):
+
+        for a in astr:
+            extname = a['extname']
+            self.images[extname].update_wcs(a)
