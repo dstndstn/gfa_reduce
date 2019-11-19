@@ -7,14 +7,15 @@ from astropy.coordinates import SkyCoord
 from astropy import units as u
 import matplotlib.pyplot as plt
 from astropy import wcs
-from amm_2dhist import amm_2dhist
+from .amm_2dhist import amm_2dhist
 from scipy.ndimage import gaussian_filter
-from center_contrast import center_contrast
+from .center_contrast import center_contrast
 import ci_reduce.common as common
+import copy
 #import fitsio # for testing
 
 def downselected_star_sample(cat, n_desi_max):
-    assert(len(np.unique(cat['CAMERA'])) == 1)
+    assert(len(np.unique(cat['camera'])) == 1)
 
     _cat = cat[cat['DQ_FLAGS'] == 0]
 
@@ -26,7 +27,7 @@ def downselected_star_sample(cat, n_desi_max):
 
     return result
     
-def kentools_center(cat, skyra, skydec, extname='GUIDE0', arcmin_max=3.5):
+def kentools_center(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5):
 
     # cat needs to have fields xcentroid and ycentroid
     # skyra, skydec are the initial guesses of the 
@@ -52,6 +53,7 @@ def kentools_center(cat, skyra, skydec, extname='GUIDE0', arcmin_max=3.5):
     #expid = h['EXPID']
 
     #cat = fits.getdata(fname_cat)
+    cat = copy.deepcopy(catalog)
  # should just entirely rename racen, deccen to skyr, skydec ...
     racen = skyra
     deccen = skydec
@@ -91,7 +93,7 @@ def kentools_center(cat, skyra, skydec, extname='GUIDE0', arcmin_max=3.5):
     gaia = gaia[dangle.degree < 2]
     g = SkyCoord(gaia['ra']*u.deg, gaia['dec']*u.deg)
     
-    cat = cat[cat['CAMERA'] == extname]
+    cat = cat[cat['camera'] == extname]
 
     assert(len(cat) > 0)
     
@@ -117,18 +119,18 @@ def kentools_center(cat, skyra, skydec, extname='GUIDE0', arcmin_max=3.5):
     dx_all = np.array([], dtype='float64')
     dy_all = np.array([], dtype='float64')
 
-    cat = cat[np.argsort(cat['DEC'])] # not really necessary
+    cat = cat[np.argsort(cat['dec'])] # not really necessary
 
     for i in range(len(cat)):
         print(i+1, ' of ', len(cat))
-        c = SkyCoord(cat[i]['RA']*u.deg, cat[i]['DEC']*u.deg)
+        c = SkyCoord(cat[i]['ra']*u.deg, cat[i]['dec']*u.deg)
         dangle = c.separation(g)
         w = (np.where(dangle.arcminute < arcmin_max))[0]
         print(len(w), len(g), len(gaia))
         if len(w) == 0:
             continue
-        dx = cat[i]['XCENTROID'] - x_gaia_guess[w]
-        dy = cat[i]['YCENTROID'] - y_gaia_guess[w]
+        dx = cat[i]['xcentroid'] - x_gaia_guess[w]
+        dy = cat[i]['ycentroid'] - y_gaia_guess[w]
         dx_all = np.concatenate((dx_all, dx))
         dy_all = np.concatenate((dy_all, dy))
 
