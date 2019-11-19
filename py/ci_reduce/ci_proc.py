@@ -77,14 +77,15 @@ if __name__ == "__main__":
 
         # reformat the output catalogs into a single merged astropy Table
         catalog = io.combine_per_camera_catalogs(catalogs)
-        if (not args.no_gaia_xmatch) and (par['gaia_env_var'] in os.environ):
-            print('Attempting to identify Gaia cross-matches')
-            catalog = io.append_gaia_crossmatches(catalog)
 
         # run astrometric recalibration
         print('Attempting astrometric recalibration relative to Gaia DR2')
         astr = wcs.recalib_astrom(catalog, fname_in)
         exp.update_wcs(astr)
+
+        if (not args.no_gaia_xmatch) and (par['gaia_env_var'] in os.environ):
+            print('Attempting to identify Gaia cross-matches')
+            catalog = io.append_gaia_crossmatches(catalog)
         
     # try to write image-level outputs if outdir is specified
 
