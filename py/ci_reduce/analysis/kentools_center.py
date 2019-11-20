@@ -17,10 +17,18 @@ import copy
 def downselected_star_sample(cat, n_desi_max):
     assert(len(np.unique(cat['camera'])) == 1)
 
-    _cat = cat[cat['DQ_FLAGS'] == 0]
+    try:
+        _cat = cat[cat['DQ_FLAGS'] == 0]
+    except:
+        _cat = cat[cat['dq_flags'] == 0]
 
-    sind = np.argsort(-1.0*_cat['APER_SUM_BKGSUB_3'])
-
+    try:
+        flux = _cat['APER_SUM_BKGSUB_3']
+    except:
+        flux = _cat['aper_sum_bkgsub_3']
+    
+    sind = np.argsort(-1.0*flux)
+    
     n = len(sind)
 
     result = _cat[sind[0:(min(n_desi_max, n))]]
