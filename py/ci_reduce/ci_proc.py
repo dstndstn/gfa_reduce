@@ -95,9 +95,9 @@ if __name__ == "__main__":
     # try to write image-level outputs if outdir is specified
 
     if write_outputs:
-        print('Attempting to write image-level outputs to directory : ' + 
-              outdir)
         if not args.skip_image_outputs:
+            print('Attempting to write image-level outputs to directory : ' + 
+                  outdir)
             # could add command line arg for turning off gzip compression
             io.write_image_level_outputs(exp, outdir, fname_in, gzip=True,
                                          cube_index=cube_index)
