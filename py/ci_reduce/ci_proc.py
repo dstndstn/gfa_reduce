@@ -13,7 +13,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=descr)
     parser.add_argument('fname_in', type=str, nargs=1)
 
-    parser.add_argument('--outdir', default='', type=str,
+    parser.add_argument('--outdir', default=None, type=str,
                         help='directory to write outputs in')
 
     parser.add_argument('--careful_sky', default=False, action='store_true',
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     fname_in = args.fname_in[0]
     cube_index = args.cube_index
     
-    write_outputs = (len(args.outdir) > 0)
+    write_outputs = (args.outdir is not None)
 
     assert(os.path.exists(fname_in))
 
