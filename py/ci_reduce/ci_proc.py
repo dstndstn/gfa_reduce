@@ -27,6 +27,10 @@ if __name__ == "__main__":
 
     parser.add_argument('--cube_index', default=None, type=int,
                         help='guide cube index')
+
+    parser.add_argument('--skip_image_outputs', default=False,
+                        action='store_true',
+                        help='skip writing of full-frame image outputs')
     
     args = parser.parse_args()
 
@@ -93,9 +97,11 @@ if __name__ == "__main__":
     if write_outputs:
         print('Attempting to write image-level outputs to directory : ' + 
               outdir)
-        # could add command line arg for turning off gzip compression
-        io.write_image_level_outputs(exp, outdir, fname_in, gzip=True,
-                                     cube_index=cube_index)
+        if not args.skip_image_outputs:
+            # could add command line arg for turning off gzip compression
+            io.write_image_level_outputs(exp, outdir, fname_in, gzip=True,
+                                         cube_index=cube_index)
+
         if not args.no_cataloging:
             io.write_exposure_source_catalog(catalog, outdir, fname_in,
                                              cube_index=cube_index)
