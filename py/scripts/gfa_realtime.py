@@ -13,7 +13,7 @@ import astropy.io.fits as fits
 # https://raw.githubusercontent.com/sbailey/multirunner/master/multirunner.py
 
 parser = argparse.ArgumentParser(usage = "{prog} [options]")
-parser.add_argument("-i", "--indir", type=str,  help="input directory")
+parser.add_argument("--night", type=str,  help="NIGHT string")
 parser.add_argument("-n", "--numworkers", type=int,  default=1, help="number of workers")
 parser.add_argument("-w", "--waittime", type=int, default=5, help="wait time between directory checks")
 parser.add_argument("-e", "--expid_min", type=int, default=-1, help="start with this EXPID value")
@@ -51,7 +51,7 @@ known_files = set()
 
 #- Periodically check for any new files that may have appeared and add them
 #- to the queue for a worker to process.
-glob_pattern = os.path.join(args.indir, '????????/gfa*.fits.fz')
+glob_pattern = os.path.join('/exposures/desi/' + args.night, '????????/gfa*.fits.fz')
 while(True):
     flist = glob.glob(glob_pattern)
     flist.sort()
