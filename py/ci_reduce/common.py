@@ -304,7 +304,7 @@ def reduced_flavor_to_bunit(flavor):
     return d[flavor]
 
 def expid_from_filename(fname):
-    # assumes ci-????????.fits.fz pattern
+    # assumes ci-????????.fits.fz or gfa-????????.fits.fz pattern
     # this is meant to be run on an input fname that is a single string
     # as opposed to an array/list of strings
 
@@ -312,7 +312,9 @@ def expid_from_filename(fname):
 
     f = os.path.basename(fname)
 
-    expid = int(f[3:11])
+    _string = f.split('-')[1]
+    
+    expid = int(_string[0:8])
 
     return expid
 
