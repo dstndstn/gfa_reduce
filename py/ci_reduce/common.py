@@ -16,7 +16,7 @@ def ci_misc_params():
            'gaia_env_var': 'GAIA_CAT_DIR',
            'width_pix_native': width_pix_native,
            'height_pix_native': height_pix_native,
-           'n_cameras': 5,
+           'n_cameras': 6,
            'nominal_zeropoint': 26.56,
            'fz_dummy_extname': 'CI',
            'master_bias_filename': 'GFA_master_bias.fits', 
