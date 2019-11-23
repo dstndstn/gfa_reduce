@@ -51,7 +51,9 @@ known_files = set()
 
 #- Periodically check for any new files that may have appeared and add them
 #- to the queue for a worker to process.
-glob_pattern = os.path.join('/exposures/desi/' + args.night, '????????/gfa*.fits.fz')
+indir = '/exposures/desi/' + args.night
+assert(os.path.exists(indir))
+glob_pattern = os.path.join(indir, '????????/gfa*.fits.fz')
 while(True):
     flist = glob.glob(glob_pattern)
     flist.sort()
