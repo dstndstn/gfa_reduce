@@ -106,12 +106,12 @@ class CI_image:
         f = (fits.PrimaryHDU if primary else fits.ImageHDU)
 
         if (flavor == '') or (flavor == 'REDUCED'):
-            hdu = f(self.image, header=self.header)
+            hdu = f(self.image.astype('float32'), header=self.header)
         elif (flavor == 'BITMASK'):
-            hdu = f(self.bitmask, header=self.header)
+            hdu = f(self.bitmask.astype('int'), header=self.header)
             hdu.header = dq_mask.add_dq_bitmask_header_cards(hdu.header)
         elif (flavor == 'INVVAR'):
-            hdu = f(self.ivar_adu, header=self.header)
+            hdu = f(self.ivar_adu.astype('float32'), header=self.header)
 
         hdu.header['FLAVOR'] = flavor
 
