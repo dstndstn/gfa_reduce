@@ -17,7 +17,16 @@ parser.add_argument("--night", type=str,  help="NIGHT string")
 parser.add_argument("-n", "--numworkers", type=int,  default=1, help="number of workers")
 parser.add_argument("-w", "--waittime", type=int, default=5, help="wait time between directory checks")
 parser.add_argument("-e", "--expid_min", type=int, default=-1, help="start with this EXPID value")
+parser.add_argument("--out_basedir", type=str, default='/n/home/datasystems/users/ameisner/reduced/realtime', help="base output directory for GFA reductions")
 args = parser.parse_args()
+
+indir = '/exposures/desi/' + args.night
+assert(os.path.exists(indir))
+print(args.out_basedir)
+assert(os.path.exists(args.out_basedir))
+night_basedir_out = os.path.join(args.out_basedir, args.night)
+if not os.path.exists(night_basedir_out):
+    os.mkdir(night_basedir_out)
 
 #- Create communication queue to pass files to workers
 q = mp.Queue()
@@ -25,6 +34,7 @@ q = mp.Queue()
 #- Function to run for each worker.
 #- Listens on Queue q for filenames to process.
 def run(workerid, q):
+    global night_basedir_out
     print('Worker {} ready to go'.format(workerid))
     while True:
         filename = q.get(block=True)
@@ -33,7 +43,8 @@ def run(workerid, q):
         #- Do something with that filename
         h = fits.getheader(filename, extname='GFA')
         if h['FLAVOR'].lower() == 'science':
-            _proc(filename)
+            outdir = os.path.join(night_basedir_out, str(expid_from_filename(filename)).zfill(8))
+            _proc(filename, outdir=outdir)
         else:
             print('New GFA file ' + filename + ' is not flavor=science ; skipping')
         print('Worker {} done with {}'.format(workerid, filename))
@@ -51,8 +62,7 @@ known_files = set()
 
 #- Periodically check for any new files that may have appeared and add them
 #- to the queue for a worker to process.
-indir = '/exposures/desi/' + args.night
-assert(os.path.exists(indir))
+
 glob_pattern = os.path.join(indir, '????????/gfa*.fits.fz')
 while(True):
     flist = glob.glob(glob_pattern)
