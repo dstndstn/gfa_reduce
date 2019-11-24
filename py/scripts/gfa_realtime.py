@@ -8,6 +8,7 @@ from ci_reduce.gfa_red import _proc
 from ci_reduce.common import expid_from_filename
 import numpy as np
 import astropy.io.fits as fits
+import json
 
 # using Stephen Bailey's "multirunner" template as the basis for this script
 # https://raw.githubusercontent.com/sbailey/multirunner/master/multirunner.py
@@ -19,6 +20,21 @@ parser.add_argument("-w", "--waittime", type=int, default=5, help="wait time bet
 parser.add_argument("-e", "--expid_min", type=int, default=-1, help="start with this EXPID value")
 parser.add_argument("--out_basedir", type=str, default='/n/home/datasystems/users/ameisner/reduced/realtime', help="base output directory for GFA reductions")
 args = parser.parse_args()
+
+def check_flavor_json(gfa_image_fname):
+    gfa_json_fname = gfa_image_fname.replace('gfa-', 'request-')
+    gfa_json_fname = gfa_json_fname.replace('.fits.fz', '.json')
+
+    print(gfa_json_fname)
+    assert(os.path.exists(gfa_json_fname))
+ 
+    with open(gfa_json_fname) as json_file:
+        data = json.load(json_file)
+
+    return data['FLAVOR']
+
+def is_flavor_science(gfa_image_fname):
+    return check_flavor_json(gfa_image_fname).lower() == 'science'
 
 indir = '/exposures/desi/' + args.night
 assert(os.path.exists(indir))
@@ -44,7 +60,7 @@ def run(workerid, q):
         h = fits.getheader(filename, extname='GFA')
         if h['FLAVOR'].lower() == 'science':
             outdir = os.path.join(night_basedir_out, str(expid_from_filename(filename)).zfill(8))
-            _proc(filename, outdir=outdir)
+            _proc(filename, outdir=outdir, realtime=True) # realtime HARDCODED to true
         else:
             print('New GFA file ' + filename + ' is not flavor=science ; skipping')
         print('Worker {} done with {}'.format(workerid, filename))
@@ -75,9 +91,12 @@ while(True):
     flist = flist[expids >= args.expid_min]
     for filename in flist:
         if filename not in known_files:
-            print('Server putting {} in the queue'.format(filename))
-            sys.stdout.flush()
-            q.put(filename)
+            if is_flavor_science(filename):
+                print('Server putting {} in the queue'.format(filename))
+                sys.stdout.flush()
+                q.put(filename)
+            else:
+                print('skipping ' + filename + ' ; NOT flavor=science')
             known_files.add(filename)
 
     time.sleep(args.waittime)
