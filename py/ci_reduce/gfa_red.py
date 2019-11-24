@@ -9,7 +9,8 @@ import ci_reduce.common as common
 import ci_reduce.analysis.recalib_astrom as wcs
 
 def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
-          no_gaia_xmatch=False, cube_index=None, skip_image_outputs=False):
+          no_gaia_xmatch=False, cube_index=None, skip_image_outputs=False,
+          realtime=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -27,7 +28,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         io.check_image_level_outputs_exist(outdir, fname_in, gzip=True,
                                            cube_index=cube_index)
 
-    exp = io.load_exposure(fname_in, cube_index=cube_index)
+    exp = io.load_exposure(fname_in, cube_index=cube_index, realtime=realtime)
 
     print('Attempting to compute basic statistics of raw pixel data')
     imstats = io.gather_pixel_stats(exp)
@@ -110,6 +111,10 @@ if __name__ == "__main__":
     parser.add_argument('--skip_image_outputs', default=False,
                         action='store_true',
                         help='skip writing of full-frame image outputs')
+
+    parser.add_argument('--realtime', default=False,
+                        action='store_true',
+                        help='avoid crashing on partially written raw files')
     
     args = parser.parse_args()
 
@@ -118,4 +123,4 @@ if __name__ == "__main__":
     _proc(fname_in, outdir=args.outdir, careful_sky=args.careful_sky,
           no_cataloging=args.no_cataloging, no_gaia_xmatch=args.no_gaia_xmatch,
           cube_index=args.cube_index,
-          skip_image_outputs=args.skip_image_outputs)
+          skip_image_outputs=args.skip_image_outputs, realtime=args.realtime)
