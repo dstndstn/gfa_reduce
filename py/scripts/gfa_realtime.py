@@ -58,7 +58,10 @@ for i in range(args.numworkers):
 #- Track what files have already been added to queue.
 #- TODO: Upon startup, this could compare against files in output dir
 #- and only load input files haven't already been processed.
-known_files = set()
+exp_outdirs = glob.glob(night_basedir_out + '/????????')
+known_files = set([indir + '/' + os.path.split(d)[-1] + '/gfa-' + os.path.split(d)[-1] + '.fits.fz' for d in exp_outdirs])
+
+print('Number of known files = ', len(known_files))
 
 #- Periodically check for any new files that may have appeared and add them
 #- to the queue for a worker to process.
