@@ -57,12 +57,8 @@ def run(workerid, q):
         print('Worker {} processing {}'.format(workerid, filename))
         sys.stdout.flush()
         #- Do something with that filename
-        h = fits.getheader(filename, extname='GFA')
-        if h['FLAVOR'].lower() == 'science':
-            outdir = os.path.join(night_basedir_out, str(expid_from_filename(filename)).zfill(8))
-            _proc(filename, outdir=outdir, realtime=True) # realtime HARDCODED to true
-        else:
-            print('New GFA file ' + filename + ' is not flavor=science ; skipping')
+        outdir = os.path.join(night_basedir_out, str(expid_from_filename(filename)).zfill(8))
+        _proc(filename, outdir=outdir, realtime=True) # realtime HARDCODED to true
         print('Worker {} done with {}'.format(workerid, filename))
         sys.stdout.flush()
 
