@@ -53,6 +53,7 @@ def realtime_raw_read(fname, delay=2.0, max_attempts=5):
             hdul.verify(option='exception')
             for hdu in hdul:
                 _, __ = hdu.data, hdu.header
+                ___ = hdu.data.shape
         except:
             print('encountered problem reading ' + fname)
             time.sleep(delay)
