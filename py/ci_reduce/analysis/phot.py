@@ -114,7 +114,7 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
                                error=aper_phot_unc_map(ivar_adu))
 
     for i, aperture in enumerate(apertures):
-        aper_bkg_tot = bkg_median*aperture.area()
+        aper_bkg_tot = bkg_median*aperture.area
         catalog['aper_sum_bkgsub_' + str(i)] = phot['aperture_sum_' + str(i)] - aper_bkg_tot
 
         catalog['aper_bkg_' + str(i)] = aper_bkg_tot
@@ -125,7 +125,7 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
     phot = aperture_photometry(data, apertures_ell, 
                                error=aper_phot_unc_map(ivar_adu))
     for i, aperture in enumerate(apertures_ell):
-        aper_bkg_tot = bkg_median*aperture.area()
+        aper_bkg_tot = bkg_median*aperture.area
         catalog['aper_ell_sum_bkgsub_' + str(i)] = phot['aperture_sum_' + str(i)] - aper_bkg_tot
 
         catalog['aper_ell_bkg_' + str(i)] = aper_bkg_tot
@@ -137,7 +137,7 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
     phot = aperture_photometry(data, aper_fib, 
                                error=aper_phot_unc_map(ivar_adu))
 
-    aper_bkg_tot = bkg_median*aper_fib.area()
+    aper_bkg_tot = bkg_median*aper_fib.area
     catalog['aper_sum_bkgsub_fib'] = phot['aperture_sum'] - aper_bkg_tot
 
     catalog['aper_bkg_fib'] = aper_bkg_tot
@@ -146,7 +146,7 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
     ####
 
     # is .area() result a vector or scalar ??
-    catalog['sky_annulus_area_pix'] = annulus_apertures.area()
+    catalog['sky_annulus_area_pix'] = annulus_apertures.area
     catalog['sky_annulus_median'] = bkg_median
 
 def get_nominal_fwhm_pix(extname):
