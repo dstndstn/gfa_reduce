@@ -37,7 +37,9 @@ def is_flavor_science(gfa_image_fname):
     return check_flavor_json(gfa_image_fname).lower() == 'science'
 
 indir = '/exposures/desi/' + args.night
-assert(os.path.exists(indir))
+if not os.path.exists(indir):
+    print('WARNING: INPUT DIRECTORY DOES NOT CURRENTLY EXIST')
+
 print(args.out_basedir)
 assert(os.path.exists(args.out_basedir))
 night_basedir_out = os.path.join(args.out_basedir, args.night)
