@@ -4,6 +4,7 @@ import numpy as np
 from scipy.stats import scoreatpercentile
 import glob
 from ci_reduce.common import expid_from_filename
+import imageio
 
 def get_overscan(im, amp):
     sh = im.shape
@@ -160,8 +161,6 @@ def _loop_control(amp='E'):
         plt.cla()
 
 def gif_one_amp(amp='E', control=False):
-    import glob
-    import imageio
 
     png_dir = 'fan_test' + ('' if not control else '_control')
     flist = glob.glob(png_dir + '/*' + amp + '.png')
@@ -172,3 +171,20 @@ def gif_one_amp(amp='E', control=False):
         images.append(imageio.imread(f))
     basename = 'fan_test' if not control else 'control'
     imageio.mimsave('/global/cscratch1/sd/ameisner/' + basename + '_amp' + amp + '.gif', images, duration=0.35)
+
+def gif_one_amp_one_night(night, amp='E', lastn=30):
+    flist = glob.glob('*amp' + amp + '*' + night + '.png')
+
+    print(len(flist))
+    flist.sort()
+
+    if lastn is not None:
+        flist = flist[(-1*lastn):]
+
+    images = []
+    for i, f in enumerate(flist):
+        print(i)
+        images.append(imageio.imread(f))
+
+    outname = night + '_amp' + amp + '.gif'
+    imageio.mimsave(outname, images, duration=0.35)
