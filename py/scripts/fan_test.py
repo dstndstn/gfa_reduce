@@ -2,6 +2,8 @@ import astropy.io.fits as fits
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import scoreatpercentile
+import glob
+from ci_reduce.common import expid_from_filename
 
 def get_overscan(im, amp):
     sh = im.shape
@@ -59,7 +61,7 @@ def plot_one_overscan(im, extname, amp):
     subim -= medval
     plt.imshow(subim, cmap='gray', interpolation='nearest', origin='lower',
                vmin=-30, vmax=30, aspect=1.0)
-    plt.title(extname + '; ' + amp, fontsize=8)
+    plt.title(extname + '; ' + amp, fontsize=7)
     
     plt.gca().set_axis_off()
     # plt.show()
@@ -72,24 +74,31 @@ def _test_one_overscan():
     plot_one_overscan(im, extname, amp)
     
 
-def plot_one_exp(fname, expid, fans=True, amp='E'):
+def plot_one_exp(fname, expid, fans=True, amp='E', night=None):
     fig = plt.figure(figsize=(8, 8))
 
 
     plt.subplots_adjust(hspace=0.01, wspace=0.01)
     # focus1 missing from fan test data set probably due to 
     # michael schubnell's testing
-    extnames = ['GUIDE0', 'GUIDE2', 'GUIDE3', 'FOCUS4', 'GUIDE5',
+    extnames = ['GUIDE0', 'FOCUS1', 'GUIDE2', 'GUIDE3', 'FOCUS4', 'GUIDE5',
                 'FOCUS6', 'GUIDE7', 'GUIDE8', 'FOCUS9']
     fig.tight_layout()
     #fig.subplots_adjust(top=0.7)
     for i in range(len(extnames)):
-        plt.subplot(1, 9, i+1)
+        plt.subplot(1, 10, i+1)
         im = fits.getdata(fname, extname=extnames[i])
         plot_one_overscan(im, extnames[i], amp)
 
-    title = 'fans ' + ('on' if fans else 'off')
-    plt.suptitle(title + '; expid = ' + str(expid), y=0.93, color='r')
+    if fans is not None:
+        title = 'fans ' + ('on' if fans else 'off') + '; '
+    else:
+        if night is None:
+            title = ''
+        else:
+            title = night + '; '
+
+    plt.suptitle(title + 'expid = ' + str(expid) + ' ; amp ' + amp, y=0.93, color='r')
     #plt.savefig('blat.png', bbox_inches='tight', dpi=400)
 
 def test_one_exp():
@@ -105,6 +114,34 @@ def _loop(amp='E'):
         fname = '/project/projectdirs/desi/spectro/data/20191107/' + str(expid).zfill(8) + '/gfa-' + str(expid).zfill(8) + '.fits.fz'
         plot_one_exp(fname, expid, fans=(not fan_off), amp=amp)
         plt.savefig('fan_test/expid_' + str(expid) + '_amp' + amp + '.png',
+                     dpi=300, bbox_inches='tight')
+        plt.cla()
+
+def _is_simulated(f):
+    im = fits.getdata(f, extname='GUIDE0')
+    sh = im.shape
+    
+    result = sh[1] == 2048
+    return result
+
+def _loop_night(night, amp='E', indstart=None):
+    # get the list of file names
+
+    night_dir = '/exposures/desi/' + night
+
+    flist = glob.glob(night_dir + '/*/gfa*.fz')
+
+    for i, f in enumerate(flist):
+        if indstart is not None:
+            if i < indstart:
+                continue
+
+        if _is_simulated(f):
+            continue
+
+        expid = expid_from_filename(f)
+        plot_one_exp(f, expid, fans=None, amp=amp, night=night)
+        plt.savefig('expid_' + str(expid) + '_amp' + amp + '-' + night + '.png',
                      dpi=300, bbox_inches='tight')
         plt.cla()
         
