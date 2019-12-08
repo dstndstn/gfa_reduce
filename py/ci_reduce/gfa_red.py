@@ -7,6 +7,7 @@ from datetime import datetime
 import ci_reduce.analysis.util as util
 import ci_reduce.common as common
 import ci_reduce.analysis.recalib_astrom as wcs
+import time
 
 def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           no_gaia_xmatch=False, cube_index=None, skip_image_outputs=False,
@@ -14,6 +15,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
+
+    t0 = time.time()
     
     write_outputs = (outdir is not None)
 
@@ -85,6 +88,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
 
     print('Successfully finished reducing ' + fname_in)
 
+    dt = time.time() - t0
+    print('GFA reduction pipeline took ' + str(dt) + ' seconds')
     print('GFA reduction pipeline completed at: ' + str(datetime.utcnow()) + 
           ' UTC')
 
