@@ -89,7 +89,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
     print('Successfully finished reducing ' + fname_in)
 
     dt = time.time() - t0
-    print('GFA reduction pipeline took ' + str(dt) + ' seconds')
+    print('GFA reduction pipeline took ' + '{:.2f}'.format(dt) + ' seconds')
     print('GFA reduction pipeline completed at: ' + str(datetime.utcnow()) + 
           ' UTC')
 
