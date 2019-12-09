@@ -17,7 +17,7 @@ from astropy.table import Table
 
 nside = 32
 
-def gaia_chunknames(ipix):
+def gaia_chunknames(ipix, ps1=False):
     # could add checks to make sure that all ipix values are 
     # sane HEALPix pixel indices
     # RIGHT NOW THIS ASSUMES IPIX IS AN ARRAY !! 
@@ -25,13 +25,14 @@ def gaia_chunknames(ipix):
 
     par = common.ci_misc_params()
 
-    gaia_dir = os.environ[par['gaia_env_var']]
+    env_var = par['ps1_env_var'] if ps1 else par['gaia_env_var']
+    gaia_dir = os.environ[env_var]
 
     flist = [os.path.join(gaia_dir, 'chunk-' + str(i).zfill(5) + 
                                     '.fits') for i in ipix]
     return flist
 
-def read_gaia_cat(ra, dec):
+def read_gaia_cat(ra, dec, ps1=False):
     # should add checks to make sure that ra and dec have compatible dimensions
     # should also check that this works for both scalar and array ra/dec
 
@@ -39,18 +40,28 @@ def read_gaia_cat(ra, dec):
 
     ipix_u = np.unique(ipix_all)
 
-    flist = gaia_chunknames(ipix_u)
+    flist = gaia_chunknames(ipix_u, ps1=ps1)
 
+    # for the case of PS1, should eventually add checking/handling of cases
+    # where a HEALPix pixel not present in the PS1 chunks (dec < -30)
+    # is requested
+    
     tablist = []
     for f in flist:
         print('READING : ', f)
         tab = fits.getdata(f)
         tablist.append(tab)
 
-    return np.hstack(tuple(tablist))
+    result = np.hstack(tuple(tablist))
 
-def gaia_xmatch(ra, dec):
-    gaia_cat = read_gaia_cat(ra, dec)
+    if ps1:
+        # dumb stuff about capitalization of column names
+        result.dtype.names = tuple([n.lower() for n in result.dtype.names])
+
+    return result
+
+def gaia_xmatch(ra, dec, ps1=False):
+    gaia_cat = read_gaia_cat(ra, dec, ps1=ps1)
 
     assert(len(gaia_cat) > 0)
     assert(type(gaia_cat).__name__ == 'ndarray')
@@ -67,6 +78,3 @@ def gaia_xmatch(ra, dec):
     gaia_matches['ang_sep_deg'] = ang_sep_deg
 
     return gaia_matches
-
-# ra = np.arange(180, 185, 0.1)
-# dec = np.arange(3, -2, -0.1)

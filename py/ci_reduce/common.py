@@ -14,6 +14,7 @@ def ci_misc_params():
 
     par = {'etc_env_var': 'GFA_REDUCE_ETC',
            'gaia_env_var': 'GAIA_CAT_DIR',
+           'ps1_env_var' : 'PS_CAT_DIR',
            'width_pix_native': width_pix_native,
            'height_pix_native': height_pix_native,
            'n_cameras': 6,
