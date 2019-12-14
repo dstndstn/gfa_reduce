@@ -10,6 +10,7 @@ import ci_reduce.analysis.basic_catalog_stats as bcs
 import ci_reduce.analysis.util as util
 import numpy as np
 import time
+from ci_reduce.ci_wcs import ccd_center_radec
 
 # in the context of this file, "image" and "exposure" generally refer to 
 # CI_image and CI_exposure objects
@@ -333,6 +334,14 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
     tab['sky_mag_ab'] = [exp.images[extname].sky_mag for extname in tab['camera']]
 
     tab['ci_number'] = [common.ci_extname_to_ci_number(extname) for extname in tab['camera']]
+
+    tab['racen'] = np.zeros(len(tab), dtype=float)
+    tab['deccen'] = np.zeros(len(tab), dtype=float)
+
+    for i, extname in enumerate(tab['camera']):
+        racen, deccen = ccd_center_radec(exp.images[extname].wcs)
+        tab['racen'][i] = racen
+        tab['deccen'][i] = deccen
 
     high_level_ccds_metrics(tab, catalog)
 

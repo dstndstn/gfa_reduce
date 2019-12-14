@@ -21,3 +21,11 @@ def nominal_tan_wcs(telra, teldec, extname):
     w = wcs.WCS(h)
 
     return w
+
+def ccd_center_radec(_wcs):
+    y_pixel_center = 515.5 # need to double check this relative to convention
+    x_pixel_center = 1023.5 # need to double check this relative to convention
+
+    ra, dec = _wcs.all_pix2world(x_pixel_center, y_pixel_center, 0)
+
+    return ra, dec
