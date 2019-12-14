@@ -17,6 +17,11 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           ' UTC')
 
     t0 = time.time()
+
+    try:
+        print('Running on host: ' + str(os.environ.get('HOSTNAME')))
+    except:
+        print('Could not retrieve hostname!')
     
     write_outputs = (outdir is not None)
 
