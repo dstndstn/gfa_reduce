@@ -10,6 +10,7 @@ from photutils import aperture_photometry
 from photutils import CircularAperture, CircularAnnulus, EllipticalAperture
 import ci_reduce.common as common
 import ci_reduce.analysis.djs_maskinterp as djs_maskinterp
+import photutils
 
 def slices_to_table(slices, detsn, extname):
     nslc = len(slices)
@@ -33,6 +34,17 @@ def slices_to_table(slices, detsn, extname):
     tab = Table([xcen, ycen, xmin, xmax, ymin, ymax, detmap_peak], names=('xcen_init', 'ycen_init', 'detmap_xmin', 'detmap_xmax', 'detmap_ymin', 'detmap_ymax', 'detmap_peak'))
 
     return tab
+
+def _get_area_from_ap(ap):
+    # this is to try and work around the photutils API change
+    # between versions 0.6 and 0.7
+    if photutils.__version__.find('0.7') != -1:
+        area = ap.area # 0.7
+    else:
+        area = ap.area() # 0.6
+
+    return area
+
 
 def detection_map(im, fwhm):
     psf_sigma = fwhm/2.355
@@ -114,7 +126,7 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
                                error=aper_phot_unc_map(ivar_adu))
 
     for i, aperture in enumerate(apertures):
-        aper_bkg_tot = bkg_median*aperture.area
+        aper_bkg_tot = bkg_median*_get_area_from_ap(aperture)
         catalog['aper_sum_bkgsub_' + str(i)] = phot['aperture_sum_' + str(i)] - aper_bkg_tot
 
         catalog['aper_bkg_' + str(i)] = aper_bkg_tot
@@ -125,7 +137,7 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
     phot = aperture_photometry(data, apertures_ell, 
                                error=aper_phot_unc_map(ivar_adu))
     for i, aperture in enumerate(apertures_ell):
-        aper_bkg_tot = bkg_median*aperture.area
+        aper_bkg_tot = bkg_median*_get_area_from_ap(aperture)
         catalog['aper_ell_sum_bkgsub_' + str(i)] = phot['aperture_sum_' + str(i)] - aper_bkg_tot
 
         catalog['aper_ell_bkg_' + str(i)] = aper_bkg_tot
@@ -137,7 +149,7 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
     phot = aperture_photometry(data, aper_fib, 
                                error=aper_phot_unc_map(ivar_adu))
 
-    aper_bkg_tot = bkg_median*aper_fib.area
+    aper_bkg_tot = bkg_median*_get_area_from_ap(aper_fib)
     catalog['aper_sum_bkgsub_fib'] = phot['aperture_sum'] - aper_bkg_tot
 
     catalog['aper_bkg_fib'] = aper_bkg_tot
@@ -146,7 +158,7 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
     ####
 
     # is .area() result a vector or scalar ??
-    catalog['sky_annulus_area_pix'] = annulus_apertures.area
+    catalog['sky_annulus_area_pix'] = _get_area_from_ap(annulus_apertures)
     catalog['sky_annulus_median'] = bkg_median
 
 def get_nominal_fwhm_pix(extname):
