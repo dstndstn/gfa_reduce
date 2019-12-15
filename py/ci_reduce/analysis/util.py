@@ -2,6 +2,17 @@ import ci_reduce.common as common
 import numpy as np
 import os
 
+def has_wrong_dimensions(exp):
+    # check meant to catch simulated data
+    # or other rare anomalies where GFA images do not have the
+    # correct dimensions
+
+    for im in exp.images.values():
+        sh = im.image.shape
+        if (sh[0] != 1032) or (sh[1] != 2048):
+            return True
+    return False
+    
 def nominal_pixel_area_sq_asec(extname):
     par = common.ci_misc_params()
 

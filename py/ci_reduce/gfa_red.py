@@ -38,6 +38,12 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
 
     exp = io.load_exposure(fname_in, cube_index=cube_index, realtime=realtime)
 
+    # check for simulated data
+    if util.has_wrong_dimensions(exp):
+        # point is to not crash, for sake of real time reductions
+        print('EXITING: exposure may be a simulation?!')
+        return
+    
     print('Attempting to compute basic statistics of raw pixel data')
     imstats = io.gather_pixel_stats(exp)
 
