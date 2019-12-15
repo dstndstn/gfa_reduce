@@ -19,7 +19,7 @@ def ci_misc_params():
            'height_pix_native': height_pix_native,
            'n_cameras': 6,
            'nominal_zeropoint': 27.0621,
-           'fz_dummy_extname': 'CI',
+           'fz_dummy_extname': 'GFA',
            'master_bias_filename': 'GFA_master_bias.fits', 
            'master_flat_filename': 'GFA_master_flat.fits',
            'master_dark_filename' : 'GFA_master_dark.fits',

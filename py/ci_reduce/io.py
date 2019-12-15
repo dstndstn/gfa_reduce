@@ -344,6 +344,12 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
     tab['racen'] = np.zeros(len(tab), dtype=float)
     tab['deccen'] = np.zeros(len(tab), dtype=float)
 
+    tab['fname_raw'] = fname_in
+
+    h_gfa = fits.getheader(fname_in, extname='GFA')
+    tab['airmass'] = h_gfa['AIRMASS']
+    tab['night'] = h_gfa['NIGHT']
+    
     for i, extname in enumerate(tab['camera']):
         racen, deccen = ccd_center_radec(exp.images[extname].wcs)
         tab['racen'][i] = racen
