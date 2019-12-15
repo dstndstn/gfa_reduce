@@ -34,8 +34,35 @@ def downselected_star_sample(cat, n_desi_max):
     result = _cat[sind[0:(min(n_desi_max, n))]]
 
     return result
+
+def gaia_cat_for_exp(racen, deccen):
+
+    nside = 32
+    ipix = healpy.pixelfunc.get_all_neighbours(nside, racen, phi=deccen,
+                                               lonlat=True)
+
+    # remove dummy -1 values from ipix
+
+    ipix = ipix[ipix >= 0]
     
-def kentools_center(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5):
+    # probably also want to include the neighbors to the neighbors
+    ipix_all = []
+    for _ipix in ipix:
+        ipix_all.append(healpy.pixelfunc.get_all_neighbours(nside,
+                                                            _ipix))
+    
+    ipix = np.unique(ipix_all)
+
+    ipix = ipix[ipix >= 0]
+    
+    ra_pixcenters, dec_pixcenters = healpy.pixelfunc.pix2ang(nside, ipix,
+                                                              lonlat=True)
+
+    gaia = gaia_xmatch.read_gaia_cat(ra_pixcenters, dec_pixcenters)
+    return gaia
+
+def kentools_center(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5,
+                    gaia=None):
 
     # cat needs to have fields xcentroid and ycentroid
     # skyra, skydec are the initial guesses of the 
@@ -69,29 +96,9 @@ def kentools_center(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5):
     # this apparently happened for the CI in some cases...
     if isinstance(racen, str) or isinstance(deccen, str):
         return None
-    
-    nside = 32
-    ipix = healpy.pixelfunc.get_all_neighbours(nside, racen, phi=deccen,
-                                               lonlat=True)
 
-    # remove dummy -1 values from ipix
-
-    ipix = ipix[ipix >= 0]
-    
-    # probably also want to include the neighbors to the neighbors
-    ipix_all = []
-    for _ipix in ipix:
-        ipix_all.append(healpy.pixelfunc.get_all_neighbours(nside,
-                                                            _ipix))
-    
-    ipix = np.unique(ipix_all)
-
-    ipix = ipix[ipix >= 0]
-    
-    ra_pixcenters, dec_pixcenters = healpy.pixelfunc.pix2ang(nside, ipix,
-                                                              lonlat=True)
-
-    gaia = gaia_xmatch.read_gaia_cat(ra_pixcenters, dec_pixcenters)
+    if gaia is None:
+        gaia = gaia_cat_for_exp(racen, deccen)
 
     g = SkyCoord(gaia['ra']*u.deg, gaia['dec']*u.deg)
     c = SkyCoord(racen*u.deg, deccen*u.deg)

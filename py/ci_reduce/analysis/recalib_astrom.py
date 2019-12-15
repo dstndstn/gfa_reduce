@@ -1,4 +1,4 @@
-from .kentools_center import kentools_center
+from .kentools_center import kentools_center, gaia_cat_for_exp
 import numpy as np
 import astropy.io.fits as fits
 # run astrometric calibration given a catalog with the centroids and
@@ -12,10 +12,11 @@ def recalib_astrom(cat, fname_raw):
 
     h = fits.getheader(fname_raw, extname='GFA')
 
+    gaia = gaia_cat_for_exp(h['SKYRA'], h['SKYDEC'])
     result = []
     for extname in extnames:
         result.append(kentools_center(cat[cat['camera'] == extname],
                                       h['SKYRA'], h['SKYDEC'],
-                                      extname=extname))
+                                      extname=extname, gaia=gaia))
 
     return result
