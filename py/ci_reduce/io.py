@@ -335,6 +335,8 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
     tab['ci_number'] = [common.ci_extname_to_ci_number(extname) for extname in tab['camera']]
 
+    tab['expid'] = [exp.images[extname].header['EXPID'] for extname in tab['camera']]
+    
     tab['racen'] = np.zeros(len(tab), dtype=float)
     tab['deccen'] = np.zeros(len(tab), dtype=float)
 
