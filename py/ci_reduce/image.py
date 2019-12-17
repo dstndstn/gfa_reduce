@@ -21,6 +21,7 @@ class CI_image:
         self.remove_overscan()
             
         self.header = header
+        self.header['CONTRAST'] = 0.0 # typically overwritten with actual value
         self.initialize_wcs()
 
         # lazily compute bitmask image only as requested
