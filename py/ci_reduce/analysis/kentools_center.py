@@ -150,11 +150,11 @@ def kentools_center(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5,
         dy_all = np.concatenate((dy_all, dy))
 
     assert(len(dx_all) == len(dy_all))
-    print(np.min(dy_all), np.max(dy_all))
+    #print(np.min(dy_all), np.max(dy_all))
 
     axlim = max(np.round(arcmin_max*60.0/0.214), 1000.0)
 
-    print(axlim)
+    #print(axlim)
 
     dx = 1.0
     dy = 1.0
@@ -204,8 +204,6 @@ def kentools_center(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5,
 
     assert(np.sum(high) > 0)
     
-    print(val_90, '^^^^^^^^^^^^^^^^^^^^^^^^^^', np.sum(high))
-    
     print(xshift_best, yshift_best)
 
     wt = np.sum(high*smth)
@@ -215,10 +213,9 @@ def kentools_center(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5,
     print(xshift_best, yshift_best)
     contrast = center_contrast(smth)
 
-    print(contrast, ' $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
 
-    print(xcen_grid.shape)
-    print(counts.shape, smth.shape)
+    #print(xcen_grid.shape)
+    #print(counts.shape, smth.shape)
 
     result = {'xshift_best': xshift_best,
               'yshift_best': yshift_best,

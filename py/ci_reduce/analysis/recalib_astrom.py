@@ -10,7 +10,10 @@ def recalib_astrom(cat, fname_raw):
 
     extnames = np.unique(cat['camera'])
 
-    h = fits.getheader(fname_raw, extname='GFA')
+    try:
+        h = fits.getheader(fname_raw, extname='GFA')
+    except:
+        h = fits.getheader(fname_raw, extname='GUIDER')
 
     gaia = gaia_cat_for_exp(h['SKYRA'], h['SKYDEC'])
     result = []

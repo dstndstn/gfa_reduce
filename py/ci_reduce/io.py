@@ -337,18 +337,17 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
     tab['expid'] = [exp.images[extname].header['EXPID'] for extname in tab['camera']]
 
-    tab['exptime'] = [exp.images[extname].header['EXPTIME'] for extname in tab['camera']]
-
-    tab['mjd'] = [exp.images[extname].header['MJD-OBS'] for extname in tab['camera']]
+    if cube_index is None:
+        tab['exptime'] = [exp.images[extname].header['EXPTIME'] for extname in tab['camera']]
+        tab['mjd'] = [exp.images[extname].header['MJD-OBS'] for extname in tab['camera']]
+        h_gfa = fits.getheader(fname_in, extname='GFA')
+        tab['airmass'] = h_gfa['AIRMASS']
+        tab['night'] = h_gfa['NIGHT']
     
     tab['racen'] = np.zeros(len(tab), dtype=float)
     tab['deccen'] = np.zeros(len(tab), dtype=float)
 
     tab['fname_raw'] = fname_in
-
-    h_gfa = fits.getheader(fname_in, extname='GFA')
-    tab['airmass'] = h_gfa['AIRMASS']
-    tab['night'] = h_gfa['NIGHT']
 
     tab['contrast'] = [exp.images[extname].header['CONTRAST'] for extname in tab['camera']]
     
