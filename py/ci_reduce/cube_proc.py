@@ -18,6 +18,10 @@ if __name__ == "__main__":
 
     parser.add_argument('--nproc', default=None, type=int,
                         help='number of frames to process')
+
+    parser.add_argument('--write_image_outputs', default=False,
+                        action='store_true',
+                        help='write image-level reduction outputs')
     
     args = parser.parse_args()
     
@@ -33,12 +37,14 @@ if __name__ == "__main__":
     nproc = args.nproc if args.nproc is not None else nframes
     
     indend = min(nframes, args.indstart + nproc)
-    
+
+    skip_image_outputs = not args.write_image_outputs
     for i in np.arange(args.indstart, indend):
         # note the hardcoding of certain arguments, especially 
         # skipping write-out of image-level outputs (saves disk space...)
         print('WORKING ON FRAME ' + str(i+1) + ' OF ' + str(nframes))
         _proc(fname_in, outdir=args.outdir,
               careful_sky=False, no_cataloging=False,
-              no_gaia_xmatch=False, cube_index=i, skip_image_outputs=True,
+              no_gaia_xmatch=False, cube_index=i,
+              skip_image_outputs=skip_image_outputs,
               realtime=False)
