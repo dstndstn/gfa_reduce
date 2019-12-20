@@ -245,6 +245,32 @@ def write_exposure_source_catalog(catalog, outdir, fname_in,
     print('Attempting to write source catalog to ' + outname)
     catalog.write(outname, format='fits')
 
+def write_ps1_matches(catalog, outdir, fname_in, cube_index=None):
+    ps1 = gaia.gaia_xmatch(catalog['ra'], catalog['dec'], ps1=True)
+    ps1.rename_column('ra', 'ra_ps1')
+    ps1.rename_column('dec', 'dec_ps1')
+
+    ps1_matches = hstack([catalog, ps1])
+
+    assert(os.path.exists(outdir))
+
+    outname = os.path.join(outdir, os.path.basename(fname_in))
+
+    # get rid of any ".fz" or ".gz" present in input filename
+    outname = outname.replace('.fz', '')
+    outname = outname.replace('.gz', '')
+
+    assert(outname[-5:] == '.fits')
+
+    outname = outname.replace('.fits', '_ps1.fits')
+
+    if cube_index is not None:
+        outname = outname.replace('.fits',
+                                  '-' + str(cube_index).zfill(5) + '.fits')
+    
+    assert(not os.path.exists(outname))
+    ps1_matches.write(outname, format='fits')
+    
 def gather_gaia_crossmatches(catalog):
     gaia_matches = gaia.gaia_xmatch(catalog['ra'], catalog['dec'])
 

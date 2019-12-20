@@ -75,6 +75,9 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         astr = wcs.recalib_astrom(catalog, fname_in)
         exp.update_wcs(astr)
         exp.recompute_catalog_radec(catalog)
+
+        print('Attempting to perform PS1 cross-matching...')
+        io.write_ps1_matches(catalog, outdir, fname_in, cube_index=cube_index)
         
         if (not no_gaia_xmatch) and (par['gaia_env_var'] in os.environ):
             print('Attempting to identify Gaia cross-matches')
