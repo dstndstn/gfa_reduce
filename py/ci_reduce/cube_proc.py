@@ -2,6 +2,7 @@ import argparse
 from ci_reduce.gfa_red import _proc
 import astropy.io.fits as fits
 import os
+import numpy as np
 
 if __name__ == "__main__":
     descr = 'run gfa_reduce pipeline on all GFA guide cube slices'
@@ -12,6 +13,12 @@ if __name__ == "__main__":
     parser.add_argument('--outdir', default=None, type=str,
                         help='directory to write outputs in')
 
+    parser.add_argument('--indstart', default=0, type=int,
+                        help='starting frame index')
+
+    parser.add_argument('--nproc', default=None, type=int,
+                        help='number of frames to process')
+    
     args = parser.parse_args()
     
     fname_in = args.fname_in[0]
@@ -21,8 +28,13 @@ if __name__ == "__main__":
     h = fits.getheader(fname_in, extname='GUIDER')
 
     nframes = h['FRAMES']
+    assert(args.indstart < nframes)
+
+    nproc = args.nproc if args.nproc is not None else nframes
     
-    for i in range(nframes):
+    indend = min(nframes, args.indstart + nproc)
+    
+    for i in np.arange(args.indstart, indend):
         # note the hardcoding of certain arguments, especially 
         # skipping write-out of image-level outputs (saves disk space...)
         print('WORKING ON FRAME ' + str(i+1) + ' OF ' + str(nframes))
