@@ -25,6 +25,7 @@ if __name__ == "__main__":
     for i in range(nframes):
         # note the hardcoding of certain arguments, especially 
         # skipping write-out of image-level outputs (saves disk space...)
+        print('WORKING ON FRAME ' + str(i+1) + ' OF ' + str(nframes))
         _proc(fname_in, outdir=args.outdir,
               careful_sky=False, no_cataloging=False,
               no_gaia_xmatch=False, cube_index=i, skip_image_outputs=True,
