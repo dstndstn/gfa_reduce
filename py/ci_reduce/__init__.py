@@ -2,6 +2,6 @@
 ci_reduce
 =========
 
-A package for reducing DESI Commissioning Instrument (CI) images.
+A package for reducing DESI GFA images.
 
 """
