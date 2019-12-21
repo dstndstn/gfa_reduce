@@ -10,7 +10,8 @@ import ci_reduce.analysis.recalib_astrom as wcs
 import time
 
 def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
-          no_gaia_xmatch=False, cube_index=None, skip_image_outputs=False,
+          no_gaia_xmatch=False, no_ps1_xmatch=False,
+          cube_index=None, skip_image_outputs=False,
           realtime=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
@@ -76,8 +77,11 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         exp.update_wcs(astr)
         exp.recompute_catalog_radec(catalog)
 
-        print('Attempting to perform PS1 cross-matching...')
-        io.write_ps1_matches(catalog, outdir, fname_in, cube_index=cube_index)
+        if (not no_ps1_xmatch) and (par['ps1_env_var'] in os.environ):
+            # probably should look into dec < -30 handling more at some point
+            print('Attempting to perform PS1 cross-matching...')
+            io.write_ps1_matches(catalog, outdir, fname_in,
+                                 cube_index=cube_index)
         
         if (not no_gaia_xmatch) and (par['gaia_env_var'] in os.environ):
             print('Attempting to identify Gaia cross-matches')
@@ -119,10 +123,13 @@ if __name__ == "__main__":
         help='use image segmentation when deriving sky quantities')
 
     parser.add_argument('--no_cataloging', default=False, action='store_true', 
-        help='reduce image without cataloging sources')
+                        help='reduce image without cataloging sources')
 
     parser.add_argument('--no_gaia_xmatch', default=False, action='store_true',
-        help='skip Gaia cross-match')
+                        help='skip Gaia cross-match')
+
+    parser.add_argument('--no_ps1_xmatch', default=False, action='store_true',
+                        help='skip PS1 cross-match')
 
     parser.add_argument('--cube_index', default=None, type=int,
                         help='guide cube index')
@@ -141,5 +148,5 @@ if __name__ == "__main__":
 
     _proc(fname_in, outdir=args.outdir, careful_sky=args.careful_sky,
           no_cataloging=args.no_cataloging, no_gaia_xmatch=args.no_gaia_xmatch,
-          cube_index=args.cube_index,
+          no_ps1_xmatch=args.no_ps1_xmatch, cube_index=args.cube_index,
           skip_image_outputs=args.skip_image_outputs, realtime=args.realtime)
