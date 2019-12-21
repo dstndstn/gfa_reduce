@@ -45,6 +45,6 @@ if __name__ == "__main__":
         print('WORKING ON FRAME ' + str(i+1) + ' OF ' + str(nframes))
         _proc(fname_in, outdir=args.outdir,
               careful_sky=False, no_cataloging=False,
-              no_gaia_xmatch=False, cube_index=i,
+              no_gaia_xmatch=False, no_ps1_xmatch=False, cube_index=i,
               skip_image_outputs=skip_image_outputs,
               realtime=False)
