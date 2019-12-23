@@ -102,8 +102,9 @@ def load_exposure(fname, verbose=True, realtime=False, cube_index=None):
     
     try:
         imlist = [load_image_from_hdu(hdul[ind], verbose=verbose, cube_index=cube_index) for ind in w_im]
-    except:
+    except Exception as e:
         print('failed to load exposure at image list creation stage')
+        print(e)
         return None
 
     exp = CI_exposure(imlist, dummy_fz_header=dummy_fz_header)
