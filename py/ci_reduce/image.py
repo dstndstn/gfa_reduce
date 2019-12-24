@@ -15,8 +15,13 @@ class CI_image:
     def __init__(self, image, header, cube_index=None):
         if cube_index is None:
             self.image = image.astype('float32')
+            self.nframe = 1
+        elif cube_index == -1:
+            self.image = np.mean(image.astype('float32'), axis=0)
+            self.nframe = image.shape[0]
         else:
             self.image = image[cube_index, :, :].astype('float32')
+            self.nframe = 1
 
         self.remove_overscan()
             
@@ -60,6 +65,7 @@ class CI_image:
 
         var_e_sq = (common.ci_camera_readnoise(ci_extname)**2 + \
                     self.image*(self.image >= 0)*gain)
+        var_e_sq /= self.nframe
 
         assert(np.sum(var_e_sq <= 0) == 0)
         self.var_e_sq = var_e_sq
