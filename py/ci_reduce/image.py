@@ -41,7 +41,13 @@ class Overscan:
 
         # including all amps and lumping together prescan and overscan
         self.n_badpix_all = np.sum([n for n in self.n_badpix.values()])
-            
+
+        # units are raw ADU
+        self.overscan_medians = dict([(amp, np.median(self.overscan_cutouts[amp])) for amp in amps])
+
+        # units are raw ADU
+        self.prescan_medians = dict([(amp, np.median(self.prescan_cutouts[amp])) for amp in amps])
+
     def count_badpixels(self, thresh=10000, prescan=False):
         amps = common.valid_amps_list()
         
