@@ -32,6 +32,14 @@ class CI_exposure:
             if self.images[extname] is not None:
                 self.images[extname].image = self.images[extname].image - \
                     load_calibs.read_bias_image(extname)
+
+                amps = common.valid_amps_list()
+                for amp in amps:
+                    bdy = common.amp_bdy_coords(amp)
+                    self.images[extname].image[bdy['y_l']:bdy['y_u'],
+                                               bdy['x_l']:bdy['x_u']] -= \
+                        self.images[extname].overscan.overscan_medians[amp]
+                
                 self.images[extname].bias_subtracted = True
                 self.images[extname].calc_variance_e_squared()
 

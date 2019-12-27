@@ -22,7 +22,7 @@ def ci_misc_params():
            'n_cameras': 6,
            'nominal_zeropoint': 27.0621,
            'fz_dummy_extname': 'GFA',
-           'master_bias_filename': 'GFA_master_bias.fits', 
+           'master_bias_filename': 'GFA_master_bias-overscan_subtracted.fits', 
            'master_flat_filename': 'GFA_master_flat.fits',
            'master_dark_filename' : 'GFA_master_dark.fits',
            'static_mask_filename': 'GFA_static_badpixels.fits',
@@ -389,3 +389,20 @@ def prescan_bdy_coords(amp):
 
     elif amp == 'H':
         return {'x_l': 0, 'x_u': 50, 'y_l': 516, 'y_u': 1032}
+
+def amp_bdy_coords(amp):
+    assert(is_valid_amp(amp))
+
+    # assumes prescan/overscan have already been stripped out
+
+    if amp == 'E':
+        return {'x_l': 0, 'x_u': 1024, 'y_l': 0, 'y_u': 516}
+            
+    elif amp == 'F':
+        return {'x_l': 1024, 'x_u': 2048, 'y_l': 0, 'y_u': 516}
+
+    elif amp == 'G':
+        return {'x_l': 1024, 'x_u': 2048, 'y_l': 516, 'y_u': 1032}
+            
+    elif amp == 'H':
+        return {'x_l': 0, 'x_u': 1024, 'y_l': 516, 'y_u': 1032}
