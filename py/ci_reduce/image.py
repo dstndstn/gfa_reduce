@@ -9,6 +9,47 @@ import astropy.io.fits as fits
 from astropy import wcs
 from astropy.stats import mad_std
 
+class Overscan:
+    """Object to encapsulate single-camera worth of overscan and prescan"""
+
+    def __init__(self, image):
+        # image should be a 2D numpy array with dimensions
+        # 2248 x 1032 in the case of DESI GFA cameras
+
+        par = common.ci_misc_params()
+
+        sh = image.shape
+        assert(sh[0] == par['height_with_prescan_overscan'])
+        assert(sh[1] == par['width_with_prescan_overscan'])
+
+        amps = common.valid_amps_list()
+
+        self.overscan_cutouts = {}
+        self.prescan_cutouts = {}
+
+        for amp in amps:
+            bdy = common.overscan_bdy_coords(amp)
+            self.overscan_cutouts[amp] = image[bdy['y_l']:bdy['y_u'], bdy['x_l']:bdy['x_u']]
+            bdy = common.prescan_bdy_coords(amp)
+            self.prescan_cutouts[amp] = image[bdy['y_l']:bdy['y_u'], bdy['x_l']:bdy['x_u']]
+
+        self.n_badpix_overscan = self.count_badpixels()
+        self.n_badpix_prescan = self.count_badpixels(prescan=True)
+
+        # still per-amp but summing prescan and overscan counts together
+        self.n_badpix = dict([(amp, self.n_badpix_overscan[amp] + self.n_badpix_prescan[amp]) for amp in amps])
+
+        # including all amps and lumping together prescan and overscan
+        self.n_badpix_all = np.sum([n for n in self.n_badpix.values()])
+            
+    def count_badpixels(self, thresh=10000, prescan=False):
+        amps = common.valid_amps_list()
+        
+        if prescan:
+            return dict([(amp, np.sum(self.prescan_cutouts[amp] > thresh)) for amp in amps])
+        else:
+            return dict([(amp, np.sum(self.overscan_cutouts[amp] > thresh)) for amp in amps])
+    
 class CI_image:
     """Single CI image from one CI exposure"""
 
@@ -23,6 +64,7 @@ class CI_image:
             self.image = image[cube_index, :, :].astype('float32')
             self.nframe = 1
 
+        self.overscan = Overscan(self.image)
         self.remove_overscan()
             
         self.header = header

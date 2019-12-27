@@ -17,6 +17,8 @@ def ci_misc_params():
            'ps1_env_var' : 'PS_CAT_DIR',
            'width_pix_native': width_pix_native,
            'height_pix_native': height_pix_native,
+           'width_with_prescan_overscan' : 2248,
+           'height_with_prescan_overscan' : 1032,
            'n_cameras': 6,
            'nominal_zeropoint': 27.0621,
            'fz_dummy_extname': 'GFA',
@@ -350,3 +352,40 @@ def get_median_dark_current(extname):
 
     assert(extname in dark_med_dict.keys())
     return dark_med_dict[extname]
+
+def valid_amps_list():
+    return ['E', 'F', 'G', 'H']
+
+def is_valid_amp(amp):
+    return amp in valid_amps_list()
+
+def overscan_bdy_coords(amp):
+    assert(is_valid_amp(amp))
+
+    # pixel coordinates meant to be used to slice numpy arrays
+    if amp  == 'E':
+        return {'x_l': 1074, 'x_u': 1124, 'y_l': 0, 'y_u': 516}
+        
+    elif amp == 'F':
+        return {'x_l': 1124, 'x_u': 1174, 'y_l': 0, 'y_u': 516}
+    
+    elif amp == 'G':
+        return {'x_l': 1124, 'x_u': 1174, 'y_l': 516, 'y_u': 1032}
+
+    elif amp == 'H':
+        return {'x_l': 1074, 'x_u': 1124, 'y_l': 516, 'y_u': 1032}
+
+def prescan_bdy_coords(amp):
+    assert(is_valid_amp(amp))
+
+    if amp == 'E':
+        return {'x_l': 0, 'x_u': 50, 'y_l': 0, 'y_u': 516}
+        
+    elif amp == 'F':
+        return {'x_l': 2198, 'x_u': 2248, 'y_l': 0, 'y_u': 516}
+
+    elif amp == 'G':
+        return {'x_l': 2198, 'x_u': 2248, 'y_l': 516, 'y_u': 1032}
+
+    elif amp == 'H':
+        return {'x_l': 0, 'x_u': 50, 'y_l': 516, 'y_u': 1032}
