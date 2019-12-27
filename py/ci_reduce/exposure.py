@@ -56,6 +56,7 @@ class CI_exposure:
                 try:
                     t_c = self.images[extname].header['GCCDTEMP']
                 except:
+                    print('COULD NOT FIND GCCDTEMP !!!!')
                     t_c = 11.0 # HACK !!!!
                 self.images[extname].image = self.images[extname].image - \
                     dark_current.total_dark_image_adu(extname, acttime, t_c)
