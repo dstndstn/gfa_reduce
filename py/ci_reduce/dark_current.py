@@ -81,8 +81,38 @@ def total_dark_current_adu(ci_extname, acttime, t_celsius):
     return dark_adu_per_pix
 
 
-def dark_rescaling_factor(t_celsius, t_reference):
-    return dark_current_rate(t_celsius)/dark_current_rate(t_reference)
+def get_linear_coeff(extname):
+
+  assert(extname in common.valid_extname_list())
+
+  # https://github.com/desihub/desicmx/blob/master/analysis/gfa/GFA-Dark-Calibration.ipynb
+  # 91cb09761ccaa0e57b8a4bf0673bacb6  GFA-Dark-Calibration.ipynb
+  d = {'GUIDE0' : 0.223,
+       'FOCUS1' : 0.224,
+       'GUIDE2' : 0.237,
+       'GUIDE3' : 0.222,
+       'FOCUS4' : 0.233,
+       'GUIDE5' : 0.237,
+       'FOCUS6' : 0.209,
+       'GUIDE7' : 0.228,
+       'GUIDE8' : 0.195,
+       'FOCUS9' : 0.225}
+
+  return d[extname]
+
+
+def dark_rescaling_factor(t_master, t_image, extname):
+    f = get_linear_coeff(extname)
+
+    # linear rescaling factors returned by get_linear_coeff are
+    # referenced to 11.0 C (would be good to extract this special number
+    # to somewhere else)
+    fac = (1 + f*(t_image - 11.0))/(1 + f*(t_master - 11.0))
+
+    assert(fac > 0)
+
+    print(fac, '$$$$$$$$$$$$$$$$$$$$$$$$$$')
+    return fac
 
 def total_dark_image_adu(extname, exptime, t_celsius):
     # return a predicted image of the total dark current in
@@ -92,7 +122,7 @@ def total_dark_image_adu(extname, exptime, t_celsius):
 
     dark_image, hdark = load_calibs.read_dark_image(extname)
 
-    dark_image *= dark_rescaling_factor(t_celsius, hdark['GCCDTEMP'])
+    dark_image *= dark_rescaling_factor(hdark['GCCDTEMP'], t_celsius, extname)
 
     dark_image *= exptime
 
