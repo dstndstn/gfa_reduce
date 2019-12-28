@@ -13,7 +13,7 @@ def overall_image_fwhm(tab, snr_thresh=20):
 
     assert(len(np.unique(tab['camera'])) == 1)
 
-    good = ((tab['sig_major_pix'] > 0) & np.isfinite(tab['sig_major_pix']) & 
+    good = ((tab['sig_major_pix'] > 1) & np.isfinite(tab['sig_major_pix']) & 
             (tab['dq_flags'] == 0) & (tab['min_edge_dist_pix'] > 30) &
             (tab['detmap_peak'] >= snr_thresh))
 
