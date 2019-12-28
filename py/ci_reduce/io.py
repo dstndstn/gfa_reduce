@@ -210,7 +210,7 @@ def combine_per_camera_catalogs(catalogs):
     for extname, tab in catalogs.items():
         if tab is not None:
             tab['camera'] = extname
-            tab['petal_loc'] = [common.ci_extname_to_ci_number(extname) for extname in tab['camera']]
+            tab['petal_loc'] = np.array([common.ci_extname_to_ci_number(extname) for extname in tab['camera']], dtype='uint8')
             composite_list.append(tab)
 
     composite = vstack(composite_list)
@@ -361,7 +361,7 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
     tab['sky_mag_ab'] = [exp.images[extname].sky_mag for extname in tab['camera']]
 
-    tab['petal_loc'] = [common.ci_extname_to_ci_number(extname) for extname in tab['camera']]
+    tab['petal_loc'] = np.array([common.ci_extname_to_ci_number(extname) for extname in tab['camera']], dtype='uint8')
 
     tab['expid'] = [exp.images[extname].header['EXPID'] for extname in tab['camera']]
 
