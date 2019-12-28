@@ -216,6 +216,7 @@ def combine_per_camera_catalogs(catalogs):
     composite = vstack(composite_list)
     composite = strip_none_columns(composite)
 
+    composite['extname'] = composite['camera']
     return composite
 
 def write_exposure_source_catalog(catalog, outdir, fname_in,
@@ -375,6 +376,7 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
     tab['deccen'] = np.zeros(len(tab), dtype=float)
 
     tab['fname_raw'] = fname_in
+    tab['extname'] = tab['camera']
 
     tab['contrast'] = [exp.images[extname].header['CONTRAST'] for extname in tab['camera']]
     
