@@ -20,6 +20,7 @@ def recalib_astrom(cat, fname_raw):
     for extname in extnames:
         result.append(kentools_center(cat[cat['camera'] == extname],
                                       h['SKYRA'], h['SKYDEC'],
-                                      extname=extname, gaia=gaia))
+                                      extname=extname, gaia=gaia,
+                                      arcmin_max=5.0))
 
     return result
