@@ -17,10 +17,13 @@ def recalib_astrom(cat, fname_raw):
 
     gaia = gaia_cat_for_exp(h['SKYRA'], h['SKYDEC'])
     result = []
+
+    arcmin_max = 6.0
+    print('astrometry search using ' + '{:.1f}'.format(arcmin_max) + ' arcminute radius')
     for extname in extnames:
         result.append(kentools_center(cat[cat['camera'] == extname],
                                       h['SKYRA'], h['SKYDEC'],
                                       extname=extname, gaia=gaia,
-                                      arcmin_max=5.0))
+                                      arcmin_max=arcmin_max))
 
     return result
