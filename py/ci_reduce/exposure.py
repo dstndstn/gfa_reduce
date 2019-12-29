@@ -58,9 +58,12 @@ class CI_exposure:
                 except:
                     print('COULD NOT FIND GCCDTEMP !!!!')
                     t_c = 11.0 # HACK !!!!
+                dark_image = dark_current.total_dark_image_adu(extname,
+                                                               acttime, t_c)
                 self.images[extname].image = self.images[extname].image - \
-                    dark_current.total_dark_image_adu(extname, acttime, t_c)
+                    dark_image
                 self.images[extname].dark_subtracted = True
+                self.images[extname].create_dq_mask(dark_image)
 
     def apply_flatfield(self):
         print('Attempting to apply flat field...')
@@ -83,14 +86,6 @@ class CI_exposure:
 
     def populated_extnames(self):
         return [k for k,v in self.images.items() if v is not None]
-
-    def create_all_bitmasks(self):
-        for image in self.images.values():
-            if image is None:
-                continue
-            print('Attempting to create image quality bitmask, ' + 
-                  'extension name : ' + image.header['EXTNAME'])
-            image.create_dq_mask()
 
     def to_hdulist(self, flavor=''):
         # I don't plan on writing fpack'ed outputs

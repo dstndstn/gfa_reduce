@@ -8,6 +8,7 @@ import numpy as np
 import astropy.io.fits as fits
 from astropy import wcs
 from astropy.stats import mad_std
+from scipy.stats import scoreatpercentile
 
 class Overscan:
     """Object to encapsulate single-camera worth of overscan and prescan"""
@@ -94,11 +95,12 @@ class CI_image:
         self.empirical_bg_sigma = None
         self.sky_level_adu = None
 
-    def create_dq_mask(self):
+    def create_dq_mask(self, dark_image):
         if self.bitmask is not None:
             return
 
-        self.bitmask = dq_mask.dq_bitmask(self.image, self.header['EXTNAME'])
+        thresh = scoreatpercentile(dark_image, 99.5)
+        self.bitmask = (dark_image > thresh).astype('byte')
 
     def calc_variance_e_squared(self):
         # at this stage the image ought to have been bias subtracted

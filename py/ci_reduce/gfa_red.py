@@ -49,7 +49,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
     imstats = io.gather_pixel_stats(exp)
 
     # create data quality bitmasks
-    exp.create_all_bitmasks()
+    # exp.create_all_bitmasks() # revisit this later
 
     # go from "raw" images to "reduced" images
     exp.calibrate_pixels()
