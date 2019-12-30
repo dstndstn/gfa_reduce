@@ -23,7 +23,7 @@ def ci_misc_params():
            'nominal_zeropoint': 27.0621,
            'fz_dummy_extname': 'GFA',
            'master_bias_filename': 'GFA_master_bias-overscan_subtracted.fits', 
-           'master_flat_filename': 'GFA_master_flat.fits',
+           'master_flat_filename': 'GFA_master_flat.20191229.fits',
            'master_dark_filename' : 'master_dark_library/master_dark-00026584_00026684.fits',
            'static_mask_filename': 'GFA_static_badpixels.fits',
            'nominal_sag_cd': (5.0/3.0)*3.55978e-5, 
