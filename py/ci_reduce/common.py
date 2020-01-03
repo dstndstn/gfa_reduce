@@ -254,10 +254,7 @@ def mask_bit_dict():
     # keys are strings with shorthand name for each bit, values
     # are the corresponding powers of 2
 
-    d = {'FLATBAD' : 0, 
-         'FLATQ'   : 1, 
-         'SATUR'   : 2,
-         'NAN'     : 3}
+    d = {'HOTDARK' : 0}
 
     return d
 
@@ -271,10 +268,7 @@ def mask_bit_from_bitname(bitname):
 
 def mask_bit_description_dict():
 
-    d = {'FLATBAD' : 'bad pixel based on master flat', 
-         'FLATQ'   : 'questionable pixel based on master flat', 
-         'SATUR'   : 'saturated pixel',
-         'NAN'     : 'non-finite pixel value'}
+    d = {'HOTDARK' : 'hot pixel based on master dark'}
 
     return d
 
