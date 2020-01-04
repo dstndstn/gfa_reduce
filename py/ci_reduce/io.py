@@ -392,6 +392,9 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
         h_gfa = fits.getheader(fname_in, extname='GFA')
         tab['airmass'] = h_gfa['AIRMASS']
         tab['night'] = h_gfa['NIGHT']
+        tab['cube_index'] = np.nan
+    else:
+        tab['cube_index'] = int(cube_index)
     
     tab['racen'] = np.zeros(len(tab), dtype=float)
     tab['deccen'] = np.zeros(len(tab), dtype=float)
