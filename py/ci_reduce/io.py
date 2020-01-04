@@ -351,6 +351,13 @@ def high_level_ccds_metrics(tab, catalog):
     tab['n_sources'] = n_sources
     tab['n_sources_for_shape'] = n_sources_for_shape
 
+def prescan_overscan_ccds_table(tab, exp):
+    # add information about bad pixels in overscan/prescan to
+    # CCDs table, should be useful in identifying reasons for problematic
+    # reductions...
+
+    tab['npix_bad_total'] = [exp.images[extname].overscan.n_badpix_all for extname in tab['extname']]
+    
 def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
     assert(os.path.exists(outdir))
@@ -411,6 +418,8 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
     high_level_ccds_metrics(tab, catalog)
 
+    prescan_overscan_ccds_table(tab, exp)
+    
     print('Attempting to write CCDs table to ' + outname)
     tab.write(outname, format='fits')
 
