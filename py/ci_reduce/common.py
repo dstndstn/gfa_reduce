@@ -253,7 +253,8 @@ def mask_bit_dict():
     # keys are strings with shorthand name for each bit, values
     # are the corresponding powers of 2
 
-    d = {'HOTDARK' : 0}
+    d = {'HOTDARK' : 0,
+         'SATUR' : 1}
 
     return d
 
@@ -267,7 +268,8 @@ def mask_bit_from_bitname(bitname):
 
 def mask_bit_description_dict():
 
-    d = {'HOTDARK' : 'hot pixel based on master dark'}
+    d = {'HOTDARK' : 'hot pixel based on master dark',
+         'SATUR' : 'saturated pixel'}
 
     return d
 
