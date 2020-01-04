@@ -75,6 +75,9 @@ class CI_image:
         self.overscan = Overscan(self.image)
         self.remove_overscan()
 
+        par = common.ci_misc_params()
+        self.satmask = (self.image > par['sat_thresh_adu']).astype('byte')
+        
         self.cube_index = cube_index
         self.header = header
         self.header['CONTRAST'] = 0.0 # typically overwritten with actual value
@@ -116,7 +119,8 @@ class CI_image:
         d = common.mask_bit_dict()
         thresh = scoreatpercentile(dark_image, 99.5)
         self.bitmask = ((dark_image > thresh)*(2**d['HOTDARK'])).astype('byte')
-
+        self.bitmask += self.satmask*(2**1)
+        
     def calc_variance_e_squared(self):
         # at this stage the image ought to have been bias subtracted
         # but not flatfielded or dark subtracted

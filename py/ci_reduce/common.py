@@ -31,6 +31,7 @@ def ci_misc_params():
            'nominal_mer_cd': (5.0/3.0)*3.26627e-5,
            'nominal_cen_cd': (5.0/3.0)*3.70303e-5,
            'full_well_electrons' : 100000.0,
+           'sat_thresh_adu' : 40000.0,
            'nominal_fwhm_asec' : 1.25,
            'headers_dummy_filename' : 'dummy_with_headers_gaia.zenith.fits.gz',
            'reduced_image_flavors' : ['REDUCED', 'INVVAR', 'BITMASK']}
