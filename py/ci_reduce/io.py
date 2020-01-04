@@ -119,6 +119,8 @@ def load_exposure(fname, verbose=True, realtime=False, cube_index=None):
 
     exp = CI_exposure(imlist, exp_header=exp_header, bintables=bintables)
 
+    exp.set_bintable_rows()
+    
     print('Successfully loaded exposure : ' + fname)
     print('Exposure has ' + str(exp.num_images_populated()) + 
           ' image extensions populated')

@@ -73,7 +73,8 @@ class CI_image:
 
         self.overscan = Overscan(self.image)
         self.remove_overscan()
-            
+
+        self.cube_index = cube_index
         self.header = header
         self.header['CONTRAST'] = 0.0 # typically overwritten with actual value
         self.initialize_wcs()
@@ -94,6 +95,7 @@ class CI_image:
         self.segmap = None # may want to get rid of this entirely
         self.empirical_bg_sigma = None
         self.sky_level_adu = None
+        self.bintable_row = None
 
     def create_dq_mask(self, dark_image):
         if self.bitmask is not None:

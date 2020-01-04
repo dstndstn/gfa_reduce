@@ -1,6 +1,7 @@
 import ci_reduce.common as common
 import numpy as np
 import os
+from astropy.table import Table
 
 def has_wrong_dimensions(exp):
     # check meant to catch simulated data
@@ -245,3 +246,29 @@ def expid_from_raw_filename(fname):
     f = f.split('-', 1)[1]
 
     return int(f[0:8])
+
+def average_bintable_metadata(tab):
+
+    result = Table()
+
+    result['EXPTIME'] = [np.mean(tab['EXPTIME'])]
+    result['REQTIME'] = [np.mean(tab['REQTIME'])]
+    result['NIGHT'] = [tab['NIGHT'][0]]
+    
+    columns_to_average = ['MJD-OBS',
+                          'GAMBNTT',
+                          'GFPGAT',
+                          'GFILTERT',
+                          'GCOLDTEC',
+                          'GHOTTEC',
+                          'GCCDTEMP',
+                          'GCAMTEMP',
+                          'GHUMID2',
+                          'GHUMID3']
+
+    for col in columns_to_average:
+        if col in tab.columns.names:
+            # weighted average...
+            result[col] = [np.sum(tab[col]*tab['EXPTIME'])/np.sum(tab['EXPTIME'])]
+
+    return result

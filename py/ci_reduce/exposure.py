@@ -3,6 +3,7 @@ import ci_reduce.imred.load_calibs as load_calibs
 import ci_reduce.dark_current as dark_current
 import astropy.io.fits as fits
 import numpy as np
+import ci_reduce.analysis.util as util
 
 class CI_exposure:
     """Object encapsulating the contents of a single CI exposure"""
@@ -137,3 +138,13 @@ class CI_exposure:
 
         for extname in extnames:
             cat[cat['camera'] == extname] = self.images[extname].catalog_add_radec(cat[cat['camera'] == extname])
+
+    def set_bintable_rows(self):
+        for image in self.images.values():
+            extname = image.header['EXTNAME'].strip()
+            if image.cube_index is None:
+                image.bintable_row = None
+            elif image.cube_index == -1:
+                image.bintable_row = util.average_bintable_metadata(self.bintables[extname])
+            else:
+                image.bintable_row = self.bintables[extname][image.cube_index]
