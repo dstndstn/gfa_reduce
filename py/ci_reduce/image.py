@@ -119,11 +119,23 @@ class CI_image:
 
         d = common.mask_bit_dict()
         thresh = scoreatpercentile(dark_image, 99.5)
-        self.bitmask = ((dark_image > thresh)*(2**d['HOTDARK'])).astype('byte')
+        if self.bitmask is None:
+            self.bitmask = ((dark_image > thresh)*(2**d['HOTDARK'])).astype('byte')
+        else:
+            self.bitmask += ((dark_image > thresh)*(2**d['HOTDARK'])).astype('byte')
         self.bitmask += self.satmask*(2**d['SATUR'])
 
         self.bitmask = self.bitmask.astype('byte') # just to make sure...
         del self.satmask
+
+    def update_bitmask_flat(self, flatfield):
+        # doing this to avoid having to keep flatfield images in memory
+
+        thresh = 0.6 # very little thought put into this choice..
+        if self.bitmask is None:
+            self.bitmask = ((flatfield < thresh)*(2**2)).astype('byte')
+        else:
+            self.bitmask += ((flatfield < thresh)*(2**2)).astype('byte')
         
     def calc_variance_e_squared(self):
         # at this stage the image ought to have been bias subtracted

@@ -291,8 +291,10 @@ def add_metadata_columns(tab, bitmask):
     tab['dq_flags'] = bitmask[iys, ixs]
 
 def get_source_list(image, bitmask, extname, ivar_adu, thresh=5):
- 
-    image = djs_maskinterp.average_bilinear(image, (bitmask != 0))
+
+    par = common.mask_bit_dict()
+    
+    image = djs_maskinterp.average_bilinear(image, (np.bitwise_and(bitmask, 1) != 0))
 
     nominal_fwhm_pix = get_nominal_fwhm_pix(extname)
 

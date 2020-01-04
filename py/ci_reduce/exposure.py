@@ -92,6 +92,7 @@ class CI_exposure:
                     flatfield
                 self.images[extname].flatfielded = True
                 self.images[extname].calc_variance_adu(flatfield)
+                self.images[extname].update_bitmask_flat(flatfield)
 
     def calibrate_pixels(self):
         self.subtract_bias()
