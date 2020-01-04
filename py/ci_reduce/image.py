@@ -307,6 +307,7 @@ class CI_image:
         else:
             tab['mjd_obs'] = mjd_obs
 
+        util.add_ampname_to_catalog(tab)
         util.sanity_check_catalog(tab)
         return tab
 

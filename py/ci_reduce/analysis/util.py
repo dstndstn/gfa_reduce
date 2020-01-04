@@ -279,3 +279,29 @@ def sanity_check_catalog(cat):
     print('Sanity checking source catalog...')
     assert(np.sum(np.isfinite(cat['xcentroid'])) == len(cat))
     assert(np.sum(np.isfinite(cat['ycentroid'])) == len(cat))
+
+def xy_to_ampname(x, y):
+    # x and y should be zero-indexed pixel coordinates within
+    # the image area (prescan/overscan stripped out)
+    # x and y should be scalar
+
+    if (x <= 1023.5) and (y <= 515.5):
+        return 'E'
+    if (x > 1023.5) and (y <= 515.5):
+        return 'F'
+    if (x > 1023.5) and (y > 515.5):
+        return 'G'
+    if (x <= 1023.5) and (y > 515.5):
+        return 'H'
+
+    # should never get here...
+    assert(False)
+
+def add_ampname_to_catalog(cat):
+    # assumes x and y pixel coordinates conform to expectations of
+    # xy_to_ampname function above and that they're stored in columns
+    # named 'xcentroid' and 'ycentroid'
+
+    amps = [xy_to_ampname(cat['xcentroid'][i], cat['ycentroid'][i]) for i in range(len(cat))]
+
+    cat['amp'] = amps
