@@ -377,9 +377,14 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
     tab['expid'] = [exp.images[extname].header['EXPID'] for extname in tab['camera']]
 
+    # should work except if early versions of guide cubes lacked
+    # MJD information...
+    mjds = [exp.images[extname].try_retrieve_meta_keyword('MJD-OBS') for extname in tab['camera']]
+    if None not in mjds:
+        tab['mjd'] = mjds
+    
     if cube_index is None:
         tab['exptime'] = [exp.images[extname].header['EXPTIME'] for extname in tab['camera']]
-        tab['mjd'] = [exp.images[extname].header['MJD-OBS'] for extname in tab['camera']]
         h_gfa = fits.getheader(fname_in, extname='GFA')
         tab['airmass'] = h_gfa['AIRMASS']
         tab['night'] = h_gfa['NIGHT']
