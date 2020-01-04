@@ -108,7 +108,16 @@ def load_exposure(fname, verbose=True, realtime=False, cube_index=None):
         print(e)
         return None
 
-    exp = CI_exposure(imlist, exp_header=exp_header)
+    bintables = None
+    if is_cube:
+        bintables = {}
+        for ind in w_im:
+            extname_im = hdul[ind].header['EXTNAME'].strip()
+            extname_tab = extname_im + 'T'
+            # this will crash if the binary table extension is missing...
+            bintables[extname_im] = hdul[extname_tab].data
+
+    exp = CI_exposure(imlist, exp_header=exp_header, bintables=bintables)
 
     print('Successfully loaded exposure : ' + fname)
     print('Exposure has ' + str(exp.num_images_populated()) + 
