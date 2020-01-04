@@ -132,10 +132,11 @@ class CI_image:
         # doing this to avoid having to keep flatfield images in memory
 
         thresh = 0.6 # very little thought put into this choice..
+        d = common.mask_bit_dict()
         if self.bitmask is None:
-            self.bitmask = ((flatfield < thresh)*(2**2)).astype('byte')
+            self.bitmask = ((flatfield < thresh)*(2**d['FLATBAD'])).astype('byte')
         else:
-            self.bitmask += ((flatfield < thresh)*(2**2)).astype('byte')
+            self.bitmask += ((flatfield < thresh)*(2**d['FLATBAD'])).astype('byte')
         
     def calc_variance_e_squared(self):
         # at this stage the image ought to have been bias subtracted

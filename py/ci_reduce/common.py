@@ -254,7 +254,8 @@ def mask_bit_dict():
     # are the corresponding powers of 2
 
     d = {'HOTDARK' : 0,
-         'SATUR' : 1}
+         'SATUR' : 1,
+         'FLATBAD' : 2}
 
     return d
 
@@ -269,7 +270,8 @@ def mask_bit_from_bitname(bitname):
 def mask_bit_description_dict():
 
     d = {'HOTDARK' : 'hot pixel based on master dark',
-         'SATUR' : 'saturated pixel'}
+         'SATUR' : 'saturated pixel',
+         'FLATBAD' : 'low flatfield value'}
 
     return d
 
