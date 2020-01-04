@@ -357,6 +357,15 @@ def prescan_overscan_ccds_table(tab, exp):
     # reductions...
 
     tab['npix_bad_total'] = [exp.images[extname].overscan.n_badpix_all for extname in tab['extname']]
+
+    npix_bad_per_amp = np.zeros((len(tab), 4)) # 4 amps...
+    ampnames = ['E', 'F', 'G', 'H']
+    
+    for i, t in enumerate(tab):
+        vals = np.array([exp.images[t['extname']].overscan.n_badpix[amp] for amp in ampnames])
+        npix_bad_per_amp[i, :] = vals
+
+    tab['npix_bad_per_amp'] = npix_bad_per_amp
     
 def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
