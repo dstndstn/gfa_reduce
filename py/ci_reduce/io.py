@@ -78,7 +78,7 @@ def load_exposure(fname, verbose=True, realtime=False, cube_index=None):
     else:
         hdul = realtime_raw_read(fname)
 
-    dummy_fz_header = None
+    exp_header = None
 
     is_image_hdu = np.zeros(len(hdul), dtype=bool)
     for i, hdu in enumerate(hdul):
@@ -88,8 +88,9 @@ def load_exposure(fname, verbose=True, realtime=False, cube_index=None):
             continue
         if hdu.header['EXTNAME'] not in common.valid_extname_list():
             continue
-        if (hdu.header['EXTNAME']).strip() == par['fz_dummy_extname']:
-            dummy_fz_header = hdu.header
+        if (hdu.header['EXTNAME']).strip() in [par['gfa_exp_extname'], par['guider_exp_extname']]:
+            exp_header = hdu.header
+            print(repr(exp_header))
             continue
         is_image_hdu[i] = True
 
@@ -107,7 +108,7 @@ def load_exposure(fname, verbose=True, realtime=False, cube_index=None):
         print(e)
         return None
 
-    exp = CI_exposure(imlist, dummy_fz_header=dummy_fz_header)
+    exp = CI_exposure(imlist, exp_header=exp_header)
 
     print('Successfully loaded exposure : ' + fname)
     print('Exposure has ' + str(exp.num_images_populated()) + 

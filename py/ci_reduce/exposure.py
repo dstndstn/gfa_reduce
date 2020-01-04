@@ -7,7 +7,7 @@ import numpy as np
 class CI_exposure:
     """Object encapsulating the contents of a single CI exposure"""
 
-    def __init__(self, image_list, dummy_fz_header=None):
+    def __init__(self, image_list, exp_header=None):
         # images is a dictionary of CI_image objects
 
         par = common.ci_misc_params()
@@ -15,7 +15,9 @@ class CI_exposure:
                                par['n_cameras']*[None]))
 
         self.assign_image_list(image_list)
-        self.dummy_fz_header = dummy_fz_header
+
+        # exposure-level header
+        self.exp_header = exp_header
         self.pixels_calibrated = None
 
     def assign_one_image(self, image):
@@ -88,10 +90,7 @@ class CI_exposure:
         return [k for k,v in self.images.items() if v is not None]
 
     def to_hdulist(self, flavor=''):
-        # I don't plan on writing fpack'ed outputs
-        fz = False
-
-        extname_list = common.valid_extname_list(fz=False)
+        extname_list = common.valid_image_extname_list()
         hdulist = []
         for extname in extname_list:
             if self.images[extname] is not None:

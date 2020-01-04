@@ -21,7 +21,8 @@ def ci_misc_params():
            'height_with_prescan_overscan' : 1032,
            'n_cameras': 6,
            'nominal_zeropoint': 27.0621,
-           'fz_dummy_extname': 'GFA',
+           'gfa_exp_extname': 'GFA',
+           'guider_exp_extname' : 'GUIDER',
            'master_bias_filename': 'GFA_master_bias-overscan_subtracted.fits', 
            'master_flat_filename': 'GFA_master_flat.20191229.fits',
            'master_dark_filename' : 'master_dark_library/master_dark-00026584_00026684.fits',
@@ -113,19 +114,16 @@ def valid_image_extnum_list(fz=True):
 
     return (np.arange(1, 6) if fz else np.arange(0, 5))
 
+def valid_image_extname_list():
+    return ['GUIDE0', 'GUIDE2', 'GUIDE3', 'GUIDE5', 'GUIDE7', 'GUIDE8']
+
 def valid_extname_list(fz=True):
     """ returned list is in order of CI# in DESI-3347 """
 
-    extnames = ['GUIDE0', 'GUIDE2', 'GUIDE3', 'GUIDE5', 'GUIDE7', 'GUIDE8']
-
     par = ci_misc_params()
-    if fz:
-        extnames.append(par['fz_dummy_extname'])
+    extnames = valid_image_extname_list() + [par['gfa_exp_extname'], par['guider_exp_extname']]
 
     return extnames
-
-def valid_image_extname_list():
-    return valid_extname_list(fz=False)
 
 def valid_ci_number_list():
     """ from DESI-3347 page 2 CI# labels """
