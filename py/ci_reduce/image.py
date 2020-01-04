@@ -97,6 +97,17 @@ class CI_image:
         self.sky_level_adu = None
         self.bintable_row = None
 
+        # record CCD temperature used for dark current removal
+        self.t_c_for_dark = None
+
+        # should become a boolean indicating whether CCD temperature
+        # used for dark removal was a guess (1) or is thought to
+        # be correct (0)
+        self.t_c_for_dark_is_guess = None
+        
+        # record exposure time used for dark current removal
+        self.time_s_for_dark = None
+        
     def create_dq_mask(self, dark_image):
         if self.bitmask is not None:
             return

@@ -382,7 +382,11 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
     mjds = [exp.images[extname].try_retrieve_meta_keyword('MJD-OBS') for extname in tab['camera']]
     if None not in mjds:
         tab['mjd'] = mjds
-    
+
+    tab['t_c_for_dark'] = [exp.images[extname].t_c_for_dark for extname in tab['camera']]
+    tab['t_c_for_dark_is_guess'] = [int(exp.images[extname].t_c_for_dark_is_guess) for extname in tab['camera']]
+    tab['time_s_for_dark'] = [exp.images[extname].time_s_for_dark for extname in tab['camera']]
+        
     if cube_index is None:
         tab['exptime'] = [exp.images[extname].header['EXPTIME'] for extname in tab['camera']]
         h_gfa = fits.getheader(fname_in, extname='GFA')

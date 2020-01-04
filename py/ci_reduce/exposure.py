@@ -60,13 +60,21 @@ class CI_exposure:
                     print('could not find an exposure time !!!!')
                     assert(False) # die
 
+                self.images[extname].time_s_for_dark = acttime
+                
+                self.images[extname].t_c_for_dark_is_guess = False
                 t_c = self.images[extname].try_retrieve_meta_keyword('GCCDTEMP')
                 if t_c is None:
                     print('trying GCOLDTEC instead of GCCDTEMP')
                     t_c = self.images[extname].try_retreive_meta_keyword('GCOLDTEC')
+                    
                 if t_c is None:
                     print('could not find a CCD temperature !!!!')
+                    self.images[extname].t_c_for_dark_is_guess = True
                     t_c = 11.0 # HACK !!!!
+
+                self.images[extname].t_c_for_dark = t_c
+                
                 
                 dark_image = dark_current.total_dark_image_adu(extname,
                                                                acttime, t_c)
