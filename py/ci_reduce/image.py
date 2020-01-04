@@ -113,8 +113,9 @@ class CI_image:
         if self.bitmask is not None:
             return
 
+        d = common.mask_bit_dict()
         thresh = scoreatpercentile(dark_image, 99.5)
-        self.bitmask = (dark_image > thresh).astype('byte')
+        self.bitmask = ((dark_image > thresh)*(2**d['HOTDARK'])).astype('byte')
 
     def calc_variance_e_squared(self):
         # at this stage the image ought to have been bias subtracted
