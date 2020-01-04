@@ -272,3 +272,10 @@ def average_bintable_metadata(tab):
             result[col] = [np.sum(tab[col]*tab['EXPTIME'])/np.sum(tab['EXPTIME'])]
 
     return result
+
+def sanity_check_catalog(cat):
+    # can build more checks into this as time goes on...
+
+    print('Sanity checking source catalog...')
+    assert(np.sum(np.isfinite(cat['xcentroid'])) == len(cat))
+    assert(np.sum(np.isfinite(cat['ycentroid'])) == len(cat))

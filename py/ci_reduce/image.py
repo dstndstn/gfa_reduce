@@ -9,6 +9,7 @@ import astropy.io.fits as fits
 from astropy import wcs
 from astropy.stats import mad_std
 from scipy.stats import scoreatpercentile
+import ci_reduce.analysis.util as util
 
 class Overscan:
     """Object to encapsulate single-camera worth of overscan and prescan"""
@@ -306,6 +307,7 @@ class CI_image:
         else:
             tab['mjd_obs'] = mjd_obs
 
+        util.sanity_check_catalog(tab)
         return tab
 
     def initialize_wcs(self):
