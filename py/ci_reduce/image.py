@@ -289,10 +289,11 @@ class CI_image:
 
         tab = self.catalog_add_radec(tab)
 
-        try:
-            tab['MJD_OBS'] = self.header['MJD-OBS']
-        except:
+        mjd_obs = self.try_retrieve_meta_keyword('MJD-OBS')
+        if mjd_obs is None:
             print('could not find MJD-OBS header keyword !!!')
+        else:
+            tab['mjd_obs'] = mjd_obs
 
         return tab
 
@@ -341,3 +342,23 @@ class CI_image:
         del self.header['PC2_1']
         del self.header['PC1_2']
         del self.header['PC2_2']
+
+    def try_retrieve_meta_keyword(self, keyword):
+        # examples are MJD-OBS and GCCDTEMP, which
+        # are found in different places in the raw data depending
+        # on gfa*.fits.fz versus guide*.fits.fz
+
+        # because guider cube metadata has evolved over time, won't
+        # always be guaranteed to get e.g., GCCDTEMP at all
+        
+        # first look in the image header
+
+        if keyword in self.header.keys():
+            return self.header[keyword]
+        elif self.bintable_row is not None:
+            return self.bintable_row[keyword]
+        else:
+            print('could not find ' + keyword + ' !!')
+            return None
+            
+        
