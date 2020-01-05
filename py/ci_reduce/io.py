@@ -371,6 +371,40 @@ def prescan_overscan_ccds_table(tab, exp):
     tab['npix_bad_per_amp'] = npix_bad_per_amp
     tab['overscan_medians_adu'] = overscan_medians
     tab['prescan_medians_adu'] = prescan_medians
+
+def astrom_ccds_table(tab, exp):
+    # package WCS solutions into CCDs table
+
+    crvals = np.zeros((len(tab), 2), dtype=float) # double
+    naxis = np.zeros((len(tab), 2), dtype=int)
+    naxis[:, 0] = 2048 # prescan/overscan removed
+    naxis[:, 1] = 1032 # prescan/overscan removed
+    cds = np.zeros((len(tab), 2, 2), dtype=float) # double
+    cdelts = np.ones((len(tab), 2), dtype=float) # double
+    crpixs = np.zeros((len(tab), 2), dtype=float) # double
+    ctypes = np.zeros((len(tab), 2), dtype='U8') # double
+    ctypes[:, 0] = 'RA---TAN'
+    ctypes[:, 1] = 'DEC--TAN'
+    longpoles = np.zeros(len(tab), dtype=float) + 180 # double
+    latpoles = np.zeros(len(tab), dtype=float) + 90 # double
+    pv2s = np.zeros((len(tab), 2), dtype=float) # double
+    
+    
+    tab['NAXIS'] = naxis
+    
+    for i, extname in enumerate(tab['extname']):
+        crvals[i, :] = exp.images[extname].wcs.wcs.crval
+        cds[i, :, :] = np.transpose(exp.images[extname].wcs.wcs.cd)
+        crpixs[i, :] = exp.images[extname].wcs.wcs.crpix
+
+    tab['cd'] = cds
+    tab['cdelt'] = cdelts
+    tab['crpix'] = crpixs
+    tab['crval'] = crvals
+    tab['ctype'] = ctypes
+    tab['longpole'] = longpoles
+    tab['latpole'] = latpoles
+    tab['pv2'] = pv2s
     
 def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
@@ -433,6 +467,7 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
     high_level_ccds_metrics(tab, catalog)
 
     prescan_overscan_ccds_table(tab, exp)
+    astrom_ccds_table(tab, exp)
     
     print('Attempting to write CCDs table to ' + outname)
     tab.write(outname, format='fits')
