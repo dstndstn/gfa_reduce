@@ -375,19 +375,20 @@ def prescan_overscan_ccds_table(tab, exp):
 def astrom_ccds_table(tab, exp):
     # package WCS solutions into CCDs table
 
-    crvals = np.zeros((len(tab), 2), dtype=float) # double
-    naxis = np.zeros((len(tab), 2), dtype=int)
+    nrows = len(tab)
+    crvals = np.zeros((nrows, 2), dtype=float) # double
+    naxis = np.zeros((nrows, 2), dtype=int)
     naxis[:, 0] = 2048 # prescan/overscan removed
     naxis[:, 1] = 1032 # prescan/overscan removed
-    cds = np.zeros((len(tab), 2, 2), dtype=float) # double
-    cdelts = np.ones((len(tab), 2), dtype=float) # double
-    crpixs = np.zeros((len(tab), 2), dtype=float) # double
-    ctypes = np.zeros((len(tab), 2), dtype='U8') # double
+    cds = np.zeros((nrows, 2, 2), dtype=float) # double
+    cdelts = np.ones((nrows, 2), dtype=float) # double
+    crpixs = np.zeros((nrows, 2), dtype=float) # double
+    ctypes = np.zeros((nrows, 2), dtype='U8') # double
     ctypes[:, 0] = 'RA---TAN'
     ctypes[:, 1] = 'DEC--TAN'
-    longpoles = np.zeros(len(tab), dtype=float) + 180 # double
-    latpoles = np.zeros(len(tab), dtype=float) + 90 # double
-    pv2s = np.zeros((len(tab), 2), dtype=float) # double
+    longpoles = np.zeros(nrows, dtype=float) + 180 # double
+    latpoles = np.zeros(nrows, dtype=float) + 90 # double
+    pv2s = np.zeros((nrows, 2), dtype=float) # double
     
     
     tab['NAXIS'] = naxis
