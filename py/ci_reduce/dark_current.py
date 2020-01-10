@@ -116,13 +116,39 @@ def dark_rescaling_factor(t_master, t_image, extname):
     print(fac, '$$$$$$$$$$$$$$$$$$$$$$$$$$')
     return fac
 
+def read_dark_image(ci_extname, exptime, t_celsius):
+    assert(common.is_valid_extname(ci_extname))
+
+    par = common.ci_misc_params()
+
+    # try getting a master dark with an exactly matching integration time
+    dark_fname = choose_master_dark(exptime, ci_extname, t_celsius)
+
+    # if no master dark has an exactly matching integration time
+    # then just go back to some 'standard' 5 s master dark
+    # REVISIT THIS LATER TO DO BETTER
+    if dark_fname is None:
+        print('could not find a master dark with ORIGTIME matching EXPTIME')
+        dark_fname = os.path.join(os.environ[par['etc_env_var']], \
+                                  par['master_dark_filename'])
+
+    print('Attempting to read master dark : ' + dark_fname + 
+          ', extension name : ' + ci_extname)
+
+    assert(os.path.exists(dark_fname))
+
+    dark, hdark = fits.getdata(dark_fname, extname=ci_extname, header=True)
+
+    dark = load_calibs.remove_overscan(dark)
+    return dark, hdark, dark_fname
+
 def total_dark_image_adu(extname, exptime, t_celsius):
     # return a predicted image of the total dark current in
     # a CI image by scaling the master dark image to account 
     # for the exposure time and temperature
     # return value will be in ADU !!!
 
-    dark_image, hdark = load_calibs.read_dark_image(extname)
+    dark_image, hdark, dark_fname = read_dark_image(extname, exptime, t_celsius)
 
     dark_image *= dark_rescaling_factor(hdark['GCCDTEMP'], t_celsius, extname)
 
