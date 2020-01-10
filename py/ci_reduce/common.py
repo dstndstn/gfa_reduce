@@ -26,6 +26,7 @@ def ci_misc_params():
            'master_bias_filename': 'GFA_master_bias-overscan_subtracted.fits', 
            'master_flat_filename': 'GFA_master_flat.20191229.fits',
            'master_dark_filename' : 'master_dark_library/master_dark-00026584_00026684.fits',
+           'dark_index_filename' : 'master_dark_index.fits',
            'static_mask_filename': 'GFA_static_badpixels.fits',
            'nominal_sag_cd': (5.0/3.0)*3.55978e-5, 
            'nominal_mer_cd': (5.0/3.0)*3.26627e-5,

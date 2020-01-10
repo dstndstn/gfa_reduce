@@ -2,6 +2,8 @@ import ci_reduce.common as common
 import numpy as np
 import matplotlib.pyplot as plt
 import ci_reduce.imred.load_calibs as load_calibs
+import os
+import astropy.io.fits as fits
 
 # return dark current rate in e-/pix/sec as a function of temperature
 # based on DESI-3358 slide 9, or else my own dark current measurements once 
@@ -127,3 +129,27 @@ def total_dark_image_adu(extname, exptime, t_celsius):
     dark_image *= exptime
 
     return dark_image
+
+def choose_master_dark(exptime, extname, gccdtemp):
+
+    par = common.ci_misc_params()
+    
+    # eventually could cache the index of master darks...
+    fname_index = os.path.join(os.environ[par['etc_env_var']], par['dark_index_filename'])
+    
+    assert(os.path.exists(fname_index))
+    str = fits.getdata(fname_index)
+
+    # cases of potential bad readout should already be removed, but just in case
+    str = str[str['READWARN'] == 0]
+
+    str = str[(str['ORIGTIME'] == exptime) & (str['EXTNAME'] == extname)]
+
+    # this is the case where EXPTIME does not have any available
+    # master darks in the library of master darks
+    if len(str) == 0:
+        return None
+
+    indmin = np.argmin(np.abs(str['GCCDTEMP'] - gccdtemp))
+
+    return str[indmin]['FNAME_FULL'].replace(' ', '')
