@@ -275,4 +275,7 @@ def choose_master_dark(exptime, extname, gccdtemp):
 
     indmin = np.argmin(np.abs(str['GCCDTEMP'] - gccdtemp))
 
-    return str[indmin]['FNAME_FULL'].replace(' ', '')
+    fname = str[indmin]['FNAME_FULL'].replace(' ', '').split('/')[-1]
+
+    fname = os.path.join(os.environ[par['etc_env_var']] + '/master_dark_library', fname)
+    return fname
