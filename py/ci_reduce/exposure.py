@@ -77,7 +77,8 @@ class CI_exposure:
                 
                 
                 dark_image = dark_current.total_dark_image_adu(extname,
-                                                               acttime, t_c)
+                                                               acttime, t_c,
+                                                               self.images[extname].image)
                 self.images[extname].image = self.images[extname].image - \
                     dark_image
                 self.images[extname].dark_subtracted = True
