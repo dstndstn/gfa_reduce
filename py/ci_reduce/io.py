@@ -409,12 +409,16 @@ def astrom_ccds_table(tab, exp):
 
 def dark_current_ccds_table(tab, exp):
     fname_master_dark = []
+    nrows = len(tab)
+    do_fit_dark_scaling = np.zeros(nrows, dtype='uint8')
     for i, t in enumerate(tab):
         dc = exp.dark_current_objs[t['extname']]
         fname_master_dark.append(dc.fname_master_dark)
-
-    tab['fname_master_dark'] = fname_master_dark
+        do_fit_dark_scaling[i] = dc.do_fit_dark_scaling
         
+    tab['fname_master_dark'] = fname_master_dark
+    tab['do_fit_dark_scaling'] = do_fit_dark_scaling
+
 def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
     assert(os.path.exists(outdir))

@@ -17,7 +17,8 @@ from scipy.optimize import minimize
 # have sufficient data to study any camera-to-camera dark current differences
 
 class DarkCurrentInfo:
-    def __init__(self, fname_master_dark, extname, header=None):
+    def __init__(self, fname_master_dark, extname, do_fit_dark_scaling,
+                 header=None):
 
         self.fname_master_dark = fname_master_dark
         self.extname = extname
@@ -28,6 +29,8 @@ class DarkCurrentInfo:
             self.header = header
 
         assert(self.header['EXTNAME'].replace(' ', '') == self.extname)
+
+        self.do_fit_dark_scaling = do_fit_dark_scaling
 
 def _objective_function(p, im, dark):
 
@@ -250,7 +253,7 @@ def total_dark_image_adu(extname, exptime, t_celsius, im,
 
     dark_image *= exptime
 
-    dc = DarkCurrentInfo(dark_fname, extname, header=hdark)
+    dc = DarkCurrentInfo(dark_fname, extname, do_dark_rescaling, header=hdark)
     
     if do_dark_rescaling:
         rescale_factor = fit_dark_scaling(im, dark_image, extname)
