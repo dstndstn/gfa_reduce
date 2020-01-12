@@ -18,7 +18,8 @@ from scipy.optimize import minimize
 
 class DarkCurrentInfo:
     def __init__(self, fname_master_dark, extname, do_fit_dark_scaling,
-                 temp_scaling_factor, rescale_factor, exptime, header=None):
+                 temp_scaling_factor, rescale_factor, rescale_factors,
+                 exptime, header=None):
 
         self.fname_master_dark = fname_master_dark
         self.extname = extname
@@ -42,6 +43,10 @@ class DarkCurrentInfo:
         # using temp_scaling_factor*exptime, or 1.0 if such an
         # empirical dark rescaling fit is not performed
         self.rescale_factor = rescale_factor
+
+        # 4 element array of per-amp best-fit empirical rescale factors
+        # or all placeholder NaN's if no rescaling fits performed
+        self.rescale_factors = rescale_factors
 
         # this will need to be updated with logic regarding
         # whether or not rescale_factor gets adopted !!!
@@ -137,9 +142,7 @@ def fit_dark_scaling(im, dark_guess_scaled, extname):
         #rescale_factors[i] = rescale_factor
         #ncalls[i] = _ncalls
 
-    rescale_factor = np.median(rescale_factors)
-    print(rescale_factor, ' !!! ')
-    return rescale_factor
+    return rescale_factors
     
 def dark_current_rate(t_celsius):
     """
@@ -273,13 +276,17 @@ def total_dark_image_adu(extname, exptime, t_celsius, im,
     dark_image *= exptime
     
     if do_dark_rescaling:
-        rescale_factor = fit_dark_scaling(im, dark_image, extname)
+        rescale_factors = fit_dark_scaling(im, dark_image, extname)
+        rescale_factor = np.median(rescale_factors)
+        print(rescale_factor, ' !!! ')
     else:
         print('skipping empirical fit of dark current scaling')
         rescale_factor = 1.0
+        rescale_factors = np.array([np.nan]*4)
 
     dc = DarkCurrentInfo(dark_fname, extname, do_dark_rescaling,
-                         temp_scaling_factor, rescale_factor, exptime,
+                         temp_scaling_factor, rescale_factor,
+                         rescale_factors, exptime,
                          header=hdark)
         
     return dark_image*rescale_factor, dc

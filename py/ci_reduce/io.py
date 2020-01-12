@@ -415,6 +415,7 @@ def dark_current_ccds_table(tab, exp):
     master_dark_gccdtemp = np.zeros(nrows)
     dark_temp_scaling_factor = np.zeros(nrows)
     total_dark_scaling_factor = np.zeros(nrows)
+    rescale_factors_per_amp = np.zeros((nrows, 4), dtype=float)
     for i, t in enumerate(tab):
         dc = exp.dark_current_objs[t['extname']]
         fname_master_dark.append(dc.fname_master_dark)
@@ -423,6 +424,7 @@ def dark_current_ccds_table(tab, exp):
         master_dark_gccdtemp[i] = dc.header['GCCDTEMP']
         dark_temp_scaling_factor[i] = dc.temp_scaling_factor
         total_dark_scaling_factor[i] = dc.total_dark_scaling
+        rescale_factors_per_amp[i, :] = dc.rescale_factors
         
     tab['fname_master_dark'] = fname_master_dark
     tab['do_fit_dark_scaling'] = do_fit_dark_scaling
@@ -430,6 +432,7 @@ def dark_current_ccds_table(tab, exp):
     tab['master_dark_gccdtemp'] = master_dark_gccdtemp
     tab['dark_temp_scaling_factor'] = dark_temp_scaling_factor
     tab['total_dark_scaling_factor'] = total_dark_scaling_factor
+    tab['dark_rescale_factors_per_amp'] = rescale_factors_per_amp
     
 def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
