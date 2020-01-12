@@ -5,6 +5,7 @@ import ci_reduce.imred.load_calibs as load_calibs
 import os
 import astropy.io.fits as fits
 from scipy.optimize import minimize
+from copy import deepcopy
 
 # return dark current rate in e-/pix/sec as a function of temperature
 # based on DESI-3358 slide 9, or else my own dark current measurements once 
@@ -19,7 +20,7 @@ from scipy.optimize import minimize
 class DarkCurrentInfo:
     def __init__(self, fname_master_dark, extname, do_fit_dark_scaling,
                  temp_scaling_factor, rescale_factor, rescale_factors,
-                 exptime, header=None):
+                 exptime, apply_rescale_fac, header=None):
 
         self.fname_master_dark = fname_master_dark
         self.extname = extname
@@ -54,6 +55,31 @@ class DarkCurrentInfo:
 
         self.dark_rescale_factor_bestfit = rescale_factor if do_fit_dark_scaling else np.nan
 
+        self.apply_rescale_fac = apply_rescale_fac
+
+def use_rescale_fac(factors):
+    # factors should be array w/ four elements, one per amp
+    assert(len(factors) == 4)
+
+    _factors = factors[np.argsort(factors)]
+
+    # look at 'middle two' values
+    mid_factors = _factors[1:3]
+
+    if np.sum(np.isfinite(mid_factors)) != 2:
+        return False
+    if np.sum(mid_factors < 0) != 0:
+        return False
+
+    rat = mid_factors[1]/mid_factors[0]
+
+    # sanity check
+    assert(rat >= 1)
+
+    thresh = 1.3
+
+    return (rat < thresh)
+    
 def _objective_function(p, im, dark):
 
     # im and dark should already be made 1-dimensional before being input !!
@@ -279,16 +305,21 @@ def total_dark_image_adu(extname, exptime, t_celsius, im,
     
     if do_dark_rescaling:
         rescale_factors = fit_dark_scaling(im, dark_image, extname)
-        rescale_factor = np.median(rescale_factors)
+        use_rescaling = use_rescale_fac(rescale_factors)
+        if use_rescaling:
+            rescale_factor = np.median(rescale_factors)
+        else:
+            rescale_factor = 1.0
         print(rescale_factor, ' !!! ')
     else:
         print('skipping empirical fit of dark current scaling')
         rescale_factor = 1.0
+        use_rescaling = False
         rescale_factors = np.array([np.nan]*4)
 
     dc = DarkCurrentInfo(dark_fname, extname, do_dark_rescaling,
                          temp_scaling_factor, rescale_factor,
-                         rescale_factors, exptime,
+                         rescale_factors, exptime, use_rescaling, 
                          header=hdark)
         
     return dark_image*rescale_factor, dc
