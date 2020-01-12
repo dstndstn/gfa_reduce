@@ -15,6 +15,9 @@ class CI_exposure:
         self.images = dict(zip(common.valid_image_extname_list(), 
                                par['n_cameras']*[None]))
 
+        self.dark_current_objs = dict(zip(common.valid_image_extname_list(), 
+                                          par['n_cameras']*[None]))
+
         self.assign_image_list(image_list)
 
         # exposure-level header
@@ -76,14 +79,15 @@ class CI_exposure:
                 self.images[extname].t_c_for_dark = t_c
                 
                 
-                dark_image = dark_current.total_dark_image_adu(extname,
-                                                               acttime, t_c,
-                                                               self.images[extname].image,
-                                                               do_dark_rescaling=do_dark_rescaling)
+                dark_image, dc_obj = dark_current.total_dark_image_adu(extname,
+                                                                       acttime, t_c,
+                                                                       self.images[extname].image,
+                                                                       do_dark_rescaling=do_dark_rescaling)
                 self.images[extname].image = self.images[extname].image - \
                     dark_image
                 self.images[extname].dark_subtracted = True
                 self.images[extname].create_dq_mask(dark_image)
+                self.dark_current_objs[extname] = dc_obj
 
     def apply_flatfield(self):
         print('Attempting to apply flat field...')

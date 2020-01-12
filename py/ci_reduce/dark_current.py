@@ -250,13 +250,15 @@ def total_dark_image_adu(extname, exptime, t_celsius, im,
 
     dark_image *= exptime
 
+    dc = DarkCurrentInfo(dark_fname, extname, header=hdark)
+    
     if do_dark_rescaling:
         rescale_factor = fit_dark_scaling(im, dark_image, extname)
     else:
         print('skipping empirical fit of dark current scaling')
         rescale_factor = 1.0
     
-    return dark_image*rescale_factor
+    return dark_image*rescale_factor, dc
 
 def choose_master_dark(exptime, extname, gccdtemp):
 

@@ -406,7 +406,15 @@ def astrom_ccds_table(tab, exp):
     tab['longpole'] = longpoles
     tab['latpole'] = latpoles
     tab['pv2'] = pv2s
-    
+
+def dark_current_ccds_table(tab, exp):
+    fname_master_dark = []
+    for i, t in enumerate(tab):
+        dc = exp.dark_current_objs[t['extname']]
+        fname_master_dark.append(dc.fname_master_dark)
+
+    tab['fname_master_dark'] = fname_master_dark
+        
 def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
     assert(os.path.exists(outdir))
@@ -469,6 +477,7 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
     prescan_overscan_ccds_table(tab, exp)
     astrom_ccds_table(tab, exp)
+    dark_current_ccds_table(tab, exp)
     
     print('Attempting to write CCDs table to ' + outname)
     tab.write(outname, format='fits')
