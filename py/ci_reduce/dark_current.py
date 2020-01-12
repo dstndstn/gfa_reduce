@@ -20,7 +20,7 @@ from copy import deepcopy
 class DarkCurrentInfo:
     def __init__(self, fname_master_dark, extname, do_fit_dark_scaling,
                  temp_scaling_factor, rescale_factor, rescale_factors,
-                 exptime, apply_rescale_fac, header=None):
+                 exptime, apply_rescale_fac, ncalls, header=None):
 
         self.fname_master_dark = fname_master_dark
         self.extname = extname
@@ -60,6 +60,7 @@ class DarkCurrentInfo:
             self.dark_rescale_factor_adopted = np.nan
 
         self.apply_rescale_fac = apply_rescale_fac
+        self.dark_rescale_ncalls = ncalls
 
 def use_rescale_fac(factors):
     # factors should be array w/ four elements, one per amp
@@ -174,7 +175,7 @@ def fit_dark_scaling(im, dark_guess_scaled, extname):
         #rescale_factors[i] = rescale_factor
         #ncalls[i] = _ncalls
 
-    return rescale_factors
+    return rescale_factors, ncalls
     
 def dark_current_rate(t_celsius):
     """
@@ -308,7 +309,7 @@ def total_dark_image_adu(extname, exptime, t_celsius, im,
     dark_image *= exptime
     
     if do_dark_rescaling:
-        rescale_factors = fit_dark_scaling(im, dark_image, extname)
+        rescale_factors, ncalls = fit_dark_scaling(im, dark_image, extname)
         use_rescaling = use_rescale_fac(rescale_factors)
         if use_rescaling:
             rescale_factor = np.median(rescale_factors)
@@ -320,11 +321,12 @@ def total_dark_image_adu(extname, exptime, t_celsius, im,
         rescale_factor = 1.0
         use_rescaling = False
         rescale_factors = np.array([np.nan]*4)
+        ncalls = np.array([-1]*4) # use -1 as placeholder value
 
     dc = DarkCurrentInfo(dark_fname, extname, do_dark_rescaling,
                          temp_scaling_factor, rescale_factor,
                          rescale_factors, exptime, use_rescaling, 
-                         header=hdark)
+                         ncalls, header=hdark)
         
     return dark_image*rescale_factor, dc
 
