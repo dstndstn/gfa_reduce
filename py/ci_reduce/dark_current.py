@@ -18,7 +18,7 @@ from scipy.optimize import minimize
 
 class DarkCurrentInfo:
     def __init__(self, fname_master_dark, extname, do_fit_dark_scaling,
-                 header=None):
+                 temp_scaling_factor, header=None):
 
         self.fname_master_dark = fname_master_dark
         self.extname = extname
@@ -31,6 +31,9 @@ class DarkCurrentInfo:
         assert(self.header['EXTNAME'].replace(' ', '') == self.extname)
 
         self.do_fit_dark_scaling = do_fit_dark_scaling
+
+        # nominal dark scaling factor based on model of temperature dependence
+        self.temp_scaling_factor = temp_scaling_factor
 
 def _objective_function(p, im, dark):
 
@@ -197,7 +200,7 @@ def get_linear_coeff(extname):
   return d[extname]
 
 
-def dark_rescaling_factor(t_master, t_image, extname):
+def dark_scaling_factor(t_master, t_image, extname):
     f = get_linear_coeff(extname)
 
     # linear rescaling factors returned by get_linear_coeff are
@@ -249,11 +252,16 @@ def total_dark_image_adu(extname, exptime, t_celsius, im,
 
     dark_image, hdark, dark_fname = read_dark_image(extname, exptime, t_celsius)
 
-    dark_image *= dark_rescaling_factor(hdark['GCCDTEMP'], t_celsius, extname)
+    # nominal rescaling factor from linear fits of temperature dependence
+    temp_scaling_factor = dark_scaling_factor(hdark['GCCDTEMP'], t_celsius,
+                                              extname)
+    
+    dark_image *= temp_scaling_factor
 
     dark_image *= exptime
 
-    dc = DarkCurrentInfo(dark_fname, extname, do_dark_rescaling, header=hdark)
+    dc = DarkCurrentInfo(dark_fname, extname, do_dark_rescaling,
+                         temp_scaling_factor, header=hdark)
     
     if do_dark_rescaling:
         rescale_factor = fit_dark_scaling(im, dark_image, extname)
