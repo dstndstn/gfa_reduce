@@ -18,7 +18,7 @@ from scipy.optimize import minimize
 
 class DarkCurrentInfo:
     def __init__(self, fname_master_dark, extname, do_fit_dark_scaling,
-                 temp_scaling_factor, header=None):
+                 temp_scaling_factor, rescale_factor, exptime, header=None):
 
         self.fname_master_dark = fname_master_dark
         self.extname = extname
@@ -30,10 +30,22 @@ class DarkCurrentInfo:
 
         assert(self.header['EXTNAME'].replace(' ', '') == self.extname)
 
+        # note that this is the exposure time of the GFA image being detrended
+        self.exptime = exptime
+        
         self.do_fit_dark_scaling = do_fit_dark_scaling
 
         # nominal dark scaling factor based on model of temperature dependence
         self.temp_scaling_factor = temp_scaling_factor
+
+        # empirically fit dark rescaling factor relative to just
+        # using temp_scaling_factor*exptime, or 1.0 if such an
+        # empirical dark rescaling fit is not performed
+        self.rescale_factor = rescale_factor
+
+        # this will need to be updated with logic regarding
+        # whether or not rescale_factor gets adopted !!!
+        self.total_dark_scaling = exptime*temp_scaling_factor*rescale_factor
 
 def _objective_function(p, im, dark):
 
@@ -259,16 +271,17 @@ def total_dark_image_adu(extname, exptime, t_celsius, im,
     dark_image *= temp_scaling_factor
 
     dark_image *= exptime
-
-    dc = DarkCurrentInfo(dark_fname, extname, do_dark_rescaling,
-                         temp_scaling_factor, header=hdark)
     
     if do_dark_rescaling:
         rescale_factor = fit_dark_scaling(im, dark_image, extname)
     else:
         print('skipping empirical fit of dark current scaling')
         rescale_factor = 1.0
-    
+
+    dc = DarkCurrentInfo(dark_fname, extname, do_dark_rescaling,
+                         temp_scaling_factor, rescale_factor, exptime,
+                         header=hdark)
+        
     return dark_image*rescale_factor, dc
 
 def choose_master_dark(exptime, extname, gccdtemp):
