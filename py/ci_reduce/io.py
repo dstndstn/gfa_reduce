@@ -411,13 +411,16 @@ def dark_current_ccds_table(tab, exp):
     fname_master_dark = []
     nrows = len(tab)
     do_fit_dark_scaling = np.zeros(nrows, dtype='uint8')
+    origtime = np.zeros(nrows)
     for i, t in enumerate(tab):
         dc = exp.dark_current_objs[t['extname']]
         fname_master_dark.append(dc.fname_master_dark)
         do_fit_dark_scaling[i] = dc.do_fit_dark_scaling
+        origtime[i] = dc.header['ORIGTIME']
         
     tab['fname_master_dark'] = fname_master_dark
     tab['do_fit_dark_scaling'] = do_fit_dark_scaling
+    tab['master_dark_exptime'] = origtime
 
 def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
