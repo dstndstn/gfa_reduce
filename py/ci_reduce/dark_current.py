@@ -52,6 +52,8 @@ class DarkCurrentInfo:
         # whether or not rescale_factor gets adopted !!!
         self.total_dark_scaling = exptime*temp_scaling_factor*rescale_factor
 
+        self.dark_rescale_factor_bestfit = rescale_factor if do_fit_dark_scaling else np.nan
+
 def _objective_function(p, im, dark):
 
     # im and dark should already be made 1-dimensional before being input !!
