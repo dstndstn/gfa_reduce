@@ -417,6 +417,7 @@ def dark_current_ccds_table(tab, exp):
     total_dark_scaling_factor = np.zeros(nrows)
     rescale_factors_per_amp = np.zeros((nrows, 4), dtype=float)
     dark_rescale_factor_bestfit = np.zeros(nrows)
+    dark_rescale_factor_adopted = np.zeros(nrows)
     apply_rescale_factor = np.zeros(nrows, dtype='uint8')
     
     for i, t in enumerate(tab):
@@ -430,6 +431,7 @@ def dark_current_ccds_table(tab, exp):
         rescale_factors_per_amp[i, :] = dc.rescale_factors
         dark_rescale_factor_bestfit[i] = dc.dark_rescale_factor_bestfit
         apply_rescale_factor[i] = dc.apply_rescale_fac
+        dark_rescale_factor_adopted[i] = dc.dark_rescale_factor_adopted
         
     tab['fname_master_dark'] = fname_master_dark
     tab['do_fit_dark_scaling'] = do_fit_dark_scaling
@@ -439,6 +441,7 @@ def dark_current_ccds_table(tab, exp):
     tab['total_dark_scaling_factor'] = total_dark_scaling_factor
     tab['dark_rescale_factors_per_amp'] = rescale_factors_per_amp
     tab['dark_rescale_factor_bestfit'] = dark_rescale_factor_bestfit
+    tab['dark_rescale_factor_adopted'] = dark_rescale_factor_adopted
     tab['apply_dark_rescale_factor'] = apply_rescale_factor
     
 def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):

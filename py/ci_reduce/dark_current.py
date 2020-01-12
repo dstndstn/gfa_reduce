@@ -53,7 +53,11 @@ class DarkCurrentInfo:
         # whether or not rescale_factor gets adopted !!!
         self.total_dark_scaling = exptime*temp_scaling_factor*rescale_factor
 
-        self.dark_rescale_factor_bestfit = rescale_factor if do_fit_dark_scaling else np.nan
+        self.dark_rescale_factor_bestfit = np.median(rescale_factors)
+
+        self.dark_rescale_factor_adopted = rescale_factor if apply_rescale_fac else 1.0
+        if not self.do_fit_dark_scaling:
+            self.dark_rescale_factor_adopted = np.nan
 
         self.apply_rescale_fac = apply_rescale_fac
 
