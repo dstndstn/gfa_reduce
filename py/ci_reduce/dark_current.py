@@ -233,7 +233,8 @@ def read_dark_image(ci_extname, exptime, t_celsius):
     dark = load_calibs.remove_overscan(dark)
     return dark, hdark, dark_fname
 
-def total_dark_image_adu(extname, exptime, t_celsius, im):
+def total_dark_image_adu(extname, exptime, t_celsius, im,
+                         do_dark_rescaling=True):
 
     # im is the bias-subtracted, overscan/prescan removed version of the
     # image being reduced
@@ -249,7 +250,11 @@ def total_dark_image_adu(extname, exptime, t_celsius, im):
 
     dark_image *= exptime
 
-    rescale_factor = fit_dark_scaling(im, dark_image, extname)
+    if do_dark_rescaling:
+        rescale_factor = fit_dark_scaling(im, dark_image, extname)
+    else:
+        print('skipping empirical fit of dark current scaling')
+        rescale_factor = 1.0
     
     return dark_image*rescale_factor
 

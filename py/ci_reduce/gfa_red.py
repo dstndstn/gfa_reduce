@@ -12,7 +12,7 @@ import time
 def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           no_gaia_xmatch=False, no_ps1_xmatch=False,
           cube_index=None, skip_image_outputs=False,
-          realtime=False):
+          realtime=False, no_dark_rescaling=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -52,7 +52,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
     # exp.create_all_bitmasks() # revisit this later
 
     # go from "raw" images to "reduced" images
-    exp.calibrate_pixels()
+    exp.calibrate_pixels(do_dark_rescaling=(not no_dark_rescaling))
 
     # calculate sky brightness in mag per sq asec
     exp.estimate_all_sky_mags(careful_sky=careful_sky)
@@ -141,6 +141,10 @@ if __name__ == "__main__":
     parser.add_argument('--realtime', default=False,
                         action='store_true',
                         help='avoid crashing on partially written raw files')
+
+    parser.add_argument('--no_dark_rescaling', default=False,
+                        action='store_true',
+                        help='skip empirical rescaling of dark current')
     
     args = parser.parse_args()
 
@@ -149,4 +153,5 @@ if __name__ == "__main__":
     _proc(fname_in, outdir=args.outdir, careful_sky=args.careful_sky,
           no_cataloging=args.no_cataloging, no_gaia_xmatch=args.no_gaia_xmatch,
           no_ps1_xmatch=args.no_ps1_xmatch, cube_index=args.cube_index,
-          skip_image_outputs=args.skip_image_outputs, realtime=args.realtime)
+          skip_image_outputs=args.skip_image_outputs, realtime=args.realtime,
+          no_dark_rescaling=args.no_dark_rescaling)

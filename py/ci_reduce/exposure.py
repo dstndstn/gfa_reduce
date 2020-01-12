@@ -47,7 +47,7 @@ class CI_exposure:
                 self.images[extname].bias_subtracted = True
                 self.images[extname].calc_variance_e_squared()
 
-    def subtract_dark_current(self):
+    def subtract_dark_current(self, do_dark_rescaling=True):
         print('Attempting to subtract dark current...')
         for extname in self.images.keys():
             if self.images[extname] is not None:
@@ -78,7 +78,8 @@ class CI_exposure:
                 
                 dark_image = dark_current.total_dark_image_adu(extname,
                                                                acttime, t_c,
-                                                               self.images[extname].image)
+                                                               self.images[extname].image,
+                                                               do_dark_rescaling=do_dark_rescaling)
                 self.images[extname].image = self.images[extname].image - \
                     dark_image
                 self.images[extname].dark_subtracted = True
@@ -95,9 +96,9 @@ class CI_exposure:
                 self.images[extname].calc_variance_adu(flatfield)
                 self.images[extname].update_bitmask_flat(flatfield)
 
-    def calibrate_pixels(self):
+    def calibrate_pixels(self, do_dark_rescaling=True):
         self.subtract_bias()
-        self.subtract_dark_current()
+        self.subtract_dark_current(do_dark_rescaling=do_dark_rescaling)
         self.apply_flatfield()
         self.pixels_calibrated = True
 
