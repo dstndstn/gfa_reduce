@@ -5,17 +5,23 @@ import numpy as np
 # presumably restricting to relative high s/n sources
 # if no good sources are available, then need to return some dummy
 # value 
-def overall_image_fwhm(tab, snr_thresh=20):
+def overall_image_fwhm(tab, bad_amps=None, snr_thresh=20):
     # remove bad/dummy FWHM values
     # remove sources that are near image boundaries
     # could remove sources that aren't isolated, but might be fine
     # to leave this as an optimization for the future
 
     assert(len(np.unique(tab['camera'])) == 1)
-
+        
     good = ((tab['sig_major_pix'] > 1) & np.isfinite(tab['sig_major_pix']) & 
             (tab['dq_flags'] == 0) & (tab['min_edge_dist_pix'] > 30) &
             (tab['detmap_peak'] >= snr_thresh))
+
+        # if bad amps specified, it should be a list 
+    # containing the amps thought to be in a state of bad readout
+    if (bad_amps is not None) and (len(bad_amps) > 0):
+        amp_ok = np.array([(t['amp'] not in bad_amps) for t in tab])
+        good = (good & amp_ok)
 
     # check for case of not enough sources
     if np.sum(good) < 2:
