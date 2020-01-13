@@ -97,12 +97,13 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
             io.write_image_level_outputs(exp, outdir, fname_in, gzip=True,
                                          cube_index=cube_index)
 
-        if not no_cataloging:
-            io.write_exposure_source_catalog(catalog, outdir, fname_in,
-                                             cube_index=cube_index)
         # make this work correctly in the case that --no_cataloging is set
         io.write_ccds_table(imstats, catalog, exp, outdir, fname_in,
                             cube_index=cube_index)
+        
+        if not no_cataloging:
+            io.write_exposure_source_catalog(catalog, outdir, fname_in,
+                                             cube_index=cube_index)
 
     print('Successfully finished reducing ' + fname_in)
 
