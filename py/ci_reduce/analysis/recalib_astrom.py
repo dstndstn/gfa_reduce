@@ -21,7 +21,10 @@ def recalib_astrom(cat, fname_raw):
     arcmin_max = 6.0
     print('astrometry search using ' + '{:.1f}'.format(arcmin_max) + ' arcminute radius')
     for extname in extnames:
-        result.append(kentools_center(cat[cat['camera'] == extname],
+        _cat = cat[(cat['camera'] == extname) & (cat['sig_major_pix'] > 1.0)]
+        if len(_cat) < 2:
+            _cat = cat[cat['camera'] == extname]
+        result.append(kentools_center(_cat,
                                       h['SKYRA'], h['SKYDEC'],
                                       extname=extname, gaia=gaia,
                                       arcmin_max=arcmin_max))
