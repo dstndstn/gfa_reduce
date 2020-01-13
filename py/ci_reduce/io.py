@@ -324,7 +324,8 @@ def gather_pixel_stats(exp):
 
 def bad_amps_list(row):
     # row should be one row of ccds table
-    amps = ['E', 'F', 'G', 'H']
+    amps = common.valid_amps_list()
+    amps.sort()
 
     bad_amps = []
     for i, n in enumerate(row['npix_bad_per_amp']):
