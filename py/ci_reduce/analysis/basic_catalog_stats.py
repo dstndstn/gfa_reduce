@@ -24,12 +24,18 @@ def overall_image_fwhm(tab, bad_amps=None, snr_thresh=20):
         good = (good & amp_ok)
 
     # check for case of not enough sources
-    if np.sum(good) < 2:
+    ngood = np.sum(good)
+    if ngood == 0:
         return -1, -1, -1, -1, 0
 
+    sig_to_fwhm = 2.355
     # just take geometric mean of semi-major / semi-minor sigmas ??
-    fwhm_major_pix = np.median(tab[good]['sig_major_pix'])*2.355
-    fwhm_minor_pix = np.median(tab[good]['sig_minor_pix'])*2.355
+    if ngood > 1:
+        fwhm_major_pix = np.median(tab[good]['sig_major_pix'])*sig_to_fwhm
+        fwhm_minor_pix = np.median(tab[good]['sig_minor_pix'])*sig_to_fwhm
+    else:
+        fwhm_major_pix = tab[good][0]['sig_major_pix']*sig_to_fwhm
+        fwhm_minor_pix = tab[good][0]['sig_minor_pix']*sig_to_fwhm
 
     fwhm_pix = np.sqrt(fwhm_major_pix*fwhm_minor_pix)
 
