@@ -501,6 +501,11 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
     if None not in mjds:
         tab['mjd'] = mjds
 
+    programs = [exp.images[extname].try_retrieve_meta_keyword('PROGRAM') for extname in tab['camera']]
+    if None not in programs:
+        tab['program'] = programs
+    
+
     tab['t_c_for_dark'] = [exp.images[extname].t_c_for_dark for extname in tab['camera']]
     tab['t_c_for_dark_is_guess'] = [int(exp.images[extname].t_c_for_dark_is_guess) for extname in tab['camera']]
     tab['time_s_for_dark'] = [exp.images[extname].time_s_for_dark for extname in tab['camera']]
