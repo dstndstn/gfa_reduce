@@ -292,7 +292,7 @@ def add_metadata_columns(tab, bitmask):
     ixs = [int(min(max(np.round(t['xcentroid']), xmin), xmax)) for t in tab]
     iys = [int(min(max(np.round(t['ycentroid']), ymin), ymax)) for t in tab]
 
-    tab['dq_flags'] = bitmask[iys, ixs]
+    tab['dq_flags'] = bitmask[iys, ixs].astype('uint8')
 
 def get_source_list(image, bitmask, extname, ivar_adu, thresh=5):
 
