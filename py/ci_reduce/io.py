@@ -497,13 +497,11 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
     # should work except if early versions of guide cubes lacked
     # MJD information...
-    mjds = [exp.images[extname].try_retrieve_meta_keyword('MJD-OBS') for extname in tab['camera']]
-    if None not in mjds:
-        tab['mjd'] = mjds
+    mjds = [exp.images[extname].try_retrieve_meta_keyword('MJD-OBS', placeholder=0.0) for extname in tab['camera']]
+    tab['mjd'] = mjds
 
-    programs = [exp.images[extname].try_retrieve_meta_keyword('PROGRAM') for extname in tab['camera']]
-    if None not in programs:
-        tab['program'] = programs
+    programs = [str(exp.images[extname].try_retrieve_meta_keyword('PROGRAM', placeholder='')) for extname in tab['camera']]
+    tab['program'] = programs
     
 
     tab['t_c_for_dark'] = [exp.images[extname].t_c_for_dark for extname in tab['camera']]

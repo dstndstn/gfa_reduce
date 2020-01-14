@@ -379,7 +379,7 @@ class CI_image:
         del self.header['PC1_2']
         del self.header['PC2_2']
 
-    def try_retrieve_meta_keyword(self, keyword):
+    def try_retrieve_meta_keyword(self, keyword, placeholder=None):
         # examples are MJD-OBS and GCCDTEMP, which
         # are found in different places in the raw data depending
         # on gfa*.fits.fz versus guide*.fits.fz
@@ -395,6 +395,6 @@ class CI_image:
             return self.bintable_row[keyword]
         else:
             print('could not find ' + keyword + ' !!')
-            return None
+            return placeholder
             
         
