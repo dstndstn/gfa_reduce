@@ -172,7 +172,6 @@ def fit_dark_scaling(im, dark_guess_scaled, extname):
     for i, amp in enumerate(amps):
         res = fit_dark_scaling_1amp(im, dark_guess_scaled, amp, extname)
         x = res.x
-        print(x[0], ' !!!!!!!!!!!!!!!!!!! ', extname, '  ', res.nfev)
         rescale_factors[i] = x[0]
         ncalls[i] = res.nfev
         success[i] = res.success
@@ -260,7 +259,6 @@ def dark_scaling_factor(t_master, t_image, extname):
 
     assert(fac > 0)
 
-    print(fac, '$$$$$$$$$$$$$$$$$$$$$$$$$$')
     return fac
 
 def read_dark_image(ci_extname, exptime, t_celsius):
@@ -318,7 +316,6 @@ def total_dark_image_adu(extname, exptime, t_celsius, im,
             rescale_factor = np.median(rescale_factors)
         else:
             rescale_factor = 1.0
-        print(rescale_factor, ' !!! ')
     else:
         print('skipping empirical fit of dark current scaling')
         rescale_factor = 1.0
