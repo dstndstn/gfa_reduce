@@ -306,6 +306,11 @@ def get_source_list(image, bitmask, extname, ivar_adu, thresh=5):
 
     refine_centroids(tab, image, bitmask, ivar_adu)
 
+    # attempt to remove hot pixels, think this is safe since i end up
+    # rejecting (sig_major_pix <= 1) sources when computing
+    # overall FWHM and recalibrating the astrometry
+    tab = tab[tab['sig_major_pix'] > 1.0]
+    
     add_metadata_columns(tab, bitmask)
 
     tab = tab[(tab['min_edge_dist_pix'] > -5)]
