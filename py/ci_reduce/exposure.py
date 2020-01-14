@@ -169,3 +169,10 @@ class CI_exposure:
                 image.bintable_row = util.average_bintable_metadata(self.bintables[extname])
             else:
                 image.bintable_row = self.bintables[extname][image.cube_index]
+
+    def try_retrieve_header_card(self, keyword, placeholder=None):
+        if keyword in self.exp_header.keys():
+            return self.exp_header[keyword]
+        else:
+            print('could not find ' + keyword + ' in exposure-level header !!')
+            return placeholder
