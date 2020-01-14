@@ -1,6 +1,7 @@
 import ci_reduce.analysis.util as util
 from astropy.stats import mad_std
 from scipy.ndimage.filters import gaussian_filter
+from scipy import ndimage
 import numpy as np
 from scipy.ndimage.measurements import label, find_objects
 from astropy.table import Table
@@ -49,12 +50,17 @@ def _get_area_from_ap(ap):
 def detection_map(im, fwhm):
     psf_sigma = fwhm/2.355
 
-    smth = gaussian_filter(im, psf_sigma)
+    smth = gaussian_filter(ndimage.median_filter(im, 3), psf_sigma)
 
+    smth[0, :] = 0.0
+    smth[1031, :] = 0.0
+    smth[:, 0] = 0.0
+    smth[:, 2047] = 0.0
+    
     sig_smth = mad_std(smth)
 
     detsn = (smth-np.median(smth))/sig_smth
-
+    
     return detsn
 
 def detect_sources(detsn, thresh):
@@ -162,11 +168,9 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
     catalog['sky_annulus_median'] = bkg_median
 
 def get_nominal_fwhm_pix(extname):
-    # this is a nominal FWHM for use as an initial guess
-    # when creating the detection map, when nothing is yet known
-    # about the FWHM of the particular data being analyzed
-    # could revisit this and/or clean it up later on
-    nominal_fwhm_pix = (9.3766944 if (extname == 'CIC') else 10.192287)
+    # roughly 1.25 asec divided by GFA pixel scale
+    # 1.25 is same nominal FWHM i used for source detection with CI reductions
+    nominal_fwhm_pix = 6.1
 
     return nominal_fwhm_pix
 
