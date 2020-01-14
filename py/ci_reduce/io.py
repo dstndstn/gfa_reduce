@@ -508,6 +508,8 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
     tab['domshutl'] = exp.try_retrieve_header_card('DOMSHUTL', placeholder='')
     tab['domshutu'] = exp.try_retrieve_header_card('DOMSHUTU', placeholder='')
     tab['pmcover'] = exp.try_retrieve_header_card('PMCOVER', placeholder='')
+    tab['moonra'] = exp.try_retrieve_header_card('MOONRA', placeholder=np.nan)
+    tab['moondec'] = exp.try_retrieve_header_card('MOONDEC', placeholder=np.nan)
     
     tab['t_c_for_dark'] = [exp.images[extname].t_c_for_dark for extname in tab['camera']]
     tab['t_c_for_dark_is_guess'] = [int(exp.images[extname].t_c_for_dark_is_guess) for extname in tab['camera']]
