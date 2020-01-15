@@ -176,12 +176,17 @@ def retrieve_git_rev():
     return gitrev
 
 def write_image_level_outputs(exp, outdir, fname_in, gzip=True,
-                              cube_index=None):
+                              cube_index=None, dont_write_invvar=False):
     # exp is a CI_exposure object
     # outdir is the output directory (string)
     # fname_in is the input filename (string)
 
     par = common.ci_misc_params()
+
+    flavors_list = par['reduced_image_flavors']
+
+    if dont_write_invvar:
+        flavors_list.remove('INVVAR')
 
     for flavor in par['reduced_image_flavors']:
         _gzip = (gzip if (flavor != 'REDUCED') else False)

@@ -12,7 +12,8 @@ import time
 def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           no_gaia_xmatch=False, no_ps1_xmatch=False,
           cube_index=None, skip_image_outputs=False,
-          realtime=False, no_dark_rescaling=False):
+          realtime=False, no_dark_rescaling=False, 
+          dont_write_invvar=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -95,7 +96,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
                   outdir)
             # could add command line arg for turning off gzip compression
             io.write_image_level_outputs(exp, outdir, fname_in, gzip=True,
-                                         cube_index=cube_index)
+                                         cube_index=cube_index,
+                                         dont_write_invvar=dont_write_invvar)
 
         # make this work correctly in the case that --no_cataloging is set
         io.write_ccds_table(imstats, catalog, exp, outdir, fname_in,
@@ -146,6 +148,10 @@ if __name__ == "__main__":
     parser.add_argument('--no_dark_rescaling', default=False,
                         action='store_true',
                         help='skip empirical rescaling of dark current')
+
+    parser.add_argument('--dont_write_invvar', default=False, 
+                        action='store_true',
+                        help="don't write out invvar maps")
     
     args = parser.parse_args()
 
@@ -155,4 +161,5 @@ if __name__ == "__main__":
           no_cataloging=args.no_cataloging, no_gaia_xmatch=args.no_gaia_xmatch,
           no_ps1_xmatch=args.no_ps1_xmatch, cube_index=args.cube_index,
           skip_image_outputs=args.skip_image_outputs, realtime=args.realtime,
-          no_dark_rescaling=args.no_dark_rescaling)
+          no_dark_rescaling=args.no_dark_rescaling, 
+          dont_write_invvar=args.dont_write_invvar)
