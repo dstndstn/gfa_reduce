@@ -21,6 +21,12 @@ parser.add_argument("-e", "--expid_min", type=int, default=-1, help="start with 
 parser.add_argument("--out_basedir", type=str, default='/n/home/datasystems/users/ameisner/reduced/realtime', help="base output directory for GFA reductions")
 args = parser.parse_args()
 
+class ProcItem:
+    def __init__(self, fname_raw, cube_index=None):
+        self.fname_raw = fname_raw
+        self.cube_index = cube_index
+        self.is_guider_cube = cube_index is not None
+
 def check_flavor_json(gfa_image_fname):
     gfa_json_fname = gfa_image_fname.replace('gfa-', 'request-')
     gfa_json_fname = gfa_json_fname.replace('.fits.fz', '.json')
@@ -55,7 +61,8 @@ def run(workerid, q):
     global night_basedir_out
     print('Worker {} ready to go'.format(workerid))
     while True:
-        filename = q.get(block=True)
+        image = q.get(block=True)
+        filename = image.fname_raw
         print('Worker {} processing {}'.format(workerid, filename))
         sys.stdout.flush()
         #- Do something with that filename
@@ -92,7 +99,8 @@ while(True):
             if is_flavor_science(filename):
                 print('Server putting {} in the queue'.format(filename))
                 sys.stdout.flush()
-                q.put(filename)
+                image = ProcItem(filename)
+                q.put(image)
             else:
                 print('skipping ' + filename + ' ; NOT flavor=science')
             known_files.add(filename)
