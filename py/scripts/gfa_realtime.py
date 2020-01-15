@@ -19,6 +19,7 @@ parser.add_argument("-n", "--numworkers", type=int,  default=1, help="number of 
 parser.add_argument("-w", "--waittime", type=int, default=5, help="wait time between directory checks")
 parser.add_argument("-e", "--expid_min", type=int, default=-1, help="start with this EXPID value")
 parser.add_argument("--out_basedir", type=str, default='/n/home/datasystems/users/ameisner/reduced/realtime', help="base output directory for GFA reductions")
+parser.add_argument("--guider", default=False, action='store_true', help="process guide-????????.fits.fz files instead of gfa-????????.fz files")
 args = parser.parse_args()
 
 class ProcItem:
@@ -46,6 +47,8 @@ indir = '/data/dts/exposures/raw/' + args.night
 if not os.path.exists(indir):
     print('WARNING: INPUT DIRECTORY DOES NOT CURRENTLY EXIST')
 
+guider = args.guider
+
 print(args.out_basedir)
 assert(os.path.exists(args.out_basedir))
 night_basedir_out = os.path.join(args.out_basedir, args.night)
@@ -67,7 +70,7 @@ def run(workerid, q):
         sys.stdout.flush()
         #- Do something with that filename
         outdir = os.path.join(night_basedir_out, str(expid_from_filename(filename)).zfill(8))
-        _proc(filename, outdir=outdir, realtime=True) # realtime HARDCODED to true
+        _proc(filename, outdir=outdir, realtime=True, cube_index=image.cube_index) # realtime HARDCODED to true
         print('Worker {} done with {}'.format(workerid, filename))
         sys.stdout.flush()
 
@@ -87,7 +90,8 @@ print('Number of known files = ', len(known_files))
 #- Periodically check for any new files that may have appeared and add them
 #- to the queue for a worker to process.
 
-glob_pattern = os.path.join(indir, '????????/gfa*.fits.fz')
+pattern = '????????/gfa*.fits.fz' if not guider else '????????/guide-????????.fits.fz'
+glob_pattern = os.path.join(indir, pattern)
 while(True):
     flist = glob.glob(glob_pattern)
     flist.sort()
@@ -96,10 +100,11 @@ while(True):
     flist = flist[expids >= args.expid_min]
     for filename in flist:
         if filename not in known_files:
-            if is_flavor_science(filename):
+            if guider or is_flavor_science(filename):
                 print('Server putting {} in the queue'.format(filename))
                 sys.stdout.flush()
-                image = ProcItem(filename)
+                cube_index = 0 if guider else None
+                image = ProcItem(filename, cube_index=cube_index)
                 q.put(image)
             else:
                 print('skipping ' + filename + ' ; NOT flavor=science')
