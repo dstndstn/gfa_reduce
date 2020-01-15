@@ -83,7 +83,9 @@ for i in range(args.numworkers):
 #- TODO: Upon startup, this could compare against files in output dir
 #- and only load input files haven't already been processed.
 exp_outdirs = glob.glob(night_basedir_out + '/????????')
-known_files = set([indir + '/' + os.path.split(d)[-1] + '/gfa-' + os.path.split(d)[-1] + '.fits.fz' for d in exp_outdirs])
+prefix = 'guide-' if guider else 'gfa-'
+# this will not work correctly for cases where some subset of slices of a guide cube have been processed...
+known_files = set([indir + '/' + os.path.split(d)[-1] + '/' + prefix + os.path.split(d)[-1] + '.fits.fz' for d in exp_outdirs])
 
 print('Number of known files = ', len(known_files))
 
