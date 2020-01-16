@@ -542,6 +542,9 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
         tab['racen'][i] = racen
         tab['deccen'][i] = deccen
 
+    tab['moon_sep_deg'] = util.moon_separation(tab['moonra'], tab['moondec'],
+                                               tab['racen'], tab['deccen'])
+        
     prescan_overscan_ccds_table(tab, exp)
     high_level_ccds_metrics(tab, catalog)
     astrom_ccds_table(tab, exp)

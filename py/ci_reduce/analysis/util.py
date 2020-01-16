@@ -2,6 +2,8 @@ import ci_reduce.common as common
 import numpy as np
 import os
 from astropy.table import Table
+from astropy.coordinates import SkyCoord
+from astropy import units as u
 
 def has_wrong_dimensions(exp):
     # check meant to catch simulated data
@@ -305,3 +307,16 @@ def add_ampname_to_catalog(cat):
     amps = [xy_to_ampname(cat['xcentroid'][i], cat['ycentroid'][i]) for i in range(len(cat))]
 
     cat['amp'] = amps
+
+def moon_separation(ra_moon, dec_moon, ra, dec):
+
+    assert(len(ra_moon) == len(dec_moon))
+    assert(len(ra_moon) == len(ra))
+    assert(len(ra_moon) == len(dec))
+
+    c = SkyCoord(ra*u.deg, dec*u.deg)
+    m = SkyCoord(ra_moon*u.deg, dec_moon*u.deg)
+
+    dangle = c.separation(m)
+
+    return dangle
