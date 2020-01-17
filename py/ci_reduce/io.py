@@ -94,6 +94,10 @@ def load_exposure(fname, verbose=True, realtime=False, cube_index=None):
             continue
         is_image_hdu[i] = True
 
+    if np.sum(is_image_hdu) == 0:
+        print('exposure may contain only focus cameras?')
+        return None
+    
     w_im = np.where(is_image_hdu)[0]
 
     is_cube = (len(hdul[w_im[0]].data.shape) == 3)
