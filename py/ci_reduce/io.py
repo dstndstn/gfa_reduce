@@ -270,6 +270,11 @@ def write_exposure_source_catalog(catalog, outdir, fname_in,
 
 def write_ps1_matches(catalog, outdir, fname_in, cube_index=None):
     ps1 = gaia.gaia_xmatch(catalog['ra'], catalog['dec'], ps1=True)
+
+    if ps1 is None:
+        print('No PS1 matches available -- Dec may be too low??')
+        return
+    
     ps1.rename_column('ra', 'ra_ps1')
     ps1.rename_column('dec', 'dec_ps1')
 

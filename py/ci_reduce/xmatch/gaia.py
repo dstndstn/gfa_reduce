@@ -48,10 +48,20 @@ def read_gaia_cat(ra, dec, ps1=False):
     
     tablist = []
     for f in flist:
+        if ps1:
+            # PS1 is not full-sky ...
+            if not os.path.exists(f):
+                print('SKIPPING PS1 CHUNK: ', f)
+                continue
+        
         print('READING : ', f)
         tab = fits.getdata(f)
         tablist.append(tab)
 
+    if ps1:
+        if len(tablist) == 0:
+            return None
+    
     result = np.hstack(tuple(tablist))
 
     if ps1:
@@ -63,6 +73,9 @@ def read_gaia_cat(ra, dec, ps1=False):
 def gaia_xmatch(ra, dec, ps1=False):
     gaia_cat = read_gaia_cat(ra, dec, ps1=ps1)
 
+    if ps1 and (gaia_cat is None):
+        return None
+    
     assert(len(gaia_cat) > 0)
     assert(type(gaia_cat).__name__ == 'ndarray')
 
