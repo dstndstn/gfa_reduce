@@ -28,6 +28,12 @@ class ProcItem:
         self.cube_index = cube_index
         self.is_guider_cube = cube_index is not None
 
+    def _cube_index_string(self):
+        if self.is_guider_cube:
+            return str(self.cube_index)
+        else:
+            return ''
+
 def check_flavor_json(gfa_image_fname):
     gfa_json_fname = gfa_image_fname.replace('gfa-', 'request-')
     gfa_json_fname = gfa_json_fname.replace('.fits.fz', '.json')
@@ -70,7 +76,10 @@ def run(workerid, q):
         sys.stdout.flush()
         #- Do something with that filename
         outdir = os.path.join(night_basedir_out, str(expid_from_filename(filename)).zfill(8))
-        _proc(filename, outdir=outdir, realtime=True, cube_index=image.cube_index, dont_write_invvar=True) # realtime HARDCODED to true
+        try:
+            _proc(filename, outdir=outdir, realtime=True, cube_index=image.cube_index, dont_write_invvar=True) # realtime HARDCODED to true
+        except:
+            print('PROCESSING FAILURE: ' + image.fname_raw + '   ' + image._cube_index_string())
         print('Worker {} done with {}'.format(workerid, filename))
         sys.stdout.flush()
 
