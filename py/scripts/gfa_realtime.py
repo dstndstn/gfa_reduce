@@ -70,7 +70,7 @@ def run(workerid, q):
         sys.stdout.flush()
         #- Do something with that filename
         outdir = os.path.join(night_basedir_out, str(expid_from_filename(filename)).zfill(8))
-        _proc(filename, outdir=outdir, realtime=True, cube_index=image.cube_index) # realtime HARDCODED to true
+        _proc(filename, outdir=outdir, realtime=True, cube_index=image.cube_index, dont_write_invvar=True) # realtime HARDCODED to true
         print('Worker {} done with {}'.format(workerid, filename))
         sys.stdout.flush()
 
