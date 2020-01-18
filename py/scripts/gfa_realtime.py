@@ -114,9 +114,14 @@ while(True):
             if guider or is_flavor_science(filename):
                 print('Server putting {} in the queue'.format(filename))
                 sys.stdout.flush()
-                cube_index = 0 if guider else None
-                image = ProcItem(filename, cube_index=cube_index)
-                q.put(image)
+                if not guider:
+                    image = ProcItem(filename, cube_index=None)
+                    q.put(image)
+                else:
+                    h = fits.getheader(filename, extname='GUIDER')
+                    for i in range(h['FRAMES']):
+                        image = ProcItem(filename, cube_index=i)
+                        q.put(image)
             else:
                 print('skipping ' + filename + ' ; NOT flavor=science')
             known_files.add(filename)
