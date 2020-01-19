@@ -13,13 +13,19 @@ def _printouts(night, full_filename=False, imagecam=False, guider=False):
     flist.sort()
 
     extname = 'GFA' if not guider else 'GUIDER'
+
+    n_frames_tot = 0
     for f in flist:
         h = fits.getheader(f, extname=extname)
         fp = (f.replace(basedir + '/', '') + '   ') if not full_filename else f + '   '
         if not guider:
             print(fp, h['FLAVOR'].ljust(10, ' '), '{:.1f}'.format(h['EXPTIME']).ljust(10, ' '), h['PROGRAM'].ljust(40), '' if not imagecam else h['IMAGECAM'])
         else:
+            n_frames_tot += h['FRAMES']
             print(fp, str(h['FRAMES']).ljust(10, ' '), h['PROGRAM'].ljust(40))
+
+    if guider:
+        print('total # of guider frames = ' +str(n_frames_tot))
 
 if __name__ == "__main__":
     descr = 'print inventory of GFA data for a night'
