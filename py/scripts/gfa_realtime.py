@@ -119,6 +119,8 @@ while(True):
                     q.put(image)
                 else:
                     h = fits.getheader(filename, extname='GUIDER')
+                    outdir = os.path.join(night_basedir_out, str(expid_from_filename(filename)).zfill(8))
+                    os.mkdir(outdir) # avoids race condition in _proc ...
                     for i in range(h['FRAMES']):
                         image = ProcItem(filename, cube_index=i)
                         q.put(image)
