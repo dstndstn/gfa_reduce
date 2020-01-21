@@ -50,6 +50,7 @@ def is_flavor_science(gfa_image_fname):
     return check_flavor_json(gfa_image_fname).lower() == 'science'
 
 indir = '/data/dts/exposures/raw/' + args.night
+print('WATCHING FOR NEW FILES IN : ' + indir)
 if not os.path.exists(indir):
     print('WARNING: INPUT DIRECTORY DOES NOT CURRENTLY EXIST')
 
