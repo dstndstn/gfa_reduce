@@ -528,12 +528,12 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
     tab['t_c_for_dark'] = [exp.images[extname].t_c_for_dark for extname in tab['camera']]
     tab['t_c_for_dark_is_guess'] = [int(exp.images[extname].t_c_for_dark_is_guess) for extname in tab['camera']]
     tab['time_s_for_dark'] = [exp.images[extname].time_s_for_dark for extname in tab['camera']]
-        
+
+    tab['airmass'] = exp.try_retrieve_header_card('AIRMASS', placeholder=np.nan)
+    tab['night'] = exp.try_retrieve_header_card('NIGHT', placeholder='')
+    
     if cube_index is None:
         tab['exptime'] = [exp.images[extname].header['EXPTIME'] for extname in tab['camera']]
-        h_gfa = fits.getheader(fname_in, extname='GFA')
-        tab['airmass'] = h_gfa['AIRMASS']
-        tab['night'] = h_gfa['NIGHT']
         tab['cube_index'] = np.nan
     else:
         tab['cube_index'] = int(cube_index)
