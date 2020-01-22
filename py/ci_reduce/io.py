@@ -533,9 +533,10 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
     tab['airmass'] = exp.try_retrieve_header_card('AIRMASS', placeholder=np.nan)
     tab['night'] = exp.try_retrieve_header_card('NIGHT', placeholder='')
+
+    tab['exptime'] = [exp.images[extname].try_retrieve_meta_keyword('EXPTIME', placeholder=np.nan) for extname in tab['camera']]
     
     if cube_index is None:
-        tab['exptime'] = [exp.images[extname].header['EXPTIME'] for extname in tab['camera']]
         tab['cube_index'] = np.nan
     else:
         tab['cube_index'] = int(cube_index)
