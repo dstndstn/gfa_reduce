@@ -176,3 +176,7 @@ class CI_exposure:
         else:
             print('could not find ' + keyword + ' in exposure-level header !!')
             return placeholder
+
+    def compute_psfs(self, catalog):
+        for image in self.images.values():
+            image.create_psf(catalog)

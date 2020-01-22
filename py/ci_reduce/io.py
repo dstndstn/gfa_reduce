@@ -562,6 +562,34 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
     print('Attempting to write CCDs table to ' + outname)
     tab.write(outname, format='fits')
 
+def write_psf_models(exp, outdir, fname_in, cube_index=None):
+
+    assert(os.path.exists(outdir))
+
+    outname = os.path.join(outdir, os.path.basename(fname_in))
+
+    # get rid of any ".fz" or ".gz" present in input filename
+    outname = outname.replace('.fz', '')
+    outname = outname.replace('.gz', '')
+
+    assert(outname[-5:] == '.fits')
+
+    outname = outname.replace('.fits', '_psfs.fits')
+
+    if cube_index is not None:
+        outname = outname.replace('.fits',
+                                  '-' + str(cube_index).zfill(5) + '.fits')
+    
+    assert(not os.path.exists(outname))
+
+    hdul = []
+    for image in exp.images.values():
+        if image.psf is not None:
+            hdul.append(image.psf.to_hdu(primary=(len(hdul) == 0)))
+
+    hdul = fits.HDUList(hdul)
+    hdul.writeto(outname)
+
 def get_temperature_celsius(fname_in, extname):
     # try to get CCDTEMP if it's available
     # otherwise use the average of CI-T[1-5] from EXTNAME = 'CI' header

@@ -11,6 +11,19 @@ from astropy.stats import mad_std
 from scipy.stats import scoreatpercentile
 import ci_reduce.analysis.util as util
 
+class PSF:
+    def __init__(self, cube, extname):
+        self.psf_image = np.sum(cube, 2)
+        self.extname = extname
+        self.nstars = cube.shape[2]
+        self.cube = cube # maybe get rid of this eventually to save memory
+
+    def to_hdu(self, primary=False):
+         # still need to put metadata into header
+         f = (fits.PrimaryHDU if primary else fits.ImageHDU)
+         hdu = f(self.psf_image)
+         return hdu
+
 class Overscan:
     """Object to encapsulate single-camera worth of overscan and prescan"""
 
@@ -81,6 +94,7 @@ class CI_image:
         
         self.cube_index = cube_index
         self.header = header
+        self.extname = self.header['EXTNAME'].replace(' ', '')
         self.header['CONTRAST'] = 0.0 # typically overwritten with actual value
         self.initialize_wcs()
 
@@ -112,6 +126,8 @@ class CI_image:
         
         # record exposure time used for dark current removal
         self.time_s_for_dark = None
+
+        self.psf = None
         
     def create_dq_mask(self, dark_image):
         if self.bitmask is not None:
@@ -398,3 +414,51 @@ class CI_image:
             return placeholder
             
         
+    def extract_psf_cutouts(self, _catalog, sidelen=51):
+        # sidelen should be an integer...
+        assert(np.round(sidelen) == sidelen)
+
+        half = sidelen // 2
+        keep = _catalog['used_for_fwhm_meas'].astype('bool') & (_catalog['min_edge_dist_pix'] > (half + 0.5)) & (_catalog['camera'] == self.extname)
+        
+        if np.sum(keep) == 0:
+            return None
+
+        n = np.sum(keep)
+        #cube = np.zeros((sidelen, sidelen, n))
+
+        catalog = _catalog[keep]
+
+        cutouts = []
+        for i in range(n):
+            ixcentroid = int(np.round(catalog['xcentroid'][i]))
+            iycentroid = int(np.round(catalog['ycentroid'][i]))
+            cutout = self.image[(iycentroid-half):(iycentroid+half+1),
+                                (ixcentroid-half):(ixcentroid+half+1)]
+
+            # hack to try removing saturated sources
+            if np.sum(cutout >= 30000.0) > 1:
+                continue
+            cutouts.append(cutout)
+            
+            # background subtraction
+            # subpixel shifting
+            # outlier rejection
+
+        ncutouts = len(cutouts)
+        
+        if ncutouts == 0:
+            return None
+
+        cube = np.zeros((sidelen, sidelen, ncutouts))
+        for i, cutout in enumerate(cutouts):
+            cube[:, :, i] = cutout
+        
+        return cube
+
+    def create_psf(self, catalog, sidelen=51):
+        cube = self.extract_psf_cutouts(catalog, sidelen=sidelen)
+        print('computing PSF for ' + self.extname)
+        if cube is None:
+            self.psf = None
+        self.psf = PSF(cube, self.extname)        

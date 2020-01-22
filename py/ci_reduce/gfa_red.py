@@ -13,7 +13,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           no_gaia_xmatch=False, no_ps1_xmatch=False,
           cube_index=None, skip_image_outputs=False,
           realtime=False, no_dark_rescaling=False, 
-          dont_write_invvar=False):
+          dont_write_invvar=False, make_psf_models=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -106,6 +106,10 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         if not no_cataloging:
             io.write_exposure_source_catalog(catalog, outdir, fname_in,
                                              cube_index=cube_index)
+            if make_psf_models:
+                exp.compute_psfs(catalog)
+                io.write_psf_models(exp, outdir, fname_in,
+                                    cube_index=cube_index)
 
     print('Successfully finished reducing ' + fname_in)
 
@@ -152,6 +156,10 @@ if __name__ == "__main__":
     parser.add_argument('--dont_write_invvar', default=False, 
                         action='store_true',
                         help="don't write out invvar maps")
+
+    parser.add_argument('--make_psf_models', default=False,
+                        action='store_true',
+                        help="generate per-camera PSF models")
     
     args = parser.parse_args()
 
@@ -162,4 +170,5 @@ if __name__ == "__main__":
           no_ps1_xmatch=args.no_ps1_xmatch, cube_index=args.cube_index,
           skip_image_outputs=args.skip_image_outputs, realtime=args.realtime,
           no_dark_rescaling=args.no_dark_rescaling, 
-          dont_write_invvar=args.dont_write_invvar)
+          dont_write_invvar=args.dont_write_invvar,
+          make_psf_models=args.make_psf_models)
