@@ -503,6 +503,8 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
     
     assert(not os.path.exists(outname))
 
+    nrows = len(tab)
+    
     tab['sky_mag_ab'] = [exp.images[extname].sky_mag for extname in tab['camera']]
 
     tab['petal_loc'] = np.array([common.ci_extname_to_ci_number(extname) for extname in tab['camera']], dtype='uint8')
@@ -519,8 +521,8 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
     tab['skydec'] = [exp.images[extname].try_retrieve_meta_keyword('SKYDEC', placeholder=np.nan) for extname in tab['camera']]
 
-    tab['domshutl'] = exp.try_retrieve_header_card('DOMSHUTL', placeholder='')
-    tab['domshutu'] = exp.try_retrieve_header_card('DOMSHUTU', placeholder='')
+    tab['domshutl'] = np.array(nrows*[exp.try_retrieve_header_card('DOMSHUTL', placeholder='')], dtype='U8')
+    tab['domshutu'] = np.array(nrows*[exp.try_retrieve_header_card('DOMSHUTU', placeholder='')], dtype='U8')
     tab['pmcover'] = exp.try_retrieve_header_card('PMCOVER', placeholder='')
     tab['moonra'] = exp.try_retrieve_header_card('MOONRA', placeholder=np.nan)
     tab['moondec'] = exp.try_retrieve_header_card('MOONDEC', placeholder=np.nan)
