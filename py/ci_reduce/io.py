@@ -264,9 +264,15 @@ def write_exposure_source_catalog(catalog, outdir, fname_in,
     catalog['fname_in'] = fname_in
     expid = util.expid_from_raw_filename(fname_in)
     catalog['expid'] = expid
+
+    hdul = []
+    hdul.append(fits.PrimaryHDU())
+    hdul.append(fits.BinTableHDU(data=catalog, name='CATALOG'))
+    hdul = fits.HDUList(hdul)
     
     print('Attempting to write source catalog to ' + outname)
-    catalog.write(outname, format='fits')
+
+    hdul.writeto(outname)
 
 def write_ps1_matches(catalog, outdir, fname_in, cube_index=None):
     ps1 = gaia.gaia_xmatch(catalog['ra'], catalog['dec'], ps1=True)
