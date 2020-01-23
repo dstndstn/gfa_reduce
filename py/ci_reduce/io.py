@@ -240,7 +240,7 @@ def combine_per_camera_catalogs(catalogs):
     composite['extname'] = composite['camera']
     return composite
 
-def write_exposure_source_catalog(catalog, outdir, fname_in,
+def write_exposure_source_catalog(catalog, outdir, fname_in, exp, 
                                   cube_index=None):
 
     assert(os.path.exists(outdir))
@@ -268,8 +268,12 @@ def write_exposure_source_catalog(catalog, outdir, fname_in,
     hdul = []
     hdul.append(fits.PrimaryHDU())
     hdul.append(fits.BinTableHDU(data=catalog, name='CATALOG'))
+
+    for image in exp.images.values():
+        hdul.append(fits.ImageHDU(data=None, header=image.header, name=image.extname))
+
     hdul = fits.HDUList(hdul)
-    
+        
     print('Attempting to write source catalog to ' + outname)
 
     hdul.writeto(outname)

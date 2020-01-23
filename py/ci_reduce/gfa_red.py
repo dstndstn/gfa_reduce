@@ -104,7 +104,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
                             cube_index=cube_index)
         
         if not no_cataloging:
-            io.write_exposure_source_catalog(catalog, outdir, fname_in,
+            io.write_exposure_source_catalog(catalog, outdir, fname_in, exp,
                                              cube_index=cube_index)
             if make_psf_models:
                 exp.compute_psfs(catalog)
