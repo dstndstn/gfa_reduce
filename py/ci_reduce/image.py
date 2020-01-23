@@ -403,8 +403,9 @@ class CI_image:
         # because guider cube metadata has evolved over time, won't
         # always be guaranteed to get e.g., GCCDTEMP at all
         
-        # first look in the image header
-
+        # first look in the image header (could be dangerous for EXPTIME
+        # in the case of guider cubes)
+        
         if keyword in self.header.keys():
             return self.header[keyword]
         elif self.bintable_row is not None:

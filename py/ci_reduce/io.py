@@ -536,10 +536,7 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
     tab['exptime'] = [exp.images[extname].try_retrieve_meta_keyword('EXPTIME', placeholder=np.nan) for extname in tab['camera']]
     
-    if cube_index is None:
-        tab['cube_index'] = np.nan
-    else:
-        tab['cube_index'] = int(cube_index)
+    tab['cube_index'] = np.nan if cube_index is None else int(cube_index)
     
     tab['racen'] = np.zeros(len(tab), dtype=float)
     tab['deccen'] = np.zeros(len(tab), dtype=float)
