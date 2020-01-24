@@ -448,6 +448,15 @@ class CI_image:
             cutout = self.image[(iycentroid-half):(iycentroid+half+1),
                                 (ixcentroid-half):(ixcentroid+half+1)]
 
+            # hack to try removing saturated sources
+            if np.sum(cutout >= 30000.0) > 1:
+                continue
+
+            dx = np.round(catalog['xcentroid'][i]) - catalog['xcentroid'][i]
+            dy = np.round(catalog['ycentroid'][i]) - catalog['ycentroid'][i]
+
+            cutout = util._shift_stamp(cutout, dx, dy)
+
             # background subtract
             bgmask = util._stamp_radius_mask(sidelen)
 
@@ -457,9 +466,6 @@ class CI_image:
             
             cutout = cutout/catalog['aper_sum_bkgsub_3'][i]
 
-            # hack to try removing saturated sources
-            if np.sum(cutout >= 30000.0) > 1:
-                continue
             cutouts.append(cutout)
             
             # background subtraction
