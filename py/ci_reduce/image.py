@@ -20,6 +20,8 @@ class PSF:
         self.psf_image -= np.median(self.psf_image[bgmask])
 
         self.psf_image /= np.max(self.psf_image)
+
+        self.fiber_fracflux = util._fiber_fracflux(self.psf_image)
         
         self.extname = extname
         self.nstars = cube.shape[2]
@@ -31,6 +33,7 @@ class PSF:
          hdu = f(self.psf_image)
          hdu.header['EXTNAME'] = self.extname
          hdu.header['NSTARS'] = self.nstars
+         hdu.header['FIBFRAC'] = self.fiber_fracflux
          return hdu
 
 class Overscan:

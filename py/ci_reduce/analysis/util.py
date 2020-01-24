@@ -330,7 +330,7 @@ def _shift_stamp(stamp, dx, dy):
     # note ordering of dx and dy ...
     return shift(stamp, [dy, dx], order=order, mode=mode, output=output)
 
-def _stamp_radius_mask(sidelen):
+def _stamp_radius_mask(sidelen, return_radius=False):
     # assume square for now
     # assume odd side length
 
@@ -348,7 +348,12 @@ def _stamp_radius_mask(sidelen):
 
     dist = np.sqrt(np.power(xbox, 2)+ np.power(ybox, 2))
 
-    return dist.reshape((sidelen, sidelen)) > (sidelen // 2)
+    mask = dist.reshape((sidelen, sidelen)) > (sidelen // 2)
+
+    if not return_radius:
+        return mask
+    else:
+        return mask, dist.reshape(sidelen, sidelen)
 
 def _test_shift():
     import astropy.io.fits as fits
@@ -359,3 +364,31 @@ def _test_shift():
     import fitsio
     fitsio.write('gaussian_shifted_dx.fits', result)
     
+def _resize(arr, fac):
+    assert(np.round(fac) == fac)
+
+    fac = int(fac)
+    assert(fac >= 1)
+    
+    return np.repeat(np.repeat(arr, fac, axis=0), fac, axis=1)
+
+def _fiber_fracflux(psf):
+    binfac = 11
+
+    fib_diam = 107.0/15.0 # GFA pixels
+
+    fib_rad = fib_diam/2.0 # GFA pixels
+
+    sidelen = psf.shape[0] # assume square..
+
+    mask, radius = _stamp_radius_mask(sidelen*binfac, return_radius=True)
+    
+    _psf = _resize(psf, binfac)
+
+    _mask = np.logical_not(mask)
+
+    in_fiber = (radius <= fib_rad*binfac)
+    
+    frac = np.sum(_psf*_mask*in_fiber)/np.sum(_psf*_mask)
+
+    return frac
