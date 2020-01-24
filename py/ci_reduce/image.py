@@ -13,7 +13,14 @@ import ci_reduce.analysis.util as util
 
 class PSF:
     def __init__(self, cube, extname):
-        self.psf_image = np.sum(cube, 2)
+        self.psf_image = np.median(cube, 2) # failure for nstars = 1?
+
+        sh = self.psf_image.shape
+        bgmask = util._stamp_radius_mask(sh[0])
+        self.psf_image -= np.median(self.psf_image[bgmask])
+
+        self.psf_image /= np.max(self.psf_image)
+        
         self.extname = extname
         self.nstars = cube.shape[2]
         self.cube = cube # maybe get rid of this eventually to save memory
@@ -422,7 +429,7 @@ class CI_image:
         assert(np.round(sidelen) == sidelen)
 
         half = sidelen // 2
-        keep = _catalog['used_for_fwhm_meas'].astype('bool') & (_catalog['min_edge_dist_pix'] > (half + 0.5)) & (_catalog['camera'] == self.extname)
+        keep = _catalog['used_for_fwhm_meas'].astype('bool') & (_catalog['min_edge_dist_pix'] > (half + 0.5)) & (_catalog['camera'] == self.extname) & (_catalog['aper_sum_bkgsub_3'] > 0)
         
         if np.sum(keep) == 0:
             return None
@@ -432,12 +439,23 @@ class CI_image:
 
         catalog = _catalog[keep]
 
+        assert(np.sum(catalog['aper_sum_bkgsub_3'] <= 0) == 0)
+
         cutouts = []
         for i in range(n):
             ixcentroid = int(np.round(catalog['xcentroid'][i]))
             iycentroid = int(np.round(catalog['ycentroid'][i]))
             cutout = self.image[(iycentroid-half):(iycentroid+half+1),
                                 (ixcentroid-half):(ixcentroid+half+1)]
+
+            # background subtract
+            bgmask = util._stamp_radius_mask(sidelen)
+
+            bg = np.median(cutout[bgmask])
+
+            cutout -= bg
+            
+            cutout = cutout/catalog['aper_sum_bkgsub_3'][i]
 
             # hack to try removing saturated sources
             if np.sum(cutout >= 30000.0) > 1:

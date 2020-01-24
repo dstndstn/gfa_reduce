@@ -4,6 +4,7 @@ import os
 from astropy.table import Table
 from astropy.coordinates import SkyCoord
 from astropy import units as u
+from scipy.ndimage.interpolation import shift
 
 def has_wrong_dimensions(exp):
     # check meant to catch simulated data
@@ -320,3 +321,41 @@ def moon_separation(ra_moon, dec_moon, ra, dec):
     dangle = c.separation(m)
 
     return dangle
+
+def _shift_stamp(stamp, dx, dy):
+    order = 4
+    mode = 'nearest'
+    output = stamp.dtype
+
+    # note ordering of dx and dy ...
+    return shift(stamp, [dy, dx], order=order, mode=mode, output=output)
+
+def _stamp_radius_mask(sidelen):
+    # assume square for now
+    # assume odd side length
+
+    assert(sidelen == np.round(sidelen))
+    assert(sidelen % 2 == 1)
+    
+    xbox = np.arange(sidelen*sidelen, dtype=int) // sidelen
+    ybox = np.arange(sidelen*sidelen, dtype=int) % sidelen
+
+    xbox -= sidelen // 2
+    ybox -= sidelen // 2
+
+    xbox = xbox.astype('float')
+    ybox = ybox.astype('float')
+
+    dist = np.sqrt(np.power(xbox, 2)+ np.power(ybox, 2))
+
+    return dist.reshape((sidelen, sidelen)) > (sidelen // 2)
+
+def _test_shift():
+    import astropy.io.fits as fits
+    im = fits.getdata('gaussian.fits')
+
+    result = _shift_stamp(im, 0.5, 0.0)
+
+    import fitsio
+    fitsio.write('gaussian_shifted_dx.fits', result)
+    
