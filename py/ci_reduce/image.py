@@ -22,6 +22,8 @@ class PSF:
          # still need to put metadata into header
          f = (fits.PrimaryHDU if primary else fits.ImageHDU)
          hdu = f(self.psf_image)
+         hdu.header['EXTNAME'] = self.extname
+         hdu.header['NSTARS'] = self.nstars
          return hdu
 
 class Overscan:
