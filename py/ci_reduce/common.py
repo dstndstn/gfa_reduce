@@ -24,7 +24,7 @@ def ci_misc_params():
            'gfa_exp_extname': 'GFA',
            'guider_exp_extname' : 'GUIDER',
            'master_bias_filename': 'GFA_master_bias-overscan_subtracted.fits', 
-           'master_flat_filename': 'GFA_master_flat.20191229.fits',
+           'master_flat_filename': 'flat_LED_5s_20200115-all.fits',
            'master_dark_filename' : 'master_dark_library/master_dark-00026584_00026684.fits',
            'dark_index_filename' : 'master_dark_index.fits',
            'static_mask_filename': 'GFA_static_badpixels.fits',
