@@ -84,8 +84,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         if (not no_ps1_xmatch) and (par['ps1_env_var'] in os.environ):
             # probably should look into dec < -30 handling more at some point
             print('Attempting to perform PS1 cross-matching...')
-            io.write_ps1_matches(catalog, outdir, fname_in,
-                                 cube_index=cube_index)
+            ps1 = io.write_ps1_matches(catalog, outdir, fname_in,
+                                       cube_index=cube_index)
         
         if (not no_gaia_xmatch) and (par['gaia_env_var'] in os.environ):
             print('Attempting to identify Gaia cross-matches')

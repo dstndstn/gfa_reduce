@@ -283,7 +283,7 @@ def write_ps1_matches(catalog, outdir, fname_in, cube_index=None):
 
     if ps1 is None:
         print('No PS1 matches available -- Dec may be too low??')
-        return
+        return None
     
     ps1.rename_column('ra', 'ra_ps1')
     ps1.rename_column('dec', 'dec_ps1')
@@ -308,6 +308,8 @@ def write_ps1_matches(catalog, outdir, fname_in, cube_index=None):
     
     assert(not os.path.exists(outname))
     ps1_matches.write(outname, format='fits')
+
+    return ps1_matches
     
 def gather_gaia_crossmatches(catalog):
     gaia_matches = gaia.gaia_xmatch(catalog['ra'], catalog['dec'])
