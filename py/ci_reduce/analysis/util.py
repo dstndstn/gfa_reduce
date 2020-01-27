@@ -6,6 +6,25 @@ from astropy.coordinates import SkyCoord
 from astropy import units as u
 from scipy.ndimage.interpolation import shift
 
+def use_for_fwhm_meas(tab, bad_amps=None, snr_thresh=20):
+    # return a boolean mask indicating whether each source in a catalog
+    # should / should not contribute to its image's reported FWHM
+    # measurement
+
+    assert(len(np.unique(tab['camera'])) == 1)
+        
+    good = ((tab['sig_major_pix'] > 1) & np.isfinite(tab['sig_major_pix']) & 
+            (tab['dq_flags'] == 0) & (tab['min_edge_dist_pix'] > 30) &
+            (tab['detmap_peak'] >= snr_thresh))
+
+        # if bad amps specified, it should be a list 
+    # containing the amps thought to be in a state of bad readout
+    if (bad_amps is not None) and (len(bad_amps) > 0):
+        amp_ok = np.array([(t['amp'] not in bad_amps) for t in tab])
+        good = (good & amp_ok)
+
+    return good
+    
 def has_wrong_dimensions(exp):
     # check meant to catch simulated data
     # or other rare anomalies where GFA images do not have the
