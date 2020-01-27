@@ -416,3 +416,32 @@ def _fiber_fracflux(psf):
     frac = np.sum(_psf*_mask*in_fiber)/np.sum(_psf*_mask)
 
     return frac
+
+def _aperture_corr_fac(psf, extname):
+
+    # not really sure if this edge case will ever happen ??
+    if (np.sum(psf) <= 0):
+        return np.nan
+
+    binfac = 11
+
+    # would be good to not have this hardcoded...
+    rad_asec = 1.5 # corresponds to my _3 aperture fluxes
+
+    asec_per_pix = nominal_pixel_sidelen_arith(extname)
+
+    rad_pix = rad_asec/asec_per_pix
+
+    sidelen = psf.shape[0] # assume square..
+
+    mask, radius = _stamp_radius_mask(sidelen*binfac, return_radius=True)
+    
+    _psf = _resize(psf, binfac)
+
+    _mask = np.logical_not(mask)
+
+    in_aper = (radius <= rad_pix*binfac)
+
+    frac = np.sum(_psf*_mask*in_aper)/np.sum(_psf*_mask)
+
+    return frac

@@ -27,6 +27,8 @@ class PSF:
         self.nstars = cube.shape[2]
         self.cube = cube # maybe get rid of this eventually to save memory
 
+        self.aper_corr_fac = util._aperture_corr_fac(self.psf_image, extname)
+
     def to_hdu(self, primary=False):
          # still need to put metadata into header
          f = (fits.PrimaryHDU if primary else fits.ImageHDU)
