@@ -82,7 +82,15 @@ class Overscan:
             return dict([(amp, int(np.sum(self.prescan_cutouts[amp] > thresh))) for amp in amps])
         else:
             return dict([(amp, int(np.sum(self.overscan_cutouts[amp] > thresh))) for amp in amps])
-    
+
+    def bad_amps_list(self):
+        bad_amps = []
+        for k, v in self.n_badpix.items():
+            if v >= 10:
+                bad_amps.append(k)
+
+        return bad_amps
+
 class CI_image:
     """Single CI image from one CI exposure"""
 

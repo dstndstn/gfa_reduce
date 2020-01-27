@@ -345,20 +345,8 @@ def gather_pixel_stats(exp):
             t = vstack([t, t_im])
 
     return t
-
-def bad_amps_list(row):
-    # row should be one row of ccds table
-    amps = common.valid_amps_list()
-    amps.sort()
-
-    bad_amps = []
-    for i, n in enumerate(row['npix_bad_per_amp']):
-        if n >= 10:
-            bad_amps.append(amps[i])
-
-    return bad_amps
     
-def high_level_ccds_metrics(tab, catalog):
+def high_level_ccds_metrics(tab, catalog, exp):
 
     nrows = len(tab)
 
@@ -375,7 +363,7 @@ def high_level_ccds_metrics(tab, catalog):
     for i, row in enumerate(tab):
         if np.sum(catalog['camera'] == row['camera']) == 0:
             continue
-        bad_amps = bad_amps_list(row)
+        bad_amps = exp.images[row['camera']].overscan.bad_amps_list()
         fwhm_stats = bcs.overall_image_fwhm(catalog[catalog['camera'] == row['camera']], bad_amps=bad_amps)
         fwhm_major_pix[i] = fwhm_stats[0]
         fwhm_minor_pix[i] = fwhm_stats[1]
@@ -565,7 +553,7 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
                                                tab['racen'], tab['deccen'])
         
     prescan_overscan_ccds_table(tab, exp)
-    high_level_ccds_metrics(tab, catalog)
+    high_level_ccds_metrics(tab, catalog, exp)
     astrom_ccds_table(tab, exp)
     dark_current_ccds_table(tab, exp)
     
