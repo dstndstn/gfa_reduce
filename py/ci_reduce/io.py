@@ -543,6 +543,8 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
     tab['extname'] = tab['camera']
 
     tab['contrast'] = [exp.images[extname].header['CONTRAST'] for extname in tab['camera']]
+
+    tab['fiber_fracflux'] = [(exp.images[extname].psf.fiber_fracflux if exp.images[extname].psf is not None else np.nan) for extname in tab['camera']]
     
     for i, extname in enumerate(tab['camera']):
         racen, deccen = ccd_center_radec(exp.images[extname].wcs)

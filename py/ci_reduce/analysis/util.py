@@ -392,6 +392,11 @@ def _resize(arr, fac):
     return np.repeat(np.repeat(arr, fac, axis=0), fac, axis=1)
 
 def _fiber_fracflux(psf):
+
+    # not really sure if this edge case will ever happen ??
+    if (np.sum(psf) <= 0):
+        return np.nan
+        
     binfac = 11
 
     fib_diam = 107.0/15.0 # GFA pixels
