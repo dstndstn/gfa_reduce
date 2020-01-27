@@ -78,6 +78,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         exp.update_wcs(astr)
         exp.recompute_catalog_radec(catalog)
 
+        exp.compute_psfs(catalog)
+        
         if (not no_ps1_xmatch) and (par['ps1_env_var'] in os.environ):
             # probably should look into dec < -30 handling more at some point
             print('Attempting to perform PS1 cross-matching...')
@@ -107,7 +109,6 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
             io.write_exposure_source_catalog(catalog, outdir, fname_in, exp,
                                              cube_index=cube_index)
             if make_psf_models:
-                exp.compute_psfs(catalog)
                 io.write_psf_models(exp, outdir, fname_in,
                                     cube_index=cube_index)
 

@@ -13,7 +13,7 @@ import ci_reduce.analysis.util as util
 
 class PSF:
     def __init__(self, cube, extname):
-        self.psf_image = np.median(cube, 2) # failure for nstars = 1?
+        self.psf_image = np.median(cube, 2) # seems to work even for nstars = 1
 
         sh = self.psf_image.shape
         bgmask = util._stamp_radius_mask(sh[0])
@@ -435,12 +435,18 @@ class CI_image:
             return placeholder
             
         
-    def extract_psf_cutouts(self, _catalog, sidelen=51):
+    def extract_psf_cutouts(self, __catalog, sidelen=51):
         # sidelen should be an integer...
         assert(np.round(sidelen) == sidelen)
 
         half = sidelen // 2
-        keep = _catalog['used_for_fwhm_meas'].astype('bool') & (_catalog['min_edge_dist_pix'] > (half + 0.5)) & (_catalog['camera'] == self.extname) & (_catalog['aper_sum_bkgsub_3'] > 0)
+        bad_amps = self.overscan.bad_amps_list()
+
+        _catalog = __catalog[__catalog['camera'] == self.extname]
+        if len(_catalog) == 0:
+            return None
+        
+        keep = util.use_for_fwhm_meas(_catalog, bad_amps=bad_amps) & (_catalog['min_edge_dist_pix'] > (half + 0.5)) & (_catalog['aper_sum_bkgsub_3'] > 0)
         
         if np.sum(keep) == 0:
             return None
@@ -478,10 +484,6 @@ class CI_image:
             cutout = cutout/catalog['aper_sum_bkgsub_3'][i]
 
             cutouts.append(cutout)
-            
-            # background subtraction
-            # subpixel shifting
-            # outlier rejection
 
         ncutouts = len(cutouts)
         
