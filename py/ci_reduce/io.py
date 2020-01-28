@@ -264,7 +264,8 @@ def write_exposure_source_catalog(catalog, outdir, fname_in, exp,
     catalog['fname_in'] = fname_in
     expid = util.expid_from_raw_filename(fname_in)
     catalog['expid'] = expid
-
+    catalog['cube_index'] = np.nan if cube_index is None else float(cube_index)
+    
     hdul = []
     hdul.append(fits.PrimaryHDU())
     hdul.append(fits.BinTableHDU(data=catalog, name='CATALOG'))
