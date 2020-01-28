@@ -35,7 +35,9 @@ def ci_misc_params():
            'sat_thresh_adu' : 40000.0,
            'nominal_fwhm_asec' : 1.25,
            'headers_dummy_filename' : 'dummy_with_headers_gaia.zenith.fits.gz',
-           'reduced_image_flavors' : ['REDUCED', 'INVVAR', 'BITMASK']}
+           'reduced_image_flavors' : ['REDUCED', 'INVVAR', 'BITMASK'],
+           'kterm' : 0.114,
+           'zp_filename' : 'dense_field_zeropoints-combined.all_cameras.fits'}
 
     return par
 

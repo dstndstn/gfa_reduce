@@ -5,6 +5,7 @@ from astropy.table import Table
 from astropy.coordinates import SkyCoord
 from astropy import units as u
 from scipy.ndimage.interpolation import shift
+import astropy.io.fits as fits
 
 def use_for_fwhm_meas(tab, bad_amps=None, snr_thresh=20):
     # return a boolean mask indicating whether each source in a catalog
@@ -445,3 +446,64 @@ def _aperture_corr_fac(psf, extname):
     frac = np.sum(_psf*_mask*in_aper)/np.sum(_psf*_mask)
 
     return frac
+
+def zenith_zeropoint_photometric_1amp(extname, amp):
+    par = common.ci_misc_params()
+
+    fname = os.path.join(os.environ[par['etc_env_var']], par['zp_filename'])
+
+    # would be better to cache this, but it's of order ~10 kb ..
+    tab = fits.getdata(fname)
+
+    good = (tab['EXTNAME'] == extname) & (tab['AMP'] == amp)
+
+    assert(np.sum(good) == 1)
+
+    return tab[good][0]['ZP_ADU_PER_S']
+    
+def median_zenith_camera_zeropoint(extname):
+    # wraps zenith_zeropoint_photometric_1amp
+    # eventually want to do a better job of dealing with amp-to-amp
+    # zeropoint variation so this is hopefully a temporary hack
+
+    amps = common.valid_amps_list()
+
+    zps = [zenith_zeropoint_photometric_1amp(extname, amp) for amp in amps]
+
+    return np.median(zps)
+
+def zp_photometric_at_airmass(extname, airmass, amp=None):
+
+    # for now don't worry about vectorization
+
+    assert(airmass > 0.99) # allow for some roundoff to < 1
+
+    if amp is None:
+        zp_zenith = median_zenith_camera_zeropoint(extname)
+    else:
+        zp_zenith = zenith_zeropoint_photometric_1amp(extname, amp)
+
+    par = common.ci_misc_params()
+
+    # account for airmass (k term from DESI-5418-v2)
+    
+    # "photometric" here means 'in photometric conditions' at this airmass
+    zp_photometric = zp_zenith - (airmass - 1)*par['kterm']
+
+    return zp_photometric
+
+def transparency_from_zeropoint(zp_image, airmass, extname):
+    # zp_image should be the r band magnitude corresponding to a source
+    # with total detected flux of 1 ADU per second in the single-camera image
+    # of interest
+
+    if not np.isfinite(airmass):
+        return np.nan
+    if not np.isfinite(zp_image):
+        return np.nan
+    
+    zp_photometric = zp_photometric_at_airmass(extname, airmass)
+    
+    transparency = 10**((zp_image - zp_photometric)/2.5)
+
+    return transparency

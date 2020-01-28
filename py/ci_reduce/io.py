@@ -562,6 +562,8 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None, ps1=N
                                                tab['racen'], tab['deccen'])
 
     tab['zp_adu_per_s'] = [exp.images[extname].compute_zeropoint(ps1) for extname in tab['camera']]
+
+    tab['transparency'] = [util.transparency_from_zeropoint(tab[i]['zp_adu_per_s'], tab[i]['airmass'], tab[i]['camera']) for i in range(len(tab))]
     
     prescan_overscan_ccds_table(tab, exp)
     high_level_ccds_metrics(tab, catalog, exp)

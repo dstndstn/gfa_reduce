@@ -512,10 +512,6 @@ class CI_image:
         if self.psf is None:
             return np.nan
 
-        # remember to account for airmass
-
-        k = 0.114 # DESI-5418-v2
-        
         # require ps1 median_1_ r flux to be > 0
         # require correct extname
         # detmap_peak >= 10 (kind of like S/N > 10)
@@ -524,8 +520,6 @@ class CI_image:
         # require GFA _3 flux > 0
         # require something about minimum edge distance
         # cut on dq_flags
-
-        # also report the computed zeropoint, not just the transparency
         
         good = (ps1_matched_catalog['median_1_'] > 0) & (ps1_matched_catalog['camera'] == self.extname) & (ps1_matched_catalog['detmap_peak'] >= 10) & (ps1_matched_catalog['ang_sep_deg'] < 2.0/3600.0) & (ps1_matched_catalog['aper_sum_bkgsub_3'] > 0) & (ps1_matched_catalog['min_edge_dist_pix'] >= 10) & (ps1_matched_catalog['dq_flags'] == 0)
 
@@ -538,7 +532,8 @@ class CI_image:
 
         zp = np.median(r_ps1 - m_inst)
 
-        return zp
         # would be good to return metrics
-        # regarding how many sources were used for transparency
+        # regarding how many/which sources were used for determinining the zeropoint
         # what their mag range was, maybe even how well the slope of m_inst vs m_ps1 matches with unity
+        
+        return zp
