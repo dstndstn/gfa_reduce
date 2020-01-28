@@ -13,7 +13,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           no_gaia_xmatch=False, no_ps1_xmatch=False,
           cube_index=None, skip_image_outputs=False,
           realtime=False, no_dark_rescaling=False, 
-          dont_write_invvar=False, make_psf_models=False):
+          dont_write_invvar=False, make_psf_models=False,
+          compress_reduced_image=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -102,7 +103,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
             # could add command line arg for turning off gzip compression
             io.write_image_level_outputs(exp, outdir, fname_in, gzip=True,
                                          cube_index=cube_index,
-                                         dont_write_invvar=dont_write_invvar)
+                                         dont_write_invvar=dont_write_invvar,
+                                         compress_reduced_image=compress_reduced_image)
 
         # make this work correctly in the case that --no_cataloging is set
         io.write_ccds_table(imstats, catalog, exp, outdir, fname_in,
@@ -164,6 +166,10 @@ if __name__ == "__main__":
     parser.add_argument('--make_psf_models', default=False,
                         action='store_true',
                         help="generate per-camera PSF models")
+
+    parser.add_argument('--compress_reduced_image', default=False,
+                        action='store_true',
+                        help="compress reduced image output file")
     
     args = parser.parse_args()
 
@@ -175,4 +181,5 @@ if __name__ == "__main__":
           skip_image_outputs=args.skip_image_outputs, realtime=args.realtime,
           no_dark_rescaling=args.no_dark_rescaling, 
           dont_write_invvar=args.dont_write_invvar,
-          make_psf_models=args.make_psf_models)
+          make_psf_models=args.make_psf_models,
+          compress_reduced_image=args.compress_reduced_image)
