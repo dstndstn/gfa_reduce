@@ -483,7 +483,7 @@ def dark_current_ccds_table(tab, exp):
     tab['dark_rescale_ncalls'] = dark_rescale_ncalls
     tab['dark_rescale_converged'] = dark_rescale_converged
     
-def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
+def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None, ps1=None):
 
     assert(os.path.exists(outdir))
 
@@ -560,7 +560,9 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None):
 
     tab['moon_sep_deg'] = util.moon_separation(tab['moonra'], tab['moondec'],
                                                tab['racen'], tab['deccen'])
-        
+
+    tab['zp_adu_per_s'] = [exp.images[extname].compute_zeropoint(ps1) for extname in tab['camera']]
+    
     prescan_overscan_ccds_table(tab, exp)
     high_level_ccds_metrics(tab, catalog, exp)
     astrom_ccds_table(tab, exp)

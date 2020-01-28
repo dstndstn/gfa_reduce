@@ -504,3 +504,41 @@ class CI_image:
         if cube is None:
             self.psf = None
         self.psf = PSF(cube, self.extname)        
+
+    def compute_zeropoint(self, ps1_matched_catalog):
+        if ps1_matched_catalog is None:
+            return np.nan
+
+        if self.psf is None:
+            return np.nan
+
+        # remember to account for airmass
+
+        k = 0.114 # DESI-5418-v2
+        
+        # require ps1 median_1_ r flux to be > 0
+        # require correct extname
+        # detmap_peak >= 10 (kind of like S/N > 10)
+        # ang_sep_deg < 2.0/3600.0
+
+        # require GFA _3 flux > 0
+        # require something about minimum edge distance
+        # cut on dq_flags
+
+        # also report the computed zeropoint, not just the transparency
+        
+        good = (ps1_matched_catalog['median_1_'] > 0) & (ps1_matched_catalog['camera'] == self.extname) & (ps1_matched_catalog['detmap_peak'] >= 10) & (ps1_matched_catalog['ang_sep_deg'] < 2.0/3600.0) & (ps1_matched_catalog['aper_sum_bkgsub_3'] > 0) & (ps1_matched_catalog['min_edge_dist_pix'] >= 10) & (ps1_matched_catalog['dq_flags'] == 0)
+
+        if np.sum(good) == 0:
+            return np.nan
+
+        ps1_matched_catalog = ps1_matched_catalog[good]
+        r_ps1 = -2.5*np.log10(ps1_matched_catalog['median_1_'])
+        m_inst = -2.5*np.log10(ps1_matched_catalog['aper_sum_bkgsub_3']/(self.time_s_for_dark*self.psf.aper_corr_fac))
+
+        zp = np.median(r_ps1 - m_inst)
+
+        return zp
+        # would be good to return metrics
+        # regarding how many sources were used for transparency
+        # what their mag range was, maybe even how well the slope of m_inst vs m_ps1 matches with unity

@@ -86,7 +86,9 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
             print('Attempting to perform PS1 cross-matching...')
             ps1 = io.write_ps1_matches(catalog, outdir, fname_in,
                                        cube_index=cube_index)
-        
+        else:
+            ps1 = None
+            
         if (not no_gaia_xmatch) and (par['gaia_env_var'] in os.environ):
             print('Attempting to identify Gaia cross-matches')
             catalog = io.append_gaia_crossmatches(catalog)
@@ -104,7 +106,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
 
         # make this work correctly in the case that --no_cataloging is set
         io.write_ccds_table(imstats, catalog, exp, outdir, fname_in,
-                            cube_index=cube_index)
+                            cube_index=cube_index, ps1=ps1)
         
         if not no_cataloging:
             io.write_exposure_source_catalog(catalog, outdir, fname_in, exp,
