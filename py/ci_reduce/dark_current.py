@@ -337,6 +337,8 @@ def choose_master_dark(exptime, extname, gccdtemp):
     
     # eventually could cache the index of master darks...
     fname_index = os.path.join(os.environ[par['etc_env_var']], par['dark_index_filename'])
+
+    print('Reading master dark index table : ' + fname_index)
     
     assert(os.path.exists(fname_index))
     str = fits.getdata(fname_index)
