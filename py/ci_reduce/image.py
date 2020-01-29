@@ -449,6 +449,11 @@ class CI_image:
             
         
     def extract_psf_cutouts(self, __catalog, sidelen=51):
+
+        # handle case of entire exposure with no retained sources
+        if __catalog is None:
+            return
+        
         # sidelen should be an integer...
         assert(np.round(sidelen) == sidelen)
 

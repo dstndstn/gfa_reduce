@@ -8,6 +8,9 @@ import astropy.io.fits as fits
 def recalib_astrom(cat, fname_raw):
     # cat should be the catalog for an entire exposure
 
+    if cat is None:
+        return None
+        
     extnames = np.unique(cat['camera'])
 
     try:

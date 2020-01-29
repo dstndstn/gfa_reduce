@@ -149,12 +149,22 @@ class CI_exposure:
 
     def update_wcs(self, astr):
 
+        # don't crash for case when no sources were retained in entire
+        # exposure
+        if astr is None:
+            return
+        
         for a in astr:
             extname = a['extname']
             self.images[extname].update_wcs(a)
 
     def recompute_catalog_radec(self, cat):
 
+        # don't crash for case when no sources were retained in entire
+        # exposure
+        if cat is None:
+            return
+        
         extnames = np.unique(cat['camera'])
 
         for extname in extnames:

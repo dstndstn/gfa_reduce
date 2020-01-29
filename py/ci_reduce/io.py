@@ -235,6 +235,10 @@ def combine_per_camera_catalogs(catalogs):
             tab['petal_loc'] = np.array([common.ci_extname_to_ci_number(extname) for extname in tab['camera']], dtype='uint8')
             composite_list.append(tab)
 
+    # handle case of no sources in any image
+    if len(composite_list) == 0:
+        return None
+    
     composite = vstack(composite_list)
     composite = strip_none_columns(composite)
 
@@ -244,6 +248,10 @@ def combine_per_camera_catalogs(catalogs):
 def write_exposure_source_catalog(catalog, outdir, fname_in, exp, 
                                   cube_index=None):
 
+    # handle case of exposure with no retained sources
+    if catalog is None:
+        return
+    
     assert(os.path.exists(outdir))
 
     outname = os.path.join(outdir, os.path.basename(fname_in))
@@ -281,6 +289,11 @@ def write_exposure_source_catalog(catalog, outdir, fname_in, exp,
     hdul.writeto(outname)
 
 def write_ps1_matches(catalog, outdir, fname_in, cube_index=None):
+
+    # handle case of exposure with no retained sources
+    if catalog is None:
+        return None
+    
     ps1 = gaia.gaia_xmatch(catalog['ra'], catalog['dec'], ps1=True)
 
     if ps1 is None:
@@ -314,6 +327,11 @@ def write_ps1_matches(catalog, outdir, fname_in, cube_index=None):
     return ps1_matches
     
 def gather_gaia_crossmatches(catalog):
+
+    # handle case of exposure with no retained sources
+    if catalog is None:
+        return None
+    
     gaia_matches = gaia.gaia_xmatch(catalog['ra'], catalog['dec'])
 
     # avoid downstream conflict with 'ra', 'dec' columns that refer
@@ -326,6 +344,10 @@ def gather_gaia_crossmatches(catalog):
 def append_gaia_crossmatches(catalog):
     gaia_matches = gather_gaia_crossmatches(catalog)
 
+    # handle case of exposure with no retained sources
+    if gaia_matches is None:
+        return None
+    
     # I believe that there will always be a Gaia match for each
     # detected source, but will need to see if that assumption breaks
     # at any point
@@ -352,6 +374,10 @@ def gather_pixel_stats(exp):
     
 def high_level_ccds_metrics(tab, catalog, exp):
 
+    # handle case of exposure with no retained sources
+    if catalog is None:
+        return
+    
     nrows = len(tab)
 
     fwhm_major_pix = np.zeros(nrows)
