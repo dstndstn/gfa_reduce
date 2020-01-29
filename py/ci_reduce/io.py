@@ -509,6 +509,15 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None, ps1=N
     
     tab['sky_mag_ab'] = [exp.images[extname].sky_mag for extname in tab['camera']]
 
+    amps = common.valid_amps_list()
+    sky_mag_ab_per_amp = np.zeros((nrows, len(amps)), dtype='float32') # 4 amps
+    for i, extname in enumerate(tab['camera']):
+        for j in range(len(amps)):
+            _mag = np.nan if exp.images[extname].sky_mag_per_amp is None else exp.images[extname].sky_mag_per_amp[j]
+            sky_mag_ab_per_amp[i, j] = _mag
+
+    tab['sky_mag_ab_per_amp'] = sky_mag_ab_per_amp
+    
     tab['petal_loc'] = np.array([common.ci_extname_to_ci_number(extname) for extname in tab['camera']], dtype='uint8')
 
     tab['expid'] = [exp.images[extname].header['EXPID'] for extname in tab['camera']]

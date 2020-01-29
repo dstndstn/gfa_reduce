@@ -133,9 +133,11 @@ class CI_image:
         # the _adu in ivar_adu is meant to indicate the units are 1/(ADU^2)
         self.ivar_adu = None
         self.sky_mag = None
+        self.sky_mag_per_amp = None
         self.segmap = None # may want to get rid of this entirely
         self.empirical_bg_sigma = None
         self.sky_level_adu = None
+        self.sky_level_adu_per_amp = None
         self.bintable_row = None
 
         # record CCD temperature used for dark current removal
@@ -276,6 +278,11 @@ class CI_image:
             self.sky_level_adu = np.median(self.image[self.segmap.array == 0])
         else:
             self.sky_level_adu = np.median(self.image)
+            self.sky_level_adu_per_amp = {}
+            for amp in common.valid_amps_list():
+                bdy = common.amp_bdy_coords(amp)
+                self.sky_level_adu_per_amp[amp] = np.median(self.image[bdy['y_l']:bdy['y_u'], bdy['x_l']:bdy['x_u']])
+                
 
         return self.sky_level_adu
 
@@ -323,6 +330,10 @@ class CI_image:
         
         sky_mag = sky.adu_to_surface_brightness(sky_adu_per_pixel, 
                                                 acttime, extname)
+
+        if self.sky_level_adu_per_amp is not None:
+            amps = common.valid_amps_list()
+            self.sky_mag_per_amp = [sky.adu_to_surface_brightness(self.sky_level_adu_per_amp[amp], acttime, extname) for amp in amps]
 
         print(self.header['EXTNAME'] + ' sky mag per square asec AB : ' +  
               '{:.3f}'.format(sky_mag))
