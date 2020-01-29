@@ -35,7 +35,7 @@ class PSF:
          hdu = f(self.psf_image)
          hdu.header['EXTNAME'] = self.extname
          hdu.header['NSTARS'] = self.nstars
-         hdu.header['FIBFRAC'] = self.fiber_fracflux # will this crash for NaN values?
+         hdu.header['FIBFRAC'] = self.fiber_fracflux if np.isfinite(self.fiber_fracflux) else 0.0 # ??
          return hdu
 
 class Overscan:
