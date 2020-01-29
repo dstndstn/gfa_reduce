@@ -514,7 +514,9 @@ class CI_image:
         print('computing PSF for ' + self.extname)
         if cube is None:
             self.psf = None
-        self.psf = PSF(cube, self.extname)        
+            print("WARNING: did not find any PSF 'stars' for " + self.extname)
+        else:
+            self.psf = PSF(cube, self.extname)        
 
     def compute_zeropoint(self, ps1_matched_catalog):
         if ps1_matched_catalog is None:
