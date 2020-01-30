@@ -322,11 +322,7 @@ class CI_image:
 
         extname = self.header['EXTNAME']
 
-        try:
-            acttime = self.header['EXPTIME']
-        except:
-            print('could not find EXPTIME keyword !!!!')
-            acttime = self.header['REQTIME']
+        acttime = self.time_s_for_dark
         
         sky_mag = sky.adu_to_surface_brightness(sky_adu_per_pixel, 
                                                 acttime, extname)
