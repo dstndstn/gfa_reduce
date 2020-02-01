@@ -373,10 +373,6 @@ def gather_pixel_stats(exp):
     return t
     
 def high_level_ccds_metrics(tab, catalog, exp):
-
-    # handle case of exposure with no retained sources
-    if catalog is None:
-        return
     
     nrows = len(tab)
 
@@ -388,11 +384,17 @@ def high_level_ccds_metrics(tab, catalog, exp):
     n_sources_for_shape = np.zeros(nrows, dtype=int)
     # boolean mask listing whether each source in 'catalog' was
     # used in computing its camera's overall FWHM_ASEC value
-    used_for_fwhm_meas = np.zeros(len(catalog), dtype=bool)
+    if catalog is not None:
+        used_for_fwhm_meas = np.zeros(len(catalog), dtype=bool)
 
     for i, row in enumerate(tab):
-        if np.sum(catalog['camera'] == row['camera']) == 0:
+        if (catalog is None) or (np.sum(catalog['camera'] == row['camera']) == 0):
+            fwhm_major_pix[i] = np.nan
+            fwhm_minor_pix[i] = np.nan
+            fwhm_pix[i] = np.nan
+            fwhm_asec[i] = np.nan
             continue
+
         bad_amps = exp.images[row['camera']].overscan.bad_amps_list()
         fwhm_stats = bcs.overall_image_fwhm(catalog[catalog['camera'] == row['camera']], bad_amps=bad_amps)
         fwhm_major_pix[i] = fwhm_stats[0]
@@ -410,7 +412,8 @@ def high_level_ccds_metrics(tab, catalog, exp):
     tab['n_sources'] = n_sources
     tab['n_sources_for_shape'] = n_sources_for_shape
 
-    catalog['used_for_fwhm_meas'] = used_for_fwhm_meas.astype('uint8')
+    if catalog is not None:
+        catalog['used_for_fwhm_meas'] = used_for_fwhm_meas.astype('uint8')
 
 def prescan_overscan_ccds_table(tab, exp):
     # add information about bad pixels in overscan/prescan to
