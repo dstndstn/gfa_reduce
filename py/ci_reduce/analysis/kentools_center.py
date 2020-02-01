@@ -12,7 +12,6 @@ from scipy.ndimage import gaussian_filter
 from .center_contrast import center_contrast
 import ci_reduce.common as common
 import copy
-#import fitsio # for testing
 
 def downselected_star_sample(cat, n_desi_max):
     assert(len(np.unique(cat['camera'])) == 1)
@@ -136,19 +135,31 @@ def kentools_center(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5,
 
     cat = cat[np.argsort(cat['dec'])] # not really necessary
 
+    _g = None
     for i in range(len(cat)):
         print(i+1, ' of ', len(cat))
         c = SkyCoord(cat[i]['ra']*u.deg, cat[i]['dec']*u.deg)
-        dangle = c.separation(g)
+        dangle = c.separation(g if _g is None else _g)
         w = (np.where(dangle.arcminute < arcmin_max))[0]
-        print(len(w), len(g), len(gaia))
+        print(len(w), len(dangle))
         if len(w) == 0:
             continue
+
+        assert(len(dangle) == len(x_gaia_guess))
+        assert(len(dangle) == len(y_gaia_guess))
+        
         dx = cat[i]['xcentroid'] - x_gaia_guess[w]
         dy = cat[i]['ycentroid'] - y_gaia_guess[w]
         dx_all = np.concatenate((dx_all, dx))
         dy_all = np.concatenate((dy_all, dy))
 
+        if _g is None:
+            padfac = 2.0
+            keep = (dangle.arcminute < (8.1 + padfac*arcmin_max))
+            x_gaia_guess = x_gaia_guess[keep]
+            y_gaia_guess = y_gaia_guess[keep]
+            _g = g[keep]
+        
     assert(len(dx_all) == len(dy_all))
     #print(np.min(dy_all), np.max(dy_all))
 
@@ -169,7 +180,7 @@ def kentools_center(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5,
     fwhm_pix = 4.7
     sigma_pix = fwhm_pix/(2*np.sqrt(2*np.log(2)))
     smth = gaussian_filter(counts, sigma_pix, mode='constant')
-
+    
     counts_shape = counts.shape
     sidelen = counts_shape[0]
     #plt.imshow(smth, cmap='gray_r')
