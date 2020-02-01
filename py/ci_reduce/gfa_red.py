@@ -13,7 +13,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           no_gaia_xmatch=False, no_ps1_xmatch=False,
           cube_index=None, skip_image_outputs=False,
           realtime=False, no_dark_rescaling=False, 
-          dont_write_invvar=False, make_psf_models=False,
+          dont_write_invvar=False, skip_psf_models=False,
           compress_reduced_image=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
@@ -79,7 +79,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         exp.update_wcs(astr)
         exp.recompute_catalog_radec(catalog)
 
-        if make_psf_models:
+        if not skip_psf_models:
             exp.compute_psfs(catalog)
         
         if (not no_ps1_xmatch) and (par['ps1_env_var'] in os.environ):
@@ -113,7 +113,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         if not no_cataloging:
             io.write_exposure_source_catalog(catalog, outdir, fname_in, exp,
                                              cube_index=cube_index)
-            if make_psf_models:
+            if not skip_psf_models:
                 io.write_psf_models(exp, outdir, fname_in,
                                     cube_index=cube_index)
 
@@ -163,9 +163,9 @@ if __name__ == "__main__":
                         action='store_true',
                         help="don't write out invvar maps")
 
-    parser.add_argument('--make_psf_models', default=False,
+    parser.add_argument('--skip_psf_models', default=False,
                         action='store_true',
-                        help="generate per-camera PSF models")
+                        help="skip generating per-camera PSF models")
 
     parser.add_argument('--compress_reduced_image', default=False,
                         action='store_true',
@@ -181,5 +181,5 @@ if __name__ == "__main__":
           skip_image_outputs=args.skip_image_outputs, realtime=args.realtime,
           no_dark_rescaling=args.no_dark_rescaling, 
           dont_write_invvar=args.dont_write_invvar,
-          make_psf_models=args.make_psf_models,
+          skip_psf_models=args.skip_psf_models,
           compress_reduced_image=args.compress_reduced_image)
