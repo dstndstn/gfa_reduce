@@ -6,7 +6,6 @@ import os
 import astropy.io.fits as fits
 from scipy.optimize import minimize
 from copy import deepcopy
-import time
 
 # return dark current rate in e-/pix/sec as a function of temperature
 # based on DESI-3358 slide 9, or else my own dark current measurements once 
@@ -145,10 +144,7 @@ def fit_dark_scaling_1amp(im, dark_guess_scaled, amp, extname):
     _cutout = _cutout[ind_subsample]
     _dark_cutout = _dark_cutout[ind_subsample]
     
-    t0 = time.time()
     res = minimize(_objective_function, [1.0], args=(_cutout, _dark_cutout), method='Nelder-Mead', options={'maxfev': 200, 'disp': False, 'initial_simplex': initial_simplex, 'adaptive': False, 'fatol': 1.0e-5})
-    dt = time.time()-t0
-    print(dt, ' $$$$$$$')
     
     return res
 
