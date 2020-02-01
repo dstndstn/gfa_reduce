@@ -289,12 +289,13 @@ def average_bintable_metadata(tab):
                           'GHUMID2',
                           'GHUMID3']
 
+    _tab = tab[1:]
     for col in columns_to_average:
-        if col in tab.columns.names:
+        if col in _tab.columns.names:
             # weighted average...
-            result[col] = [np.sum(tab[col]*tab['EXPTIME'])/np.sum(tab['EXPTIME'])]
+            result[col] = [np.sum(_tab[col]*_tab['EXPTIME'])/np.sum(_tab['EXPTIME'])]
 
-    return result
+    return result[0]
 
 def sanity_check_catalog(cat):
     # can build more checks into this as time goes on...

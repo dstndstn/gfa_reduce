@@ -101,7 +101,7 @@ class CI_image:
             self.image = image.astype('float32')
             self.nframe = 1
         elif cube_index == -1:
-            self.image = np.mean(image.astype('float32'), axis=0)
+            self.image = np.mean(image[1:, :, :].astype('float32'), axis=0)
             self.nframe = image.shape[0]
         else:
             self.image = image[cube_index, :, :].astype('float32')
