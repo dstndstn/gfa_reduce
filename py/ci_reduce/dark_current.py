@@ -89,20 +89,13 @@ def use_rescale_fac(factors):
     
 def _objective_function(p, im, dark):
 
-    # im and dark should already be made 1-dimensional before being input !!
-
-    n_all = im.size
+    # im and dark should already be made 1-dimensional before being input !
+    # and should already be subsampled
+    
     # p should have one element
     # p should generally be a factor relatively close to 1 like 1.1 or 0.9
 
-    # important that this not be a divisor of the # of rows or cols
-    fac = 10
-
-    n_subsample = int(np.floor(float(n_all)/float(fac)))
-
-    ind_subsample = fac*np.arange(n_subsample, dtype=int)
-
-    sub = im[ind_subsample] - dark[ind_subsample]*p[0]
+    sub = im - dark*p[0]
 
     sind = np.argsort(sub)
 
@@ -141,6 +134,17 @@ def fit_dark_scaling_1amp(im, dark_guess_scaled, amp, extname):
     initial_simplex[0] = 0.99
     initial_simplex[1] = 1.01
 
+    n_all = _cutout.size
+    
+    fac = 10
+
+    n_subsample = int(np.floor(float(n_all)/float(fac)))
+
+    ind_subsample = fac*np.arange(n_subsample, dtype=int)
+
+    _cutout = _cutout[ind_subsample]
+    _dark_cutout = _dark_cutout[ind_subsample]
+    
     t0 = time.time()
     res = minimize(_objective_function, [1.0], args=(_cutout, _dark_cutout), method='Nelder-Mead', options={'maxfev': 200, 'disp': False, 'initial_simplex': initial_simplex, 'adaptive': False, 'fatol': 1.0e-5})
     dt = time.time()-t0
