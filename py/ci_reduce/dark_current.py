@@ -6,6 +6,7 @@ import os
 import astropy.io.fits as fits
 from scipy.optimize import minimize
 from copy import deepcopy
+import time
 
 # return dark current rate in e-/pix/sec as a function of temperature
 # based on DESI-3358 slide 9, or else my own dark current measurements once 
@@ -89,12 +90,10 @@ def use_rescale_fac(factors):
 def _objective_function(p, im, dark):
 
     # im and dark should already be made 1-dimensional before being input !!
-    
+
+    n_all = im.size
     # p should have one element
     # p should generally be a factor relatively close to 1 like 1.1 or 0.9
-    _sub = im - dark*p[0]
-
-    n_all = _sub.size
 
     # important that this not be a divisor of the # of rows or cols
     fac = 10
@@ -103,7 +102,7 @@ def _objective_function(p, im, dark):
 
     ind_subsample = fac*np.arange(n_subsample, dtype=int)
 
-    sub = _sub[ind_subsample]
+    sub = im[ind_subsample] - dark[ind_subsample]*p[0]
 
     sind = np.argsort(sub)
 
@@ -141,9 +140,12 @@ def fit_dark_scaling_1amp(im, dark_guess_scaled, amp, extname):
     initial_simplex = np.zeros((2, 1))
     initial_simplex[0] = 0.99
     initial_simplex[1] = 1.01
-    
-    res = minimize(_objective_function, [1.0], args=(_cutout, _dark_cutout), method='Nelder-Mead', options={'maxfev': 200, 'disp': False, 'initial_simplex': initial_simplex, 'adaptive': False, 'fatol': 1.0e-5})
 
+    t0 = time.time()
+    res = minimize(_objective_function, [1.0], args=(_cutout, _dark_cutout), method='Nelder-Mead', options={'maxfev': 200, 'disp': False, 'initial_simplex': initial_simplex, 'adaptive': False, 'fatol': 1.0e-5})
+    dt = time.time()-t0
+    print(dt, ' $$$$$$$')
+    
     return res
 
 def fit_dark_scaling(im, dark_guess_scaled, extname):
