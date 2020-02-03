@@ -574,6 +574,8 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None, ps1=N
     tab['airmass'] = exp.try_retrieve_header_card('AIRMASS', placeholder=np.nan)
     tab['night'] = exp.try_retrieve_header_card('NIGHT', placeholder='')
 
+    tab['focus'] = exp.try_retrieve_header_card('FOCUS', placeholder='')
+
     tab['exptime'] = [exp.images[extname].try_retrieve_meta_keyword('EXPTIME', placeholder=np.nan) for extname in tab['camera']]
     
     tab['cube_index'] = np.nan if cube_index is None else int(cube_index)
@@ -589,9 +591,14 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None, ps1=N
     tab['fiber_fracflux'] = [(exp.images[extname].psf.fiber_fracflux if exp.images[extname].psf is not None else np.nan) for extname in tab['camera']]
 
     tab['n_sources_for_psf'] = [(exp.images[extname].psf.nstars if exp.images[extname].psf is not None else 0) for extname in tab['camera']]
-
+    
     # this pertains to aperture _3 which is 1.5 asec radius
     tab['aper_corr_fac'] = [(exp.images[extname].psf.aper_corr_fac if exp.images[extname].psf is not None else np.nan) for extname in tab['camera']]
+
+    tab['xcentroid_psf'] = [(exp.images[extname].psf.xcen_flux_weighted if exp.images[extname].psf is not None else np.nan) for extname in tab['camera']]
+    tab['ycentroid_psf'] = [(exp.images[extname].psf.ycen_flux_weighted if exp.images[extname].psf is not None else np.nan) for extname in tab['camera']]
+
+    tab['psf_fwhm_pix'] =  [(exp.images[extname].psf.gaussian_fwhm if exp.images[extname].psf is not None else np.nan) for extname in tab['camera']]
     
     for i, extname in enumerate(tab['camera']):
         racen, deccen = ccd_center_radec(exp.images[extname].wcs)

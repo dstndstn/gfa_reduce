@@ -6,6 +6,7 @@ from astropy.coordinates import SkyCoord
 from astropy import units as u
 from scipy.ndimage.interpolation import shift
 import astropy.io.fits as fits
+from scipy.optimize import minimize
 
 def use_for_fwhm_meas(tab, bad_amps=None, snr_thresh=20):
     # return a boolean mask indicating whether each source in a catalog
@@ -508,3 +509,59 @@ def transparency_from_zeropoint(zp_image, airmass, extname):
     transparency = 10**((zp_image - zp_photometric)/2.5)
 
     return transparency
+
+def _gauss2d_profile(sidelen, xcen, ycen, peak_val, sigma, bg=0):
+    
+    ybox = np.arange(sidelen*sidelen, dtype=int) // sidelen
+    xbox = np.arange(sidelen*sidelen, dtype=int) % sidelen
+
+    xbox = xbox.astype('float')
+    ybox = ybox.astype('float')
+
+    xcen = float(xcen)
+    ycen = float(ycen)
+    sigma = float(sigma)
+    
+    dx2 = np.power(xbox - xcen, 2)
+    dy2 = np.power(ybox - ycen, 2)
+
+    r2 = dx2 + dy2
+
+    prof = np.exp(-1.0*r2/(2*(sigma**2)))
+    prof = peak_val*prof/np.max(prof)
+
+    prof += bg
+
+    prof = prof.reshape((sidelen, sidelen))
+
+    return prof
+
+def _gauss2d_metric(p, xcen, ycen, image):
+    # p[0] : sigma (pixels)
+    # p[1] : peak value
+
+    sh = image.shape
+
+    assert(sh[0] == sh[1])
+
+    sidelen = sh[0]
+
+    model = _gauss2d_profile(sidelen, xcen, ycen, p[1], p[0])
+
+    return np.sum(np.power(image-model, 2))
+
+def _fit_gauss2d(xcen, ycen, image):
+
+    # would be good to specify the initial simplex here at some point
+    res = minimize(_gauss2d_metric, [6.0, 1.0], args=(xcen, ycen, image), method='Nelder-Mead', options={'maxfev': 200, 'disp': False, 'adaptive': False, 'fatol': 1.0e-5})
+
+    return res
+
+def _test_gauss2d_fit():
+    tab = fits.getdata('/project/projectdirs/desi/users/ameisner/GFA/run/psf_flux_weighted_centroid/20200131/00045485/gfa-00045485_ccds.fits')
+
+    psf = fits.getdata('/project/projectdirs/desi/users/ameisner/GFA/run/psf_flux_weighted_centroid/20200131/00045485/gfa-00045485_psfs.fits')
+
+    res = _fit_gauss2d(tab[0]['XCENTROID_PSF'], tab[0]['YCENTROID_PSF'], psf)
+
+    return res

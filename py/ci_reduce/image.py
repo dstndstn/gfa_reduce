@@ -16,6 +16,10 @@ class PSF:
         self.psf_image = np.median(cube, 2) # seems to work even for nstars = 1
 
         sh = self.psf_image.shape
+        assert(sh[0] == sh[1])
+
+        self.sidelen = sh[0]
+        
         bgmask = util._stamp_radius_mask(sh[0])
         self.psf_image -= np.median(self.psf_image[bgmask])
 
@@ -29,6 +33,10 @@ class PSF:
 
         self.aper_corr_fac = util._aperture_corr_fac(self.psf_image, extname)
 
+        self.flux_weighted_centroid()
+
+        self.fit_gaussian_fwhm()
+
     def to_hdu(self, primary=False):
          # still need to put metadata into header
          f = (fits.PrimaryHDU if primary else fits.ImageHDU)
@@ -37,6 +45,24 @@ class PSF:
          hdu.header['NSTARS'] = self.nstars
          hdu.header['FIBFRAC'] = self.fiber_fracflux if np.isfinite(self.fiber_fracflux) else 0.0 # ??
          return hdu
+
+    def flux_weighted_centroid(self):
+        assert(self.sidelen % 2 == 1)
+    
+        ybox = np.arange(self.sidelen*self.sidelen, dtype=int) // self.sidelen
+        xbox = np.arange(self.sidelen*self.sidelen, dtype=int) % self.sidelen
+
+        xbox = xbox.astype('float')
+        ybox = ybox.astype('float')
+
+        self.xcen_flux_weighted = np.sum(xbox*np.ravel(self.psf_image))/np.sum(self.psf_image)
+        self.ycen_flux_weighted = np.sum(ybox*np.ravel(self.psf_image))/np.sum(self.psf_image)
+
+    def fit_gaussian_fwhm(self):
+        res = util._fit_gauss2d(self.xcen_flux_weighted, self.ycen_flux_weighted, self.psf_image)
+
+        # check for success of minimization ?
+        self.gaussian_fwhm = res.x[0]*2.355
 
 class Overscan:
     """Object to encapsulate single-camera worth of overscan and prescan"""
