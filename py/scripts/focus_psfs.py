@@ -1,20 +1,25 @@
+#!/usr/bin/env python
+
 import astropy.io.fits as fits
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+import argparse
 
 def focus_plots(night, expids,
-               basedir='/global/cscratch1/sd/ameisner/reduced/v0003'):
+               basedir='/n/home/datasystems/users/ameisner/reduced/realtime'):
 
     plt.figure(figsize=(12, 9))
     extnames = ['GUIDE0', 'GUIDE2', 'GUIDE3', 'GUIDE5', 'GUIDE7', 'GUIDE8']
 
     focus_z = []
     fwhm_pix = []
+
     # PSF stamps plot
     plt.subplots_adjust(hspace=0.01, wspace=0.01)
     for i, expid in enumerate(expids):
         fname = basedir + '/' + night + '/' + str(expid).zfill(8) + '/gfa-' + str(expid).zfill(8) + '_psfs.fits'
+        print(fname)
         fname_ccds = fname.replace('_psfs.fits', '_ccds.fits')
         if not os.path.exists(fname):
             continue
@@ -91,3 +96,24 @@ def _test_missing_cam():
     expids = 45485 + np.arange(7)
 
     focus_plots(night, expids, basedir='/project/projectdirs/desi/users/ameisner/GFA/run/psf_flux_weighted_centroid')
+
+if __name__ == "__main__":
+    descr = 'GFA focus sequence plots/analysis'
+    parser = argparse.ArgumentParser(description=descr)
+
+    parser.add_argument('first_expid', type=int, nargs=1)
+
+    parser.add_argument('night', type=str, nargs=1)
+    
+    parser.add_argument('--basedir', default='/n/home/datasystems/users/ameisner/reduced/realtime',
+                        type=str, help='base directory for GFA reductions')
+
+    args = parser.parse_args()
+
+    expids = args.first_expid + np.arange(7, dtype=int)
+
+    print(expids)
+    print(args.night[0])
+    print(args.basedir)
+    
+    focus_plots(args.night[0], expids, basedir=args.basedir)
