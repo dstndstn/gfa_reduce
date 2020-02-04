@@ -7,9 +7,10 @@ import matplotlib.pyplot as plt
 import argparse
 
 def focus_plots(night, expids,
-               basedir='/n/home/datasystems/users/ameisner/reduced/realtime'):
+               basedir='/n/home/datasystems/users/ameisner/reduced/realtime',
+               outdir='/n/home/desiobserver/focus_scan'):
 
-    plt.figure(figsize=(12, 9))
+    plt.figure(1, figsize=(12, 9))
     extnames = ['GUIDE0', 'GUIDE2', 'GUIDE3', 'GUIDE5', 'GUIDE7', 'GUIDE8']
 
     focus_z = []
@@ -51,10 +52,10 @@ def focus_plots(night, expids,
     print(focus_z)
     print(fwhm_pix)
 
-    plt.savefig('stamps_focus_scan-' + str(expid_min).zfill(8)+'.png', bbox_inches='tight')
-    plt.cla()
+    plt.savefig(os.path.join(outdir, 'stamps_focus_scan-' + str(expid_min).zfill(8)+'.png'), bbox_inches='tight')
+    #plt.cla()
 
-    plt.figure()
+    plt.figure(200)
     
     asec_per_pix = 0.205
 
@@ -83,7 +84,8 @@ def focus_plots(night, expids,
     plt.text(focus_z[2], yrange[0] + 0.7*(yrange[1]-yrange[0]), 'best FWHM (fit) : ' + '{:.2f}'.format(min_fwhm_fit_asec))
     plt.text(focus_z[2], yrange[0] + 0.9*(yrange[1]-yrange[0]), 'best focus : ' + str(int(np.round(zmin))))
     
-    plt.savefig('fit_focus_scan-' + str(expid_min) + '.png', bbox_inches='tight')
+    plt.savefig(os.path.join(outdir, 'fit_focus_scan-' + str(expid_min) + '.png'), bbox_inches='tight')
+    plt.show()
     
 def _test():
     night = '20200131'
@@ -108,6 +110,9 @@ if __name__ == "__main__":
     parser.add_argument('--basedir', default='/n/home/datasystems/users/ameisner/reduced/realtime',
                         type=str, help='base directory for GFA reductions')
 
+    parser.add_argument('--outdir', default='/n/home/desiobserver/focus_scan', 
+                        type=str, help='output directory for plot PNGs')
+
     args = parser.parse_args()
 
     expids = args.first_expid + np.arange(7, dtype=int)
@@ -116,4 +121,5 @@ if __name__ == "__main__":
     print(args.night[0])
     print(args.basedir)
     
-    focus_plots(args.night[0], expids, basedir=args.basedir)
+    outdir = args.outdir if os.path.exists(args.outdir) else '.'
+    focus_plots(args.night[0], expids, basedir=args.basedir, outdir=outdir)
