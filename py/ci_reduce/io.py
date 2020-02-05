@@ -203,7 +203,8 @@ def write_image_level_outputs(exp, outdir, fname_in, gzip=True,
         print('Attempting to write ' + flavor + ' image output to ' + 
               outname)
 
-        hdulist.writeto(outname)
+        hdulist.writeto(outname + '.tmp')
+        os.rename(outname + '.tmp', outname)
 
         print('Successfully wrote ' + flavor + ' image output to ' + 
               outname)
