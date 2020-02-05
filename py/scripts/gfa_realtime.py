@@ -78,6 +78,11 @@ def run(workerid, q):
         sys.stdout.flush()
         #- Do something with that filename
         outdir = os.path.join(night_basedir_out, str(expid_from_filename(filename)).zfill(8))
+
+        if args.guider and (image.cube_index < 12):
+            print('sleeping for 1 minute to avoid bad DTS links')
+            time.sleep(60.0) # hack to deal with bad DTS links
+
         try:
             _proc(filename, outdir=outdir, realtime=True, cube_index=image.cube_index, dont_write_invvar=True) # realtime HARDCODED to true
         except:
@@ -123,9 +128,9 @@ while(True):
                     h = fits.getheader(filename, extname='GUIDER')
                     outdir = os.path.join(night_basedir_out, str(expid_from_filename(filename)).zfill(8))
                     os.mkdir(outdir) # avoids race condition in _proc ...
-                    for i in range(h['FRAMES']):
-                        image = ProcItem(filename, cube_index=i)
-                        q.put(image)
+                    __cube_index = 1 if (h['FRAMES'] > 1) else 0
+                    image = ProcItem(filename, cube_index=__cube_index)
+                    q.put(image)
             else:
                 print('skipping ' + filename + ' ; NOT flavor=science')
             known_files.add(filename)
