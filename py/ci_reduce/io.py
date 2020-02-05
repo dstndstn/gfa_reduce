@@ -287,7 +287,8 @@ def write_exposure_source_catalog(catalog, outdir, fname_in, exp,
         
     print('Attempting to write source catalog to ' + outname)
 
-    hdul.writeto(outname)
+    hdul.writeto(outname + '.tmp')
+    os.rename(outname + '.tmp', outname)
 
 def write_ps1_matches(catalog, outdir, fname_in, cube_index=None):
 
