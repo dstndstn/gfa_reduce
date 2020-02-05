@@ -618,7 +618,8 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None, ps1=N
     dark_current_ccds_table(tab, exp)
     
     print('Attempting to write CCDs table to ' + outname)
-    tab.write(outname, format='fits')
+    tab.write(outname + '.tmp', format='fits')
+    os.rename(outname + '.tmp', outname)
 
 def write_psf_models(exp, outdir, fname_in, cube_index=None):
 
@@ -645,8 +646,10 @@ def write_psf_models(exp, outdir, fname_in, cube_index=None):
         if image.psf is not None:
             hdul.append(image.psf.to_hdu(primary=(len(hdul) == 0)))
 
-    hdul = fits.HDUList(hdul)
-    hdul.writeto(outname)
+    if len(hdul) > 0:
+        hdul = fits.HDUList(hdul)
+        hdul.writeto(outname + '.tmp')
+        os.rename(outname + '.tmp', outname)
 
 def get_temperature_celsius(fname_in, extname):
     # try to get CCDTEMP if it's available
