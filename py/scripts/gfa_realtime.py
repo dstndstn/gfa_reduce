@@ -20,6 +20,7 @@ parser.add_argument("-w", "--waittime", type=int, default=5, help="wait time bet
 parser.add_argument("-e", "--expid_min", type=int, default=-1, help="start with this EXPID value")
 parser.add_argument("--out_basedir", type=str, default='/n/home/datasystems/users/ameisner/reduced/realtime', help="base output directory for GFA reductions")
 parser.add_argument("--guider", default=False, action='store_true', help="process guide-????????.fits.fz files instead of gfa-????????.fz files")
+parser.add_argument("--focus", default=False, action='store_true', help="optimize for focus scan analysis")
 args = parser.parse_args()
 
 class ProcItem:
@@ -84,7 +85,10 @@ def run(workerid, q):
             time.sleep(60.0) # hack to deal with bad DTS links
 
         try:
-            _proc(filename, outdir=outdir, realtime=True, cube_index=image.cube_index, dont_write_invvar=True) # realtime HARDCODED to true
+            if not args.focus:
+                _proc(filename, outdir=outdir, realtime=True, cube_index=image.cube_index, skip_image_outputs=True, skip_raw_imstats=True)
+            else:
+                _proc(filename, outdir=outdir, realtime=True, cube_index=image.cube_index, skip_image_outputs=True, skip_raw_imstats=True, skip_astrometry=True, no_ps1_xmatch=True, no_gaia_xmatch=True)
         except:
             print('PROCESSING FAILURE: ' + image.fname_raw + '   ' + image._cube_index_string())
         print('Worker {} done with {}'.format(workerid, filename))
