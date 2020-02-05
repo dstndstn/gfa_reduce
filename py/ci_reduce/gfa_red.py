@@ -14,7 +14,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           cube_index=None, skip_image_outputs=False,
           realtime=False, no_dark_rescaling=False, 
           dont_write_invvar=False, skip_psf_models=False,
-          compress_reduced_image=False, skip_raw_imstats=False):
+          compress_reduced_image=False, skip_raw_imstats=False,
+          skip_astrometry=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -74,11 +75,12 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         # reformat the output catalogs into a single merged astropy Table
         catalog = io.combine_per_camera_catalogs(catalogs)
 
-        # run astrometric recalibration
-        print('Attempting astrometric recalibration relative to Gaia DR2')
-        astr = wcs.recalib_astrom(catalog, fname_in)
-        exp.update_wcs(astr)
-        exp.recompute_catalog_radec(catalog)
+        if not skip_astrometry:
+            # run astrometric recalibration
+            print('Attempting astrometric recalibration relative to Gaia DR2')
+            astr = wcs.recalib_astrom(catalog, fname_in)
+            exp.update_wcs(astr)
+            exp.recompute_catalog_radec(catalog)
 
         if not skip_psf_models:
             exp.compute_psfs(catalog)
@@ -175,6 +177,10 @@ if __name__ == "__main__":
     parser.add_argument('--skip_raw_imstats', default=False,
                         action='store_true',
                         help="skip computing of raw image pixel statistics")
+
+    parser.add_argument('--skip_astrometry', default=False,
+                        action='store_true',
+                        help='skip astrometric recalibration')
     
     args = parser.parse_args()
 
@@ -188,4 +194,5 @@ if __name__ == "__main__":
           dont_write_invvar=args.dont_write_invvar,
           skip_psf_models=args.skip_psf_models,
           compress_reduced_image=args.compress_reduced_image,
-          skip_raw_imstats=args.skip_raw_imstats)
+          skip_raw_imstats=args.skip_raw_imstats,
+          skip_astrometry=args.skip_astrometry)
