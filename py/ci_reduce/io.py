@@ -3,7 +3,7 @@ from ci_reduce.exposure import CI_exposure
 import ci_reduce.common as common
 import ci_reduce.xmatch.gaia as gaia
 import astropy.io.fits as fits
-from astropy.table import vstack, hstack
+from astropy.table import Table, vstack, hstack
 import os
 import ci_reduce.analysis.basic_image_stats as bis
 import ci_reduce.analysis.basic_catalog_stats as bcs
@@ -356,20 +356,25 @@ def append_gaia_crossmatches(catalog):
     
     return catalog
 
-def gather_pixel_stats(exp):
+def gather_pixel_stats(exp, skip=False):
 
-    t = None
-    for extname, im in exp.images.items():
-        if im is None:
-            continue
+    if not skip:
+        t = None
+        for extname, im in exp.images.items():
+            if im is None:
+                continue
 
-        print('Computing pixel statistics for ' + extname)
-        t_im = bis.compute_all_stats(im.image, extname=extname)
-        if t is None:
-            t = t_im
-        else:
-            t = vstack([t, t_im])
-
+            print('Computing pixel statistics for ' + extname)
+            t_im = bis.compute_all_stats(im.image, extname=extname)
+            if t is None:
+                t = t_im
+            else:
+                t = vstack([t, t_im])
+    else:
+        t = Table()
+        t['camera'] = list(exp.images.keys())
+            
+                
     return t
     
 def high_level_ccds_metrics(tab, catalog, exp):

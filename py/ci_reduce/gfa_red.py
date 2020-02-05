@@ -14,7 +14,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           cube_index=None, skip_image_outputs=False,
           realtime=False, no_dark_rescaling=False, 
           dont_write_invvar=False, skip_psf_models=False,
-          compress_reduced_image=False):
+          compress_reduced_image=False, skip_raw_imstats=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -48,7 +48,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         return
     
     print('Attempting to compute basic statistics of raw pixel data')
-    imstats = io.gather_pixel_stats(exp)
+
+    imstats = io.gather_pixel_stats(exp, skip=skip_raw_imstats)
 
     # create data quality bitmasks
     # exp.create_all_bitmasks() # revisit this later
@@ -170,6 +171,10 @@ if __name__ == "__main__":
     parser.add_argument('--compress_reduced_image', default=False,
                         action='store_true',
                         help="compress reduced image output file")
+
+    parser.add_argument('--skip_raw_imstats', default=False,
+                        action='store_true',
+                        help="skip computing of raw image pixel statistics")
     
     args = parser.parse_args()
 
@@ -182,4 +187,5 @@ if __name__ == "__main__":
           no_dark_rescaling=args.no_dark_rescaling, 
           dont_write_invvar=args.dont_write_invvar,
           skip_psf_models=args.skip_psf_models,
-          compress_reduced_image=args.compress_reduced_image)
+          compress_reduced_image=args.compress_reduced_image,
+          skip_raw_imstats=args.skip_raw_imstats)
