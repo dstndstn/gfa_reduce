@@ -322,8 +322,9 @@ def write_ps1_matches(catalog, outdir, fname_in, cube_index=None):
                                   '-' + str(cube_index).zfill(5) + '.fits')
     
     assert(not os.path.exists(outname))
-    ps1_matches.write(outname, format='fits')
-
+    ps1_matches.write(outname + '.tmp', format='fits')
+    os.rename(outname + '.tmp', outname)
+    
     return ps1_matches
     
 def gather_gaia_crossmatches(catalog):
