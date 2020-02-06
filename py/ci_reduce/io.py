@@ -35,6 +35,21 @@ def load_image_from_filename(fname, extname):
     data, header = fits.getdata(fname, extname=extname, header=True)
     return CI_image(data, header)
 
+def _atomic_write(data, outname):
+    # data should be either an astropy Table or an hdulist
+
+    if outname[-3:] == '.gz':
+        outname_tmp = outname.replace('.gz', '.tmp.gz')
+    else:
+        outname_tmp = outname + '.tmp'
+    
+    if isinstance(data, Table):
+        data.write(outname_tmp, format='fits')
+    else:
+        data.writeto(outname_tmp)
+
+    os.rename(outname_tmp, outname)
+    
 def realtime_raw_read(fname, delay=2.0, max_attempts=5):
     """
     attempt to avoid getting burned by partially written files when
@@ -203,9 +218,8 @@ def write_image_level_outputs(exp, outdir, fname_in, gzip=True,
         print('Attempting to write ' + flavor + ' image output to ' + 
               outname)
 
-        hdulist.writeto(outname + '.tmp')
-        os.rename(outname + '.tmp', outname)
-
+        _atomic_write(hdulist, outname)
+        
         print('Successfully wrote ' + flavor + ' image output to ' + 
               outname)
 
@@ -287,8 +301,7 @@ def write_exposure_source_catalog(catalog, outdir, fname_in, exp,
         
     print('Attempting to write source catalog to ' + outname)
 
-    hdul.writeto(outname + '.tmp')
-    os.rename(outname + '.tmp', outname)
+    _atomic_write(hdul, outname)
 
 def write_ps1_matches(catalog, outdir, fname_in, cube_index=None):
 
@@ -324,8 +337,8 @@ def write_ps1_matches(catalog, outdir, fname_in, cube_index=None):
                                   '-' + str(cube_index).zfill(5) + '.fits')
     
     assert(not os.path.exists(outname))
-    ps1_matches.write(outname + '.tmp', format='fits')
-    os.rename(outname + '.tmp', outname)
+
+    _atomic_write(ps1_matches, outname)
     
     return ps1_matches
     
@@ -626,8 +639,8 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None, ps1=N
     dark_current_ccds_table(tab, exp)
     
     print('Attempting to write CCDs table to ' + outname)
-    tab.write(outname + '.tmp', format='fits')
-    os.rename(outname + '.tmp', outname)
+
+    _atomic_write(tab, outname)
 
 def write_psf_models(exp, outdir, fname_in, cube_index=None):
 
@@ -656,8 +669,7 @@ def write_psf_models(exp, outdir, fname_in, cube_index=None):
 
     if len(hdul) > 0:
         hdul = fits.HDUList(hdul)
-        hdul.writeto(outname + '.tmp')
-        os.rename(outname + '.tmp', outname)
+        _atomic_write(hdul, outname)
 
 def get_temperature_celsius(fname_in, extname):
     # try to get CCDTEMP if it's available
