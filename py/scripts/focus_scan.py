@@ -8,7 +8,7 @@ import argparse
 
 def focus_plots(night, expids,
                basedir='/n/home/datasystems/users/ameisner/reduced/realtime',
-               outdir='/n/home/desiobserver/focus_scan'):
+               outdir='/n/home/desiobserver/focus_scan', no_popups=False):
 
     plt.figure(1, figsize=(12, 9))
     extnames = ['GUIDE0', 'GUIDE2', 'GUIDE3', 'GUIDE5', 'GUIDE7', 'GUIDE8']
@@ -85,7 +85,8 @@ def focus_plots(night, expids,
     plt.text(focus_z[2], yrange[0] + 0.9*(yrange[1]-yrange[0]), 'best focus : ' + str(int(np.round(zmin))))
     
     plt.savefig(os.path.join(outdir, 'fit_focus_scan-' + str(expid_min) + '.png'), bbox_inches='tight')
-    plt.show()
+    if not no_popups:
+        plt.show()
     
 def _test():
     night = '20200131'
@@ -113,6 +114,9 @@ if __name__ == "__main__":
     parser.add_argument('--outdir', default='/n/home/desiobserver/focus_scan', 
                         type=str, help='output directory for plot PNGs')
 
+    parser.add_argument('--no_popups', default=False, action='store_true',
+                        help='write PNGs without popping up plot windows')
+
     args = parser.parse_args()
 
     expids = args.first_expid + np.arange(7, dtype=int)
@@ -122,4 +126,4 @@ if __name__ == "__main__":
     print(args.basedir)
     
     outdir = args.outdir if os.path.exists(args.outdir) else '.'
-    focus_plots(args.night[0], expids, basedir=args.basedir, outdir=outdir)
+    focus_plots(args.night[0], expids, basedir=args.basedir, outdir=outdir, no_popups=args.no_popups)
