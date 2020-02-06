@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import argparse
 
 def focus_plots(night, expids,
-               basedir='/n/home/datasystems/users/ameisner/reduced/realtime',
+               basedir='/n/home/datasystems/users/ameisner/reduced/focus',
                outdir='/n/home/desiobserver/focus_scan', no_popups=False):
 
     plt.figure(1, figsize=(12, 9))
@@ -84,7 +84,7 @@ def focus_plots(night, expids,
     plt.text(focus_z[2], yrange[0] + 0.7*(yrange[1]-yrange[0]), 'best FWHM (fit) : ' + '{:.2f}'.format(min_fwhm_fit_asec))
     plt.text(focus_z[2], yrange[0] + 0.9*(yrange[1]-yrange[0]), 'best focus : ' + str(int(np.round(zmin))))
     
-    plt.savefig(os.path.join(outdir, 'fit_focus_scan-' + str(expid_min) + '.png'), bbox_inches='tight')
+    plt.savefig(os.path.join(outdir, 'fit_focus_scan-' + str(expid_min).zfill(8) + '.png'), bbox_inches='tight')
     if not no_popups:
         plt.show()
     
@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
     parser.add_argument('night', type=str, nargs=1)
     
-    parser.add_argument('--basedir', default='/n/home/datasystems/users/ameisner/reduced/realtime',
+    parser.add_argument('--basedir', default='/n/home/datasystems/users/ameisner/reduced/focus',
                         type=str, help='base directory for GFA reductions')
 
     parser.add_argument('--outdir', default='/n/home/desiobserver/focus_scan', 
