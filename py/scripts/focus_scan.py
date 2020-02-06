@@ -42,7 +42,8 @@ def focus_plots(night, expids,
             im = fits.getdata(fname, extname=extname)
             plt.imshow(im, interpolation='nearest', origin='lower', cmap='gray_r', vmin=0.01)
             plt.text(5, 44, str(expid) + '; ' + extname, color='r', fontsize=9)
-
+            plt.text(10, 3.5, 'z = ' + str(int(float(ccds[0]['FOCUS'].split(',')[2]))), color='r')
+            
             if np.isfinite(ccds[j]['XCENTROID_PSF']) and np.isfinite(ccds[j]['YCENTROID_PSF']):
                 plt.scatter([ccds[j]['XCENTROID_PSF']], [ccds[j]['YCENTROID_PSF']], marker='.', c='r')
 
@@ -92,7 +93,7 @@ def _test():
     night = '20200131'
     expids = 45446 + np.arange(7)
 
-    focus_plots(night, expids, basedir='/project/projectdirs/desi/users/ameisner/GFA/run/psf_flux_weighted_centroid')
+    focus_plots(night, expids, basedir='/project/projectdirs/desi/users/ameisner/GFA/run/psf_flux_weighted_centroid', outdir='.')
 
 def _test_missing_cam():
     night = '20200131'
