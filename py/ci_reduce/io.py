@@ -619,7 +619,9 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None, ps1=N
     tab['xcentroid_psf'] = [(exp.images[extname].psf.xcen_flux_weighted if exp.images[extname].psf is not None else np.nan) for extname in tab['camera']]
     tab['ycentroid_psf'] = [(exp.images[extname].psf.ycen_flux_weighted if exp.images[extname].psf is not None else np.nan) for extname in tab['camera']]
 
-    tab['psf_fwhm_pix'] =  [(exp.images[extname].psf.gaussian_fwhm if exp.images[extname].psf is not None else np.nan) for extname in tab['camera']]
+    tab['psf_fwhm_pix'] =  [(exp.images[extname].psf.gaussian_fwhm_pix if exp.images[extname].psf is not None else np.nan) for extname in tab['camera']]
+
+    tab['psf_fwhm_asec'] = [(exp.images[extname].psf.gaussian_fwhm_asec if exp.images[extname].psf is not None else np.nan) for extname in tab['camera']]
     
     for i, extname in enumerate(tab['camera']):
         racen, deccen = ccd_center_radec(exp.images[extname].wcs)

@@ -62,7 +62,10 @@ class PSF:
         res = util._fit_gauss2d(self.xcen_flux_weighted, self.ycen_flux_weighted, self.psf_image)
 
         # check for success of minimization ?
-        self.gaussian_fwhm = res.x[0]*2.355
+        self.gaussian_fwhm_pix = res.x[0]*2.355
+
+        # could do a more detailed job of this later...
+        self.gaussian_fwhm_asec = self.gaussian_fwhm_pix*0.205
 
 class Overscan:
     """Object to encapsulate single-camera worth of overscan and prescan"""
