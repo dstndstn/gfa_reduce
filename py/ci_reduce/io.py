@@ -309,8 +309,9 @@ def write_exposure_source_catalog(catalog, outdir, proc_obj, exp,
 
     _atomic_write(hdul, outname)
 
-def write_ps1_matches(catalog, outdir, fname_in, cube_index=None):
-
+# since this function doesn't do the writing of the PS1 cross-matches
+# it may belong somewhere else rather than in 'io'
+def get_ps1_matches(catalog):
     # handle case of exposure with no retained sources
     if catalog is None:
         return None
@@ -326,6 +327,14 @@ def write_ps1_matches(catalog, outdir, fname_in, cube_index=None):
 
     ps1_matches = hstack([catalog, ps1])
 
+    return ps1_matches
+    
+def write_ps1_matches(ps1_matches, outdir, fname_in, cube_index=None):
+
+    if ps1_matches is None:
+        print('no PS1 cross-matches to write...')
+        return
+    
     assert(os.path.exists(outdir))
 
     outname = os.path.join(outdir, os.path.basename(fname_in))
@@ -345,8 +354,6 @@ def write_ps1_matches(catalog, outdir, fname_in, cube_index=None):
     assert(not os.path.exists(outname))
 
     _atomic_write(ps1_matches, outname)
-    
-    return ps1_matches
     
 def gather_gaia_crossmatches(catalog):
 

@@ -89,15 +89,11 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
 
         if not skip_psf_models:
             exp.compute_psfs(catalog)
-
-        if not os.path.exists(outdir):
-            os.mkdir(outdir)
             
         if (not no_ps1_xmatch) and (par['ps1_env_var'] in os.environ):
             # probably should look into dec < -30 handling more at some point
             print('Attempting to perform PS1 cross-matching...')
-            ps1 = io.write_ps1_matches(catalog, outdir, fname_in,
-                                       cube_index=cube_index)
+            ps1 = io.get_ps1_matches(catalog)
         else:
             ps1 = None
             
@@ -131,6 +127,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         if not no_cataloging:
             io.write_exposure_source_catalog(catalog, outdir, proc_obj, exp,
                                              cube_index=cube_index)
+            io.write_ps1_matches(ps1, outdir, fname_in,
+                                 cube_index=cube_index)
             if not skip_psf_models:
                 io.write_psf_models(exp, outdir, fname_in,
                                     cube_index=cube_index)
