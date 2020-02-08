@@ -194,12 +194,11 @@ def retrieve_git_rev():
 
     return gitrev
 
-def write_image_level_outputs(exp, outdir, fname_in, gzip=True,
+def write_image_level_outputs(exp, outdir, proc_obj, gzip=True,
                               cube_index=None, dont_write_invvar=False,
                               compress_reduced_image=False):
     # exp is a CI_exposure object
     # outdir is the output directory (string)
-    # fname_in is the input filename (string)
 
     par = common.ci_misc_params()
 
@@ -210,10 +209,13 @@ def write_image_level_outputs(exp, outdir, fname_in, gzip=True,
 
     for flavor in par['reduced_image_flavors']:
         _gzip = (gzip if (flavor != 'REDUCED') else compress_reduced_image)
-        outname = reduced_image_fname(outdir, fname_in, flavor, gzip=_gzip,
-                                      cube_index=cube_index)
+        outname = reduced_image_fname(outdir, proc_obj.fname_in, flavor,
+                                      gzip=_gzip, cube_index=cube_index)
 
         hdulist = exp.to_hdulist(flavor=flavor)
+
+        for hdu in hdulist:
+            hdu.header['GITREV'] = proc_obj.gitrev
 
         print('Attempting to write ' + flavor + ' image output to ' + 
               outname)
@@ -260,7 +262,7 @@ def combine_per_camera_catalogs(catalogs):
     composite['extname'] = composite['camera']
     return composite
 
-def write_exposure_source_catalog(catalog, outdir, fname_in, exp, 
+def write_exposure_source_catalog(catalog, outdir, proc_obj, exp, 
                                   cube_index=None):
 
     # handle case of exposure with no retained sources
@@ -269,7 +271,7 @@ def write_exposure_source_catalog(catalog, outdir, fname_in, exp,
     
     assert(os.path.exists(outdir))
 
-    outname = os.path.join(outdir, os.path.basename(fname_in))
+    outname = os.path.join(outdir, os.path.basename(proc_obj.fname_in))
 
     # get rid of any ".fz" or ".gz" present in input filename
     outname = outname.replace('.fz', '')
@@ -285,8 +287,9 @@ def write_exposure_source_catalog(catalog, outdir, fname_in, exp,
     
     assert(not os.path.exists(outname))
 
-    catalog['fname_in'] = fname_in
-    expid = util.expid_from_raw_filename(fname_in)
+    catalog['fname_in'] = proc_obj.fname_in
+    catalog['gitrev'] = proc_obj.gitrev
+    expid = util.expid_from_raw_filename(proc_obj.fname_in)
     catalog['expid'] = expid
     catalog['cube_index'] = np.nan if cube_index is None else float(cube_index)
     
@@ -535,11 +538,12 @@ def dark_current_ccds_table(tab, exp):
     tab['dark_rescale_ncalls'] = dark_rescale_ncalls
     tab['dark_rescale_converged'] = dark_rescale_converged
     
-def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None, ps1=None):
+def write_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
+                     ps1=None):
 
     assert(os.path.exists(outdir))
 
-    outname = os.path.join(outdir, os.path.basename(fname_in))
+    outname = os.path.join(outdir, os.path.basename(proc_obj.fname_in))
 
     # get rid of any ".fz" or ".gz" present in input filename
     outname = outname.replace('.fz', '')
@@ -604,7 +608,9 @@ def write_ccds_table(tab, catalog, exp, outdir, fname_in, cube_index=None, ps1=N
     tab['racen'] = np.zeros(len(tab), dtype=float)
     tab['deccen'] = np.zeros(len(tab), dtype=float)
 
-    tab['fname_raw'] = fname_in
+    tab['fname_raw'] = proc_obj.fname_in
+    tab['gitrev']  = proc_obj.gitrev
+    
     tab['extname'] = tab['camera']
 
     tab['contrast'] = [exp.images[extname].header['CONTRAST'] for extname in tab['camera']]

@@ -9,6 +9,11 @@ import ci_reduce.common as common
 import ci_reduce.analysis.recalib_astrom as wcs
 import time
 
+class ProcObj():
+    def __init__(self, fname_in, gitrev):
+        self.fname_in = fname_in
+        self.gitrev = gitrev
+
 def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           no_gaia_xmatch=False, no_ps1_xmatch=False,
           cube_index=None, skip_image_outputs=False,
@@ -33,6 +38,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
 
     gitrev = io.retrieve_git_rev()
 
+    proc_obj = ProcObj(fname_in, gitrev)
+    
     if write_outputs:
         if not os.path.exists(outdir):
             os.mkdir(outdir)
@@ -104,17 +111,17 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
             print('Attempting to write image-level outputs to directory : ' + 
                   outdir)
             # could add command line arg for turning off gzip compression
-            io.write_image_level_outputs(exp, outdir, fname_in, gzip=True,
+            io.write_image_level_outputs(exp, outdir, proc_obj, gzip=True,
                                          cube_index=cube_index,
                                          dont_write_invvar=dont_write_invvar,
                                          compress_reduced_image=compress_reduced_image)
 
         # make this work correctly in the case that --no_cataloging is set
-        io.write_ccds_table(imstats, catalog, exp, outdir, fname_in,
+        io.write_ccds_table(imstats, catalog, exp, outdir, proc_obj,
                             cube_index=cube_index, ps1=ps1)
         
         if not no_cataloging:
-            io.write_exposure_source_catalog(catalog, outdir, fname_in, exp,
+            io.write_exposure_source_catalog(catalog, outdir, proc_obj, exp,
                                              cube_index=cube_index)
             if not skip_psf_models:
                 io.write_psf_models(exp, outdir, fname_in,
