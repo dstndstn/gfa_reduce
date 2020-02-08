@@ -69,7 +69,7 @@ class CI_exposure:
                 t_c = self.images[extname].try_retrieve_meta_keyword('GCCDTEMP')
                 if t_c is None:
                     print('trying GCOLDTEC instead of GCCDTEMP')
-                    t_c = self.images[extname].try_retreive_meta_keyword('GCOLDTEC')
+                    t_c = self.images[extname].try_retrieve_meta_keyword('GCOLDTEC')
                     
                 if t_c is None:
                     print('could not find a CCD temperature !!!!')

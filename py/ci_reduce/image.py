@@ -466,7 +466,7 @@ class CI_image:
         
         if keyword in self.header.keys():
             return self.header[keyword]
-        elif self.bintable_row is not None:
+        elif (self.bintable_row is not None) and (keyword in self.bintable_row.array.dtype.names):
             return self.bintable_row[keyword]
         else:
             print('could not find ' + keyword + ' !!')
