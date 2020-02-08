@@ -172,6 +172,9 @@ class CI_exposure:
 
     def set_bintable_rows(self):
         for image in self.images.values():
+            if image is None:
+                continue
+            
             extname = image.header['EXTNAME'].strip()
             if image.cube_index is None:
                 image.bintable_row = None
@@ -189,4 +192,6 @@ class CI_exposure:
 
     def compute_psfs(self, catalog):
         for image in self.images.values():
+            if image is None:
+                continue
             image.create_psf(catalog)

@@ -33,6 +33,8 @@ def has_wrong_dimensions(exp):
     # correct dimensions
 
     for im in exp.images.values():
+        if im is None:
+            continue
         sh = im.image.shape
         if (sh[0] != 1032) or (sh[1] != 2048):
             return True

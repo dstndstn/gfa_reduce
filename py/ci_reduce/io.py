@@ -307,6 +307,8 @@ def write_exposure_source_catalog(catalog, outdir, proc_obj, exp,
     hdul.append(fits.BinTableHDU(data=catalog, name='CATALOG'))
 
     for image in exp.images.values():
+        if image is None:
+            continue
         hdul.append(fits.ImageHDU(data=None, header=image.header, name=image.extname))
 
     hdul = fits.HDUList(hdul)
@@ -688,6 +690,8 @@ def write_psf_models(exp, outdir, fname_in, cube_index=None):
 
     hdul = []
     for image in exp.images.values():
+        if image is None:
+            continue
         if image.psf is not None:
             hdul.append(image.psf.to_hdu(primary=(len(hdul) == 0)))
 
