@@ -41,8 +41,6 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
     proc_obj = ProcObj(fname_in, gitrev)
     
     if write_outputs:
-        if not os.path.exists(outdir):
-            os.mkdir(outdir)
         # fail if ANY of expected outputs already exist
         io.check_image_level_outputs_exist(outdir, fname_in, gzip=True,
                                            cube_index=cube_index)
@@ -91,7 +89,10 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
 
         if not skip_psf_models:
             exp.compute_psfs(catalog)
-        
+
+        if not os.path.exists(outdir):
+            os.mkdir(outdir)
+            
         if (not no_ps1_xmatch) and (par['ps1_env_var'] in os.environ):
             # probably should look into dec < -30 handling more at some point
             print('Attempting to perform PS1 cross-matching...')
@@ -107,6 +108,10 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
     # try to write image-level outputs if outdir is specified
 
     if write_outputs:
+
+        if not os.path.exists(outdir):
+            os.mkdir(outdir)
+        
         if not skip_image_outputs:
             print('Attempting to write image-level outputs to directory : ' + 
                   outdir)

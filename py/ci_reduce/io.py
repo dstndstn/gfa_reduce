@@ -148,8 +148,11 @@ def load_exposure(fname, verbose=True, realtime=False, cube_index=None):
 
     return exp
 
-def reduced_image_fname(outdir, fname_in, flavor, gzip=True, cube_index=None):
-    assert(os.path.exists(outdir))
+def reduced_image_fname(outdir, fname_in, flavor, gzip=True,
+                        cube_index=None, outdir_not_needed=False):
+
+    if not outdir_not_needed:
+        assert(os.path.exists(outdir))
 
     outname = os.path.join(outdir, os.path.basename(fname_in))
 
@@ -179,7 +182,7 @@ def check_image_level_outputs_exist(outdir, fname_in, gzip=True,
 
     for flavor in par['reduced_image_flavors']:
         _ = reduced_image_fname(outdir, fname_in, flavor, gzip=gzip,
-                                cube_index=cube_index)
+                                cube_index=cube_index, outdir_not_needed=True)
 
 def retrieve_git_rev():
     code_dir = os.path.dirname(os.path.realpath(__file__))
