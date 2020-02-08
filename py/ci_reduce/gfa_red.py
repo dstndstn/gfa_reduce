@@ -104,7 +104,10 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         if (not no_gaia_xmatch) and (par['gaia_env_var'] in os.environ):
             print('Attempting to identify Gaia cross-matches')
             catalog = io.append_gaia_crossmatches(catalog)
-        
+    else:
+        catalog = None
+        ps1 = None
+            
     # try to write image-level outputs if outdir is specified
 
     if write_outputs:
