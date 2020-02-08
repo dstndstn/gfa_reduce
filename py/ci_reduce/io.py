@@ -295,6 +295,12 @@ def write_exposure_source_catalog(catalog, outdir, proc_obj, exp,
     expid = util.expid_from_raw_filename(proc_obj.fname_in)
     catalog['expid'] = expid
     catalog['cube_index'] = np.nan if cube_index is None else float(cube_index)
+
+    mjd = np.zeros(len(catalog), dtype=float)
+    for camera in np.unique(catalog['camera']):
+        mjd[catalog['camera'] == camera] = exp.images[camera].try_retrieve_meta_keyword('MJD-OBS', placeholder=0.0)
+
+    catalog['mjd'] = mjd
     
     hdul = []
     hdul.append(fits.PrimaryHDU())
