@@ -21,9 +21,6 @@ def loading_image_extension_message(extname):
 def load_image_from_hdu(hdu, verbose=True, cube_index=None):
     loading_image_extension_message(hdu.header['EXTNAME'])
 
-    if verbose:
-        print(repr(hdu.header))
-
     return CI_image(hdu.data, hdu.header, cube_index=cube_index)
 
 def load_image_from_filename(fname, extname):
@@ -105,7 +102,6 @@ def load_exposure(fname, verbose=True, realtime=False, cube_index=None):
             continue
         if (hdu.header['EXTNAME']).strip() in [par['gfa_exp_extname'], par['guider_exp_extname']]:
             exp_header = hdu.header
-            print(repr(exp_header))
             continue
         is_image_hdu[i] = True
 
