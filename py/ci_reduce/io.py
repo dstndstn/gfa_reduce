@@ -307,6 +307,9 @@ def write_exposure_source_catalog(catalog, outdir, proc_obj, exp,
             continue
         hdul.append(fits.ImageHDU(data=None, header=image.header, name=image.extname))
 
+    # dummy extension with copy of exposure-level raw data header
+    hdul.append(fits.ImageHDU(data=None, header=exp.exp_header, name=exp.exp_header['EXTNAME']))
+    
     hdul = fits.HDUList(hdul)
         
     print('Attempting to write source catalog to ' + outname)
