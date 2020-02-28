@@ -541,7 +541,7 @@ def _gauss2d_profile(sidelen, xcen, ycen, peak_val, sigma, bg=0):
 def _moffat2d_profile(sidelen, xcen, ycen, peak_val, fwhm, bg=0, beta=2.8):
 
 
-    alpha = fwhm/(2.0*np.sqrt(2**(1/beta) - 1))  # some function of FWHM
+    alpha = fwhm/(2.0*np.sqrt(2**(1/beta) - 1))
     # beta = 2.5 is the IRAF default value apparently
     
     ybox = np.arange(sidelen*sidelen, dtype=int) // sidelen
