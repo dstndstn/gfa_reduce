@@ -59,13 +59,13 @@ class PSF:
         self.ycen_flux_weighted = np.sum(ybox*np.ravel(self.psf_image))/np.sum(self.psf_image)
 
     def fit_gaussian_fwhm(self):
-        res = util._fit_gauss2d(self.xcen_flux_weighted, self.ycen_flux_weighted, self.psf_image)
+        res = util._fit_moffat2d(self.xcen_flux_weighted, self.ycen_flux_weighted, self.psf_image)
 
         # check for success of minimization ?
-        self.gaussian_fwhm_pix = res.x[0]*2.355
+        self.moffat_fwhm_pix = res.x[0]
 
         # could do a more detailed job of this later...
-        self.gaussian_fwhm_asec = self.gaussian_fwhm_pix*0.205
+        self.moffat_fwhm_asec = self.moffat_fwhm_pix*0.205
 
 class Overscan:
     """Object to encapsulate single-camera worth of overscan and prescan"""
