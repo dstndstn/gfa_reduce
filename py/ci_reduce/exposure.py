@@ -56,10 +56,10 @@ class CI_exposure:
             if self.images[extname] is not None:
                 
                 acttime = self.images[extname].try_retrieve_meta_keyword('EXPTIME')
-                if acttime is None:
+                if (acttime is None) or (acttime == 0):
                     print('trying REQTIME instead of EXPTIME')
                     acttime = self.images[extname].try_retrieve_meta_keyword('REQTIME')
-                if acttime is None:
+                if (acttime is None) or (acttime == 0):
                     print('could not find an exposure time !!!!')
                     assert(False) # die
 

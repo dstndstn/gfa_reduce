@@ -147,6 +147,16 @@ class CI_image:
         self.header = header
         self.extname = self.header['EXTNAME'].replace(' ', '')
         self.header['CONTRAST'] = 0.0 # typically overwritten with actual value
+
+        # for sequences that include spectro and guiding components
+        # REQTIME in guide cube headers can sometimes be the spectro
+        # REQTIME (see examples from early March 2020), so I want to avoid
+        # getting the wrong time for dark current scaling and transparency
+        # estimation by making it impossible to grab REQTIME from the header
+        # for guide cubes (think that REQTIME in the guide binary tables
+        # should be fine though, could check more exhaustively)
+        if (cube_index is not None) and ('REQTIME' in self.header):
+            del self.header['REQTIME']
         self.initialize_wcs()
 
         # lazily compute bitmask image only as requested
