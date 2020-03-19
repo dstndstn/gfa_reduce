@@ -157,6 +157,16 @@ class CI_image:
         # should be fine though, could check more exhaustively)
         if (cube_index is not None) and ('REQTIME' in self.header):
             del self.header['REQTIME']
+
+        # similarly, for guide cubes, i want to get MJD-OBS of each frame
+        # and not for the start of the guide sequence, so i want to
+        # make it impossible to accidentally grab MJD-OBS from a guide cube
+        # image extension header (this was not a problem until
+        # 20200314 when MJD-OBS showed up in these guide cube image
+        # extensions, whereas it had previously not been present)
+        if (cube_index is not None) and ('MJD-OBS' in self.header):
+            del self.header['MJD-OBS']
+
         self.initialize_wcs()
 
         # lazily compute bitmask image only as requested
