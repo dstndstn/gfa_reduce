@@ -1,9 +1,9 @@
-from .kentools_center import kentools_center, gaia_cat_for_exp
+from .asterisms import pattern_match, gaia_cat_for_exp
 import numpy as np
 import astropy.io.fits as fits
 # run astrometric calibration given a catalog with the centroids and
 # an initial guess (SKYRA, SKYDEC) of the field of view center
-# mainly going to be a wrapper for kentools_center
+# mainly going to be a wrapper for asterisms.pattern_match
 
 def recalib_astrom(cat, fname_raw, mjd=None):
     # cat should be the catalog for an entire exposure
@@ -27,9 +27,9 @@ def recalib_astrom(cat, fname_raw, mjd=None):
         _cat = cat[(cat['camera'] == extname) & (cat['sig_major_pix'] > 1.0) & (cat['min_edge_dist_pix'] > 3)] # 3 is a fairly arbitrary guess
         if len(_cat) < 2:
             _cat = cat[cat['camera'] == extname]
-        result.append(kentools_center(_cat,
-                                      h['SKYRA'], h['SKYDEC'],
-                                      extname=extname, gaia=gaia,
-                                      arcmin_max=arcmin_max))
+        result.append(pattern_match(_cat,
+                                    h['SKYRA'], h['SKYDEC'],
+                                    extname=extname, gaia=gaia,
+                                    arcmin_max=arcmin_max))
 
     return result

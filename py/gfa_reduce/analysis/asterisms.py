@@ -60,8 +60,8 @@ def gaia_cat_for_exp(racen, deccen, mjd=None):
     gaia = gaia_xmatch.read_gaia_cat(ra_pixcenters, dec_pixcenters, mjd=mjd)
     return gaia
 
-def kentools_center(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5,
-                    gaia=None):
+def pattern_match(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5,
+                  gaia=None):
 
     # cat needs to have fields xcentroid and ycentroid
     # skyra, skydec are the initial guesses of the 
@@ -235,59 +235,3 @@ def kentools_center(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5,
               'astr_guess': astrom}
 
     return result
-
-def _test(extname='CIC', arcmin_max=3.5):
-    fname_cat = '/project/projectdirs/desi/users/ameisner/CI/reduced/v0001/20190403/ci-00003697/ci-00003697_catalog.fits'
-
-    
-    gaia = kentools_center(fname_cat, extname=extname, arcmin_max=arcmin_max)
-
-    return gaia
-
-def _test_gfa():
-    fname_cat = '/project/projectdirs/desi/users/ameisner/GFA/reduced/v0000/20191116/00028537/gfa-00028537_catalog.fits'
-
-    result = kentools_center(fname_cat, extname='GUIDE2')
-
-    return result
-
-def __test_gfa():
-    fname_cat = '/project/projectdirs/desi/users/ameisner/GFA/reduced/v0000/20191116/00028537/gfa-00028537_catalog.fits'
-
-    fname_raw = '/project/projectdirs/desi/spectro/data/20191116/00028537/gfa-00028537.fits.fz'
-
-    h = fits.getheader(fname_raw, extname='GFA')
-    
-    cat = fits.getdata(fname_cat)
-
-    result = kentools_center(cat, h['SKYRA'], h['SKYDEC'], extname='GUIDE2')
-
-    return result
-
-def _loop(indstart, nproc):
-    tab = fits.getdata('/global/homes/a/ameisner/ci/pro/ci_quality_summary.fits')
-    # tab = tab[tab['GOOD'] == 1]
-
-    # shuffle
-    np.random.seed(seed=99)
-    sind = np.argsort(np.random.rand(len(tab)))
-
-    tab = tab[sind]
-
-    results = []
-
-    indend = min(indstart + nproc, len(tab))
-    for i in range(indstart, indend):
-        t = tab[i]
-        fname_cat = t['FNAME'].replace('_psf-a', '_catalog')
-        extname = t['EXTNAME']
-        print('WORKING ON: ', i, '   ', fname_cat, '   ', extname)
-        result = kentools_center(fname_cat, extname=extname, arcmin_max=3.5)
-        results.append(result)
-
-    # then write out the results to a pickle file
-    # need to construct the output file name first
-    outname = 'center_' + str(indstart).zfill(5) + '_' + str(indend-1).zfill(5) + '.pkl'
-    assert(not os.path.exists(outname))
-    import pickle
-    pickle.dump(results, open(outname, 'wb'))
