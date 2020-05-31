@@ -43,11 +43,8 @@ def has_wrong_dimensions(exp):
 def nominal_pixel_area_sq_asec(extname):
     par = common.gfa_misc_params()
 
-    if extname == 'CIC':
-        pixel_area_sq_asec = (par['nominal_cen_cd']*3600.0)**2
-    else:
-        pixel_area_sq_asec = \
-            (par['nominal_mer_cd']*3600.0)*(par['nominal_sag_cd']*3600.0)
+    pixel_area_sq_asec = \
+        (par['nominal_mer_cd']*3600.0)*(par['nominal_sag_cd']*3600.0)
 
     return pixel_area_sq_asec
 
@@ -57,10 +54,7 @@ def nominal_pixel_sidelen_arith(extname):
 
     par = common.gfa_misc_params()
 
-    if extname == 'CIC':
-        return par['nominal_cen_cd']*3600.0
-    else:
-        return np.mean([par['nominal_mer_cd'], par['nominal_sag_cd']])*3600.0
+    return np.mean([par['nominal_mer_cd'], par['nominal_sag_cd']])*3600.0
 
 def nominal_pixel_sidelen_geom(extname):
     # calculate/return the nominal pixel sidelength in arcseconds
@@ -68,9 +62,9 @@ def nominal_pixel_sidelen_geom(extname):
 
     return np.sqrt(nominal_pixel_area_sq_asec(extname))
 
-def ci_pixel_xmax(pix_center=False, quadrant=None):
+def gfa_pixel_xmax(pix_center=False, quadrant=None):
     """
-    "x" here is in CI pixel coordinates
+    "x" here is in GFA pixel coordinates
     could imagine adding a "binfac" keyword here for use in processing
     steps where I've performed an integer downbinning
     """
@@ -88,9 +82,9 @@ def ci_pixel_xmax(pix_center=False, quadrant=None):
 
     return xmax
 
-def ci_pixel_ymax(pix_center=False, quadrant=None):
+def gfa_pixel_ymax(pix_center=False, quadrant=None):
     """
-    "y" here is in CI pixel coordinates
+    "y" here is in GFA pixel coordinates
     """
     par = common.gfa_misc_params()
 
@@ -106,9 +100,9 @@ def ci_pixel_ymax(pix_center=False, quadrant=None):
 
     return ymax
 
-def ci_pixel_xmin(pix_center=False, quadrant=None):
+def gfa_pixel_xmin(pix_center=False, quadrant=None):
     """
-    "x" here is in CI pixel coordinates
+    "x" here is in GFA pixel coordinates
     """
 
     # left edge of leftmost pixel
@@ -124,9 +118,9 @@ def ci_pixel_xmin(pix_center=False, quadrant=None):
 
     return xmin
 
-def ci_pixel_ymin(pix_center=False, quadrant=None):
+def gfa_pixel_ymin(pix_center=False, quadrant=None):
     """
-    "y" here is in CI pixel coordinates
+    "y" here is in GFA pixel coordinates
     """
 
     # left edge of leftmost pixel
@@ -142,7 +136,7 @@ def ci_pixel_ymin(pix_center=False, quadrant=None):
 
     return ymin
 
-def ci_center_pix_coords():
+def gfa_center_pix_coords():
     # native binning, this is the exact center of the image, 
     # which is at the corner of four pixels because of even sidelengths
 
@@ -153,17 +147,17 @@ def ci_center_pix_coords():
 
     return x_pix_center, y_pix_center
 
-def ci_boundary_pixel_coords(pix_center=True):
+def gfa_boundary_pixel_coords(pix_center=True):
     par = common.gfa_misc_params()
 
-    x_top = np.arange(ci_pixel_xmin(pix_center=pix_center), 
-                      ci_pixel_xmax(pix_center=pix_center) + 1)
+    x_top = np.arange(gfa_pixel_xmin(pix_center=pix_center), 
+                      gfa_pixel_xmax(pix_center=pix_center) + 1)
     x_left = np.zeros(par['height_pix_native'] + 1*(not pix_center)) + \
-                      ci_pixel_xmin(pix_center=pix_center)
-    y_left = np.arange(ci_pixel_ymin(pix_center=pix_center),
-                      ci_pixel_ymax(pix_center=pix_center) + 1)
+                      gfa_pixel_xmin(pix_center=pix_center)
+    y_left = np.arange(gfa_pixel_ymin(pix_center=pix_center),
+                      gfa_pixel_ymax(pix_center=pix_center) + 1)
     y_bottom = np.zeros(par['width_pix_native'] + 1*(not pix_center)) + \
-                        ci_pixel_ymin(pix_center=pix_center)
+                        gfa_pixel_ymin(pix_center=pix_center)
     y_top = y_bottom + par['height_pix_native'] - 1 + 1*(not pix_center)
     x_right = x_left + par['width_pix_native'] - 1 + 1*(not pix_center)
     y_right = np.flip(y_left, axis=0)
@@ -174,17 +168,17 @@ def ci_boundary_pixel_coords(pix_center=True):
 
     return x_bdy, y_bdy
 
-def ci_corner_pixel_coords(pix_center=False, wrap=False):
+def gfa_corner_pixel_coords(pix_center=False, wrap=False):
     # LL -> UL -> UR -> LR
-    x_pix = [ci_pixel_xmin(pix_center=pix_center),
-             ci_pixel_xmin(pix_center=pix_center), 
-             ci_pixel_xmax(pix_center=pix_center),
-             ci_pixel_xmax(pix_center=pix_center)]
+    x_pix = [gfa_pixel_xmin(pix_center=pix_center),
+             gfa_pixel_xmin(pix_center=pix_center), 
+             gfa_pixel_xmax(pix_center=pix_center),
+             gfa_pixel_xmax(pix_center=pix_center)]
 
-    y_pix = [ci_pixel_ymin(pix_center=pix_center),
-             ci_pixel_ymax(pix_center=pix_center),
-             ci_pixel_ymax(pix_center=pix_center),
-             ci_pixel_ymin(pix_center=pix_center)]
+    y_pix = [gfa_pixel_ymin(pix_center=pix_center),
+             gfa_pixel_ymax(pix_center=pix_center),
+             gfa_pixel_ymax(pix_center=pix_center),
+             gfa_pixel_ymin(pix_center=pix_center)]
 
     if wrap:
         x_pix.append(x_pix[0])
@@ -193,10 +187,9 @@ def ci_corner_pixel_coords(pix_center=False, wrap=False):
     return x_pix, y_pix
 
 # should probably also have something available for the case of upbinning
-def ci_downbinned_shape(binfac):
+def gfa_downbinned_shape(binfac):
     # assume integer rebinning until I come across a case where
     # arbitrary rebinning would be valuable
-    # the native CI image dimensions are very favorable for integer rebinning
 
     # assume same rebinning factor in both dimensions for now, until
     # I come across a case where I would want otherwise
@@ -223,10 +216,10 @@ def min_edge_dist_pix(x, y):
 
     min_edge_dist = 10000
 
-    min_edge_dist = min(min_edge_dist, x-ci_pixel_xmin())
-    min_edge_dist = min(min_edge_dist, y-ci_pixel_ymin())
-    min_edge_dist = min(min_edge_dist, ci_pixel_xmax()-x)
-    min_edge_dist = min(min_edge_dist, ci_pixel_ymax()-y)
+    min_edge_dist = min(min_edge_dist, x-gfa_pixel_xmin())
+    min_edge_dist = min(min_edge_dist, y-gfa_pixel_ymin())
+    min_edge_dist = min(min_edge_dist, gfa_pixel_xmax()-x)
+    min_edge_dist = min(min_edge_dist, gfa_pixel_ymax()-y)
 
     return min_edge_dist
 
@@ -257,10 +250,10 @@ def create_det_ids(catalog, extname, fname_in, add_col=True, cube_index=None):
 
 def slice_indices_for_quadrant(quadrant):
 
-    xmin = int(ci_pixel_xmin(pix_center=True, quadrant=quadrant))
-    xmax = int(ci_pixel_xmax(pix_center=True, quadrant=quadrant)) + 1
-    ymin = int(ci_pixel_ymin(pix_center=True, quadrant=quadrant))
-    ymax = int(ci_pixel_ymax(pix_center=True, quadrant=quadrant)) + 1
+    xmin = int(gfa_pixel_xmin(pix_center=True, quadrant=quadrant))
+    xmax = int(gfa_pixel_xmax(pix_center=True, quadrant=quadrant)) + 1
+    ymin = int(gfa_pixel_ymin(pix_center=True, quadrant=quadrant))
+    ymax = int(gfa_pixel_ymax(pix_center=True, quadrant=quadrant)) + 1
 
     return xmin, xmax, ymin, ymax
 

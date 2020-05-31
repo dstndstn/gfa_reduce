@@ -284,10 +284,10 @@ def add_metadata_columns(tab, bitmask):
 
     # there's probably a scipy function for this but w/e
 
-    xmin = util.ci_pixel_xmin(pix_center=True)
-    xmax = util.ci_pixel_xmax(pix_center=True)
-    ymin = util.ci_pixel_ymin(pix_center=True)
-    ymax = util.ci_pixel_ymax(pix_center=True)
+    xmin = util.gfa_pixel_xmin(pix_center=True)
+    xmax = util.gfa_pixel_xmax(pix_center=True)
+    ymin = util.gfa_pixel_ymin(pix_center=True)
+    ymax = util.gfa_pixel_ymax(pix_center=True)
 
     ixs = [int(min(max(np.round(t['xcentroid']), xmin), xmax)) for t in tab]
     iys = [int(min(max(np.round(t['ycentroid']), ymin), ymax)) for t in tab]
