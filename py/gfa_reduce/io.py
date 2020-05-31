@@ -10,7 +10,7 @@ import gfa_reduce.analysis.basic_catalog_stats as bcs
 import gfa_reduce.analysis.util as util
 import numpy as np
 import time
-from gfa_reduce.ci_wcs import ccd_center_radec
+from gfa_reduce.gfa_wcs import ccd_center_radec
 
 # in the context of this file, "image" and "exposure" generally refer to 
 # GFA_image and GFA_exposure objects

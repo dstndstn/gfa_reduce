@@ -3,7 +3,7 @@ import gfa_reduce.imred.dq_mask as dq_mask
 import gfa_reduce.analysis.sky as sky
 import gfa_reduce.analysis.segment as segment
 import gfa_reduce.analysis.phot as phot
-from gfa_reduce.ci_wcs import nominal_tan_wcs
+from gfa_reduce.gfa_wcs import nominal_tan_wcs
 import numpy as np
 import astropy.io.fits as fits
 from astropy import wcs
@@ -123,7 +123,7 @@ class Overscan:
         return bad_amps
 
 class GFA_image:
-    """Single CI image from one CI exposure"""
+    """Single GFA image from one GFA exposure"""
 
     def __init__(self, image, header, cube_index=None):
         if cube_index is None:

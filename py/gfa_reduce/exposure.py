@@ -6,7 +6,7 @@ import numpy as np
 import gfa_reduce.analysis.util as util
 
 class GFA_exposure:
-    """Object encapsulating the contents of a single CI exposure"""
+    """Object encapsulating the contents of a single GFA exposure"""
 
     def __init__(self, image_list, exp_header=None, bintables=None):
         # images is a dictionary of GFA_image objects
