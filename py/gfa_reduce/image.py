@@ -235,10 +235,10 @@ class GFA_image:
 
         assert((not self.dark_subtracted) and (not self.flatfielded))
 
-        ci_extname = self.header['EXTNAME']
-        gain = common.gfa_camera_gain(ci_extname)
+        extname = self.header['EXTNAME']
+        gain = common.gfa_camera_gain(extname)
 
-        var_e_sq = (common.ci_camera_readnoise(ci_extname)**2 + \
+        var_e_sq = (common.ci_camera_readnoise(extname)**2 + \
                     self.image*(self.image >= 0)*gain)
         var_e_sq /= self.nframe
 
@@ -248,8 +248,8 @@ class GFA_image:
     def calc_variance_adu(self, flatfield):
         assert(self.flatfielded)
 
-        ci_extname = self.header['EXTNAME']
-        gain = common.gfa_camera_gain(ci_extname)
+        extname = self.header['EXTNAME']
+        gain = common.gfa_camera_gain(extname)
 
         variance_adu_sq = self.var_e_sq/(gain**2)
 
@@ -297,13 +297,13 @@ class GFA_image:
 
         hdu.header['FLAVOR'] = flavor
 
-        ci_extname = self.header['EXTNAME']
-        gain = common.gfa_camera_gain(ci_extname)
+        extname = self.header['EXTNAME']
+        gain = common.gfa_camera_gain(extname)
         hdu.header['GAINA'] = (gain, '[e-/ADU] assumed gain')
 
         hdu.header['BUNIT'] = common.reduced_flavor_to_bunit(flavor)
 
-        ci_num = common.gfa_extname_to_gfa_number(ci_extname)
+        ci_num = common.gfa_extname_to_gfa_number(extname)
         hdu.header['CINUM'] = (ci_num, 'CI# number from DESI-3347')
 
         return hdu
