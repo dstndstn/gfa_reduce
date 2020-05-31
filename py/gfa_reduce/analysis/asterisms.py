@@ -176,7 +176,7 @@ def pattern_match(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5,
 
     counts = counts.astype(float)
 
-    # 7.5 value is tailored to the CI -- revisit for GFAs !!
+    # it's possible that this fwhm_pix value could use more tailoring
     fwhm_pix = 4.7
     sigma_pix = fwhm_pix/(2*np.sqrt(2*np.log(2)))
     smth = gaussian_filter(counts, sigma_pix, mode='constant')
@@ -205,7 +205,7 @@ def pattern_match(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5,
     #fitsio.write('/global/cscratch1/sd/ameisner/smth.fits', smth)
     #fitsio.write('/global/cscratch1/sd/ameisner/d.fits', d)
     
-    r_max = 4*4.7 # roughly 4 asec radius for the CI
+    r_max = 4*4.7 # roughly 4 asec radius
 
     sind = np.argsort(np.ravel(smth))
 

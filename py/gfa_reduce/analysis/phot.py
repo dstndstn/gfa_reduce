@@ -89,7 +89,7 @@ def aper_rad_pix(extname):
 
 def do_aper_phot(data, catalog, extname, ivar_adu):
     # catalog should be the catalog with refined centroids 
-    # for **one CI camera**
+    # for **one GFA camera**
 
     print('Attempting to do aperture photometry')
     positions = list(zip(catalog['xcentroid'], catalog['ycentroid']))
@@ -102,20 +102,16 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
 
     par = common.gfa_misc_params()
 
-    b_over_a = (1.0 if (extname == 'CIC') else par['nominal_mer_cd']/par['nominal_sag_cd'])
+    b_over_a = par['nominal_mer_cd']/par['nominal_sag_cd']
 
-    # the long axis of elliptical aperture (in terms of pixels) needs to
-    # be in the CI pixel Y direction
     apertures_ell = [EllipticalAperture(positions, a, a*b_over_a, theta=np.pi/2) for a in radii]
 
     # 107 um fiber diam, 9 um on a side for a pixel
     # fiber diam from Table 4.1 of https://arxiv.org/abs/1611.00037
     rad_fiber_pix_sag = (107.0/9.0)/2.0
     deg_to_normal = 5.43 # [desi-commiss 522]
-    if extname != 'CIC':
-        rad_fiber_pix_mer = rad_fiber_pix_sag*np.sin(deg_to_normal/(180.0/np.pi))
-    else:
-        rad_fiber_pix_mer = rad_fiber_pix_sag
+
+    rad_fiber_pix_mer = rad_fiber_pix_sag*np.sin(deg_to_normal/(180.0/np.pi))
 
     aper_fib = EllipticalAperture(positions, rad_fiber_pix_sag, rad_fiber_pix_mer, theta=np.pi/2)
 
@@ -169,7 +165,7 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
 
 def get_nominal_fwhm_pix(extname):
     # roughly 1.25 asec divided by GFA pixel scale
-    # 1.25 is same nominal FWHM i used for source detection with CI reductions
+    # 1.25 is same nominal FWHM I used for source detection with CI reductions
     nominal_fwhm_pix = 6.1
 
     return nominal_fwhm_pix
