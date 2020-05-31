@@ -235,10 +235,9 @@ class GFA_image:
 
         assert((not self.dark_subtracted) and (not self.flatfielded))
 
-        extname = self.header['EXTNAME']
-        gain = common.gfa_camera_gain(extname)
+        gain = common.gfa_camera_gain(self.extname)
 
-        var_e_sq = (common.ci_camera_readnoise(extname)**2 + \
+        var_e_sq = (common.ci_camera_readnoise(self.extname)**2 + \
                     self.image*(self.image >= 0)*gain)
         var_e_sq /= self.nframe
 
@@ -248,8 +247,7 @@ class GFA_image:
     def calc_variance_adu(self, flatfield):
         assert(self.flatfielded)
 
-        extname = self.header['EXTNAME']
-        gain = common.gfa_camera_gain(extname)
+        gain = common.gfa_camera_gain(self.extname)
 
         variance_adu_sq = self.var_e_sq/(gain**2)
 
@@ -297,13 +295,12 @@ class GFA_image:
 
         hdu.header['FLAVOR'] = flavor
 
-        extname = self.header['EXTNAME']
-        gain = common.gfa_camera_gain(extname)
+        gain = common.gfa_camera_gain(self.extname)
         hdu.header['GAINA'] = (gain, '[e-/ADU] assumed gain')
 
         hdu.header['BUNIT'] = common.reduced_flavor_to_bunit(flavor)
 
-        ci_num = common.gfa_extname_to_gfa_number(extname)
+        ci_num = common.gfa_extname_to_gfa_number(self.extname)
         hdu.header['CINUM'] = (ci_num, 'CI# number from DESI-3347')
 
         return hdu
@@ -336,10 +333,9 @@ class GFA_image:
         return self.sky_level_adu
 
     def compute_segmap(self):
-        print('Attempting to compute segmentation map for ' + 
-              self.header['EXTNAME'])
+        print('Attempting to compute segmentation map for ' + self.extname)
 
-        segmap = segment.segmentation_map(self.image, self.header['EXTNAME'])
+        segmap = segment.segmentation_map(self.image, self.extname)
         return segmap
 
     def set_segmap(self):
@@ -369,18 +365,16 @@ class GFA_image:
 
         sky_adu_per_pixel = self.estimate_sky_level(careful_sky=careful_sky)
 
-        extname = self.header['EXTNAME']
-
         acttime = self.time_s_for_dark
         
         sky_mag = sky.adu_to_surface_brightness(sky_adu_per_pixel, 
-                                                acttime, extname)
+                                                acttime, self.extname)
 
         if self.sky_level_adu_per_amp is not None:
             amps = common.valid_amps_list()
-            self.sky_mag_per_amp = [sky.adu_to_surface_brightness(self.sky_level_adu_per_amp[amp], acttime, extname) for amp in amps]
+            self.sky_mag_per_amp = [sky.adu_to_surface_brightness(self.sky_level_adu_per_amp[amp], acttime, self.extname) for amp in amps]
 
-        print(self.header['EXTNAME'] + ' sky mag per square asec AB : ' +  
+        print(self.extname + ' sky mag per square asec AB : ' +  
               '{:.3f}'.format(sky_mag))
 
         self.sky_mag = sky_mag
@@ -401,16 +395,16 @@ class GFA_image:
         return catalog
 
     def catalog_sources(self):
-        print('Attempting to catalog sources in ' + self.header['EXTNAME'] +  
+        print('Attempting to catalog sources in ' + self.extname +  
               ' image')
 
         tab = phot.get_source_list(self.image, self.bitmask, 
-                                   self.header['EXTNAME'], self.ivar_adu)
+                                   self.extname, self.ivar_adu)
 
         n_sources = (len(tab) if tab is not None else 0)
 
         print('Found ' + str(n_sources) + ' sources in ' +
-              self.header['EXTNAME'] + ' image')
+              self.extname + ' image')
 
         if tab is None:
             return tab
@@ -430,10 +424,9 @@ class GFA_image:
     def initialize_wcs(self):
         telra = self.header['SKYRA']
         teldec = self.header['SKYDEC']
-        extname = self.header['EXTNAME']
 
-        print('Attempting to initialize WCS guess for ' + extname)
-        self.wcs = nominal_tan_wcs(telra, teldec, extname)
+        print('Attempting to initialize WCS guess for ' + self.extname)
+        self.wcs = nominal_tan_wcs(telra, teldec, self.extname)
 
     def remove_overscan(self):
         sh = self.image.shape
@@ -447,7 +440,7 @@ class GFA_image:
         # d is a dictionary with xshift_best, yshift_best, astr_guess
         # for this EXTNAME
 
-        assert(d['extname'] == self.header['EXTNAME'])
+        assert(d['extname'] == self.extname)
 
         wcs = d['astr_guess']
         wcs.wcs.crpix = wcs.wcs.crpix + np.array([d['xshift_best'], d['yshift_best']])
