@@ -237,7 +237,7 @@ class GFA_image:
 
         gain = common.gfa_camera_gain(self.extname)
 
-        var_e_sq = (common.ci_camera_readnoise(self.extname)**2 + \
+        var_e_sq = (common.gfa_camera_readnoise(self.extname)**2 + \
                     self.image*(self.image >= 0)*gain)
         var_e_sq /= self.nframe
 
@@ -300,8 +300,8 @@ class GFA_image:
 
         hdu.header['BUNIT'] = common.reduced_flavor_to_bunit(flavor)
 
-        ci_num = common.gfa_extname_to_gfa_number(self.extname)
-        hdu.header['PETALLOC'] = (ci_num, 'petal number')
+        petal_loc = common.gfa_extname_to_gfa_number(self.extname)
+        hdu.header['PETALLOC'] = (petal_loc, 'petal number')
 
         return hdu
 

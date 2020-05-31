@@ -58,7 +58,7 @@ def gfa_camera_gain(extname):
 
     return gains[extname]
 
-def ci_camera_readnoise_dict():
+def gfa_camera_readnoise_dict():
     # units are electrons per pixel
     # HACK !!
     readnoise_electrons = {'GUIDE0': 20.0,
@@ -70,10 +70,10 @@ def ci_camera_readnoise_dict():
 
     return readnoise_electrons
 
-def ci_camera_readnoise(extname):
+def gfa_camera_readnoise(extname):
     assert(is_valid_extname(extname))
 
-    r = ci_camera_readnoise_dict()
+    r = gfa_camera_readnoise_dict()
     return r[extname]
 
 def valid_image_extnum_list(fz=True):
