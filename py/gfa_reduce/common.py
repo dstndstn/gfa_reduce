@@ -80,60 +80,21 @@ def valid_image_extname_list():
     return ['GUIDE0', 'GUIDE2', 'GUIDE3', 'GUIDE5', 'GUIDE7', 'GUIDE8']
 
 def valid_extname_list(fz=True):
-    """ returned list is in order of CI# in DESI-3347 """
 
     par = gfa_misc_params()
     extnames = valid_image_extname_list() + [par['gfa_exp_extname'], par['guider_exp_extname']]
 
     return extnames
 
-def valid_ci_number_list():
+def valid_gfa_number_list():
 
     return [0, 2, 3, 5, 7, 8]
 
-def ci_extname_to_extnum_dict(fz=True):
-    """
-    return a dictionary with the correspondence between CI 
-    extension name and CI extension number
-    for now I'm including the dummy zeroth extension in the fzipped case    
-    """
-
-    par = gfa_misc_params()
-
-    if fz:
-        d = {par['fz_dummy_extname']: 0, 'CIN': 1, 'CIW': 2, 'CIC': 3, 
-                 'CIE': 4, 'CIS': 5}
-    else:
-        d = {'CIN': 0, 'CIW': 1, 'CIC': 2, 'CIE': 3, 'CIS': 4}
-
-    return d
-
-def ci_extnum_to_extname_dict(fz=True):
-    """ 
-    make this a wrapper of ci_extname_to_extnum_dict to
-    to avoid having the same information typed out explicitly twice, 
-    which would be asking for additional bugs/inconsistencies
-    """
-    d_reverse = ci_extname_to_extnum_dict(fz=fz)
-
-    d = dict((v,k) for k,v in d_reverse.items())
-
-    return d
-
-def ci_extname_to_extnum(extname, fz=True):
-    """ convert CI image extension name to extension number"""
-
-    assert(is_valid_extname(extname))
-
-    d = ci_extname_to_extnum_dict(fz=fz)
-
-    return d[extname]
-
 def gfa_extname_to_gfa_number_dict():
-    return dict(zip(valid_image_extname_list(), valid_ci_number_list()))
+    return dict(zip(valid_image_extname_list(), valid_gfa_number_list()))
 
 def ci_number_to_ci_extname_dict():
-    return dict(zip(valid_ci_number_list(), valid_image_extname_list()))
+    return dict(zip(valid_gfa_number_list(), valid_image_extname_list()))
 
 def gfa_extname_to_gfa_number(extname):
     """ convert CI image extension name to integer CI# from DESI-3347"""
@@ -157,15 +118,6 @@ def ci_number_to_ci_extname(num):
 
     return d[num]
 
-def ci_number_to_extnum(num, fz=True):
-    # convert ci number to ci extname
-    # then use extname to get extnum
-    extname = ci_number_to_ci_extname(num)
-
-    d = ci_extname_to_extnum_dict(fz=fz)
-    return d[extname]
-
-
 def is_valid_image_extname(extname):
     return (extname in valid_image_extname_list())
 
@@ -178,7 +130,7 @@ def is_valid_extname(extname, fz=True):
     return (extname in valid_extname_list(fz=fz))
 
 def is_valid_ci_number(num):
-    return (num in valid_ci_number_list())
+    return (num in valid_gfa_number_list())
 
 def valid_flavor_list():
     """
@@ -267,34 +219,6 @@ def expid_from_filename(fname):
     expid = int(_string[0:8])
 
     return expid
-
-def get_median_bias_adu(extname):
-    # see py/scripts/median_bias_per_camera.py
-    # result in in ADU
-    bias_med_dict = {'CIE' : 991.0, 
-                     'CIN' : 1013.0, 
-                     'CIC' : 1020.0, 
-                     'CIS' : 984.0, 
-                     'CIW' : 990.0}
-
-    assert(extname in bias_med_dict.keys())
-    return bias_med_dict[extname]
-
-def get_median_dark_current(extname):
-    # return values are in ADU/s at a nominal temperature of 7.5 Celsius
-    # the nominal temperature is just a guess since the dark frames
-    # that my master dark are based on don't have CCDTEMP available
-
-    # see py/scripts/median_dark_current_per_camera.py
-
-    dark_med_dict = {'CIE' : 0.128333, 
-                     'CIN' : 0.161667,
-                     'CIC' : 0.143333,
-                     'CIS' : 0.153333,
-                     'CIW' : 0.143333}
-
-    assert(extname in dark_med_dict.keys())
-    return dark_med_dict[extname]
 
 def valid_amps_list():
     return ['E', 'F', 'G', 'H']
