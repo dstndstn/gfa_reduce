@@ -212,7 +212,7 @@ def total_dark_current_electrons(acttime, t_celsius):
 
     return dark_e_per_pix
 
-def total_dark_current_adu(ci_extname, acttime, t_celsius):
+def total_dark_current_adu(extname, acttime, t_celsius):
     """
     accttime - actual exposure time in seconds
     t_celsius - temperature in deg celsius
@@ -220,11 +220,11 @@ def total_dark_current_adu(ci_extname, acttime, t_celsius):
     output is in ADU/pix
     """
 
-    assert(common.is_valid_image_extname(ci_extname))
+    assert(common.is_valid_image_extname(extname))
 
     assert(acttime >= 0)
 
-    gain = common.gfa_camera_gain(ci_extname)
+    gain = common.gfa_camera_gain(extname)
     dark_e_per_pix = total_dark_current_electrons(acttime, t_celsius)
     dark_adu_per_pix = dark_e_per_pix/gain
 
@@ -263,13 +263,13 @@ def dark_scaling_factor(t_master, t_image, extname):
 
     return fac
 
-def read_dark_image(ci_extname, exptime, t_celsius):
-    assert(common.is_valid_extname(ci_extname))
+def read_dark_image(extname, exptime, t_celsius):
+    assert(common.is_valid_extname(extname))
 
     par = common.gfa_misc_params()
 
     # try getting a master dark with an exactly matching integration time
-    dark_fname = choose_master_dark(exptime, ci_extname, t_celsius)
+    dark_fname = choose_master_dark(exptime, extname, t_celsius)
 
     # if no master dark has an exactly matching integration time
     # then just go back to some 'standard' 5 s master dark
@@ -280,11 +280,11 @@ def read_dark_image(ci_extname, exptime, t_celsius):
                                   par['master_dark_filename'])
 
     print('Attempting to read master dark : ' + dark_fname + 
-          ', extension name : ' + ci_extname)
+          ', extension name : ' + extname)
 
     assert(os.path.exists(dark_fname))
 
-    dark, hdark = fits.getdata(dark_fname, extname=ci_extname, header=True)
+    dark, hdark = fits.getdata(dark_fname, extname=extname, header=True)
 
     dark = load_calibs.remove_overscan(dark)
     return dark, hdark, dark_fname
