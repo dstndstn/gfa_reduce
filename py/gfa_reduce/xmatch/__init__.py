@@ -2,7 +2,7 @@
 gfa_reduce.xmatch
 ================
 
-Cross-matching utilities for the DESI Commissioning Instrument (CI) off-line
-image reduction pipeline.
+Cross-matching utilities for the DESI GFA
+off-line reduction pipeline.
 
 """
