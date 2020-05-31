@@ -83,7 +83,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         if not skip_astrometry:
             # run astrometric recalibration
             print('Attempting astrometric recalibration relative to Gaia DR2')
-            astr = wcs.recalib_astrom(catalog, fname_in)
+            astr = wcs.recalib_astrom(catalog, fname_in,
+                                      mjd=exp.exp_header['MJD-OBS'])
             exp.update_wcs(astr)
             exp.recompute_catalog_radec(catalog)
 

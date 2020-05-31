@@ -5,7 +5,7 @@ import astropy.io.fits as fits
 # an initial guess (SKYRA, SKYDEC) of the field of view center
 # mainly going to be a wrapper for kentools_center
 
-def recalib_astrom(cat, fname_raw):
+def recalib_astrom(cat, fname_raw, mjd=None):
     # cat should be the catalog for an entire exposure
 
     if cat is None:
@@ -18,7 +18,7 @@ def recalib_astrom(cat, fname_raw):
     except:
         h = fits.getheader(fname_raw, extname='GUIDER')
 
-    gaia = gaia_cat_for_exp(h['SKYRA'], h['SKYDEC'])
+    gaia = gaia_cat_for_exp(h['SKYRA'], h['SKYDEC'], mjd=mjd)
     result = []
 
     arcmin_max = 6.0

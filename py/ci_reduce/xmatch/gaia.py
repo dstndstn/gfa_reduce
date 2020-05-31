@@ -32,7 +32,7 @@ def gaia_chunknames(ipix, ps1=False):
                                     '.fits') for i in ipix]
     return flist
 
-def read_gaia_cat(ra, dec, ps1=False):
+def read_gaia_cat(ra, dec, ps1=False, mjd=None):
     # should add checks to make sure that ra and dec have compatible dimensions
     # should also check that this works for both scalar and array ra/dec
 
@@ -67,7 +67,46 @@ def read_gaia_cat(ra, dec, ps1=False):
     if ps1:
         # dumb stuff about capitalization of column names
         result.dtype.names = tuple([n.lower() for n in result.dtype.names])
+    else:
+        # if you have an actual table of Gaia rows, then
+        # correct Gaia positions to relevant Mayall epoch
+        if mjd is not None:
+            assert(mjd >= 58757.0) # 2019Oct01 at 00:00:00
+            assert(np.isfinite(mjd))
+            assert(isinstance(mjd, float))
 
+            print('CORRECTING GAIA POSITIONS FOR PROPER MOTION WHEN POSSIBLE')
+            
+            # 2015-01-01 00:00:00.000 UTC <-> MJD = 57023
+            # a year is 365.25 days according to some definition
+            # (may not be the relevant definition but can't be too far off)
+            # so mjd_gaia must be (57023 + 365.25/2.0) = 57205.625
+            
+            mjd_gaia = 57205.625
+
+            # only adjust RA, DEC based on PMRA, PMDEC for rows
+            # that have full five-parameter astrometric solutions !!
+
+            # the division by cos(Dec) could cause problems if there were a
+            # Gaia source at Dec of exactly +/- 90 deg
+            
+            ra_corr = result['ra'] + ((mjd - mjd_gaia)/365.25)*result['pmra']/np.cos(result['dec']/(180.0/np.pi))/(3600.0*1000.0)
+            dec_corr = result['dec'] + ((mjd - mjd_gaia)/365.25)*result['pmdec']/(3600.0*1000.0)
+            
+            full_solution = np.isfinite(result['pmra'])
+            result['ra'][full_solution] = ra_corr[full_solution]
+            result['dec'][full_solution] = dec_corr[full_solution]
+
+            print('adjusted ', np.sum(full_solution), ' of ', len(result),
+                  ' Gaia source positions for proper motion')
+
+            assert(np.sum(np.isfinite(result['ra'])) == len(result))
+            assert(np.sum(np.isfinite(result['dec'])) == len(result))
+            assert(np.sum(np.abs(result['dec']) > 90) == 0)
+
+            # eventually also ensure that ra is bounded between 0 and 360 deg
+            
+            
     return result
 
 def gaia_xmatch(ra, dec, ps1=False):
@@ -79,12 +118,12 @@ def gaia_xmatch(ra, dec, ps1=False):
     assert(len(gaia_cat) > 0)
     assert(type(gaia_cat).__name__ == 'ndarray')
 
-    ci_catalog = SkyCoord(ra=ra*u.degree, dec=dec*u.degree)
+    catalog = SkyCoord(ra=ra*u.degree, dec=dec*u.degree)
     
     gaia_catalog = SkyCoord(ra=gaia_cat['ra']*u.degree, \
                             dec=gaia_cat['dec']*u.degree)
 
-    idx, ang_sep_deg, _ = ci_catalog.match_to_catalog_sky(gaia_catalog)
+    idx, ang_sep_deg, _ = catalog.match_to_catalog_sky(gaia_catalog)
 
     gaia_matches = Table(gaia_cat[idx])
 

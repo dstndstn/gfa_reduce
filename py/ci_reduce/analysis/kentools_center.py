@@ -34,7 +34,7 @@ def downselected_star_sample(cat, n_desi_max):
 
     return result
 
-def gaia_cat_for_exp(racen, deccen):
+def gaia_cat_for_exp(racen, deccen, mjd=None):
 
     nside = 32
     ipix = healpy.pixelfunc.get_all_neighbours(nside, racen, phi=deccen,
@@ -57,7 +57,7 @@ def gaia_cat_for_exp(racen, deccen):
     ra_pixcenters, dec_pixcenters = healpy.pixelfunc.pix2ang(nside, ipix,
                                                               lonlat=True)
 
-    gaia = gaia_xmatch.read_gaia_cat(ra_pixcenters, dec_pixcenters)
+    gaia = gaia_xmatch.read_gaia_cat(ra_pixcenters, dec_pixcenters, mjd=mjd)
     return gaia
 
 def kentools_center(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5,
