@@ -2,11 +2,11 @@
 
 import argparse
 import os
-import ci_reduce.io as io
+import gfa_reduce.io as io
 from datetime import datetime
-import ci_reduce.analysis.util as util
-import ci_reduce.common as common
-import ci_reduce.analysis.recalib_astrom as wcs
+import gfa_reduce.analysis.util as util
+import gfa_reduce.common as common
+import gfa_reduce.analysis.recalib_astrom as wcs
 import time
 
 class ProcObj():

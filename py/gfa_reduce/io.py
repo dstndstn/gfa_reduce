@@ -1,16 +1,16 @@
-from ci_reduce.image import CI_image
-from ci_reduce.exposure import CI_exposure
-import ci_reduce.common as common
-import ci_reduce.xmatch.gaia as gaia
+from gfa_reduce.image import CI_image
+from gfa_reduce.exposure import CI_exposure
+import gfa_reduce.common as common
+import gfa_reduce.xmatch.gaia as gaia
 import astropy.io.fits as fits
 from astropy.table import Table, vstack, hstack
 import os
-import ci_reduce.analysis.basic_image_stats as bis
-import ci_reduce.analysis.basic_catalog_stats as bcs
-import ci_reduce.analysis.util as util
+import gfa_reduce.analysis.basic_image_stats as bis
+import gfa_reduce.analysis.basic_catalog_stats as bcs
+import gfa_reduce.analysis.util as util
 import numpy as np
 import time
-from ci_reduce.ci_wcs import ccd_center_radec
+from gfa_reduce.ci_wcs import ccd_center_radec
 
 # in the context of this file, "image" and "exposure" generally refer to 
 # CI_image and CI_exposure objects

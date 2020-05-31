@@ -1,7 +1,7 @@
-import ci_reduce.common as common
+import gfa_reduce.common as common
 import numpy as np
 import matplotlib.pyplot as plt
-import ci_reduce.imred.load_calibs as load_calibs
+import gfa_reduce.imred.load_calibs as load_calibs
 import os
 import astropy.io.fits as fits
 from scipy.optimize import minimize

@@ -1,5 +1,5 @@
 import argparse
-from ci_reduce.gfa_red import _proc
+from gfa_reduce.gfa_red import _proc
 import astropy.io.fits as fits
 import os
 import numpy as np

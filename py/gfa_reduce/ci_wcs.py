@@ -2,7 +2,7 @@ import astropy.io.fits as fits
 import numpy as np
 from astropy import wcs
 import os
-import ci_reduce.common as common
+import gfa_reduce.common as common
 
 def nominal_tan_wcs(telra, teldec, extname):
     # Create a new WCS object.  The number of axes must be set

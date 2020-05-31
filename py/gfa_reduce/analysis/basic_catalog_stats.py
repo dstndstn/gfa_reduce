@@ -1,4 +1,4 @@
-import ci_reduce.analysis.util as util
+import gfa_reduce.analysis.util as util
 import numpy as np
 
 # do a meta-analysis of the per-object FWHM values, 

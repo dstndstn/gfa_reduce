@@ -1,6 +1,6 @@
-import ci_reduce.common as common
+import gfa_reduce.common as common
 import numpy as np
-import ci_reduce.analysis.util as util
+import gfa_reduce.analysis.util as util
 
 def adu_to_surface_brightness(sky_adu_1pixel, acttime, extname):
     """

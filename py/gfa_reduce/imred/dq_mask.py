@@ -1,5 +1,5 @@
-import ci_reduce.common as common
-import ci_reduce.imred.load_calibs as load_calibs
+import gfa_reduce.common as common
+import gfa_reduce.imred.load_calibs as load_calibs
 import numpy as np
 
 def create_satmask(im, extname):

@@ -2,15 +2,15 @@
 
 import argparse
 import os
-import ci_reduce.io as io
+import gfa_reduce.io as io
 import glob
 import time
 import numpy as np
 import copy
-import ci_reduce.common as common
+import gfa_reduce.common as common
 import astropy.io.fits as fits
-import ci_reduce.dark_current as dark_current
-from ci_reduce.analysis.sky import adu_to_surface_brightness
+import gfa_reduce.dark_current as dark_current
+from gfa_reduce.analysis.sky import adu_to_surface_brightness
 
 def print_imstats_1exp(imstats, fname_in, verbose=False):
 

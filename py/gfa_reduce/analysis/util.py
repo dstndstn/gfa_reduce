@@ -1,4 +1,4 @@
-import ci_reduce.common as common
+import gfa_reduce.common as common
 import numpy as np
 import os
 from astropy.table import Table

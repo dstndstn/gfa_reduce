@@ -1,5 +1,5 @@
 """
-ci_reduce.imred
+gfa_reduce.imred
 ===============
 
 Pixel-level reduction utilities for the DESI Commissioning Instrument (CI) 

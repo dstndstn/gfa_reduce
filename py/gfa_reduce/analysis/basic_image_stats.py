@@ -1,4 +1,4 @@
-import ci_reduce.analysis.util as util
+import gfa_reduce.analysis.util as util
 import numpy as np
 from astropy.stats import mad_std
 from astropy.table import Table, hstack

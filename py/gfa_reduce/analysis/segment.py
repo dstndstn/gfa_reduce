@@ -1,5 +1,5 @@
-import ci_reduce.common as common
-import ci_reduce.analysis.util as util
+import gfa_reduce.common as common
+import gfa_reduce.analysis.util as util
 from photutils import detect_threshold
 from astropy.convolution import Gaussian2DKernel
 import numpy as np

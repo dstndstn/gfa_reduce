@@ -1,5 +1,5 @@
 """
-ci_reduce
+gfa_reduce
 =========
 
 A package for reducing DESI GFA images.

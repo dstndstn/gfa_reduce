@@ -1,4 +1,4 @@
-import ci_reduce.analysis.util as util
+import gfa_reduce.analysis.util as util
 from astropy.stats import mad_std
 from scipy.ndimage.filters import gaussian_filter
 from scipy import ndimage
@@ -9,8 +9,8 @@ from photutils.centroids.core import fit_2dgaussian
 from astropy.stats import sigma_clipped_stats
 from photutils import aperture_photometry
 from photutils import CircularAperture, CircularAnnulus, EllipticalAperture
-import ci_reduce.common as common
-import ci_reduce.analysis.djs_maskinterp as djs_maskinterp
+import gfa_reduce.common as common
+import gfa_reduce.analysis.djs_maskinterp as djs_maskinterp
 import photutils
 
 def slices_to_table(slices, detsn, extname):

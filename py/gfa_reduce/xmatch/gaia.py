@@ -1,4 +1,4 @@
-import ci_reduce.common as common
+import gfa_reduce.common as common
 import astropy.io.fits as fits
 import healpy
 import numpy as np

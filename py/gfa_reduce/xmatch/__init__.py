@@ -1,5 +1,5 @@
 """
-ci_reduce.xmatch
+gfa_reduce.xmatch
 ================
 
 Cross-matching utilities for the DESI Commissioning Instrument (CI) off-line

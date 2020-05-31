@@ -1,15 +1,15 @@
-import ci_reduce.common as common
-import ci_reduce.imred.dq_mask as dq_mask
-import ci_reduce.analysis.sky as sky
-import ci_reduce.analysis.segment as segment
-import ci_reduce.analysis.phot as phot
-from ci_reduce.ci_wcs import nominal_tan_wcs
+import gfa_reduce.common as common
+import gfa_reduce.imred.dq_mask as dq_mask
+import gfa_reduce.analysis.sky as sky
+import gfa_reduce.analysis.segment as segment
+import gfa_reduce.analysis.phot as phot
+from gfa_reduce.ci_wcs import nominal_tan_wcs
 import numpy as np
 import astropy.io.fits as fits
 from astropy import wcs
 from astropy.stats import mad_std
 from scipy.stats import scoreatpercentile
-import ci_reduce.analysis.util as util
+import gfa_reduce.analysis.util as util
 
 class PSF:
     def __init__(self, cube, extname):

@@ -1,4 +1,4 @@
-import ci_reduce.xmatch.gaia as gaia_xmatch
+import gfa_reduce.xmatch.gaia as gaia_xmatch
 import astropy.io.fits as fits
 import os
 import healpy
@@ -10,7 +10,7 @@ from astropy import wcs
 from .amm_2dhist import amm_2dhist
 from scipy.ndimage import gaussian_filter
 from .center_contrast import center_contrast
-import ci_reduce.common as common
+import gfa_reduce.common as common
 import copy
 
 def downselected_star_sample(cat, n_desi_max):
