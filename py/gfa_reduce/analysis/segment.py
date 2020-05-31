@@ -7,7 +7,7 @@ from astropy.stats import gaussian_fwhm_to_sigma
 from photutils import detect_sources
 
 def segmentation_map(image, extname, get_kernel=False):
-    # in this context image means a 2D numpy array rather than a CI_image
+    # in this context image means a 2D numpy array rather than a GFA_image
     # object
 
     par = common.gfa_misc_params()

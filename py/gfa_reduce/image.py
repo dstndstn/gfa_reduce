@@ -122,7 +122,7 @@ class Overscan:
 
         return bad_amps
 
-class CI_image:
+class GFA_image:
     """Single CI image from one CI exposure"""
 
     def __init__(self, image, header, cube_index=None):

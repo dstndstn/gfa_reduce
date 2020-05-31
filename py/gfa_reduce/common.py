@@ -322,8 +322,6 @@ def expid_from_filename(fname):
     return expid
 
 def get_median_bias_adu(extname):
-    # using CI_master_bias.fits with md5sum:
-    #     5c48bef5923647ac9646d9462af88032
     # see py/scripts/median_bias_per_camera.py
     # result in in ADU
     bias_med_dict = {'CIE' : 991.0, 
@@ -340,8 +338,6 @@ def get_median_dark_current(extname):
     # the nominal temperature is just a guess since the dark frames
     # that my master dark are based on don't have CCDTEMP available
 
-    # using CI_master_bias.fits with md5sum:
-    #     dab062d6f06cc09429efc0f600f44baa
     # see py/scripts/median_dark_current_per_camera.py
 
     dark_med_dict = {'CIE' : 0.128333, 

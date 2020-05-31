@@ -3,7 +3,7 @@ import gfa_reduce.imred.load_calibs as load_calibs
 import numpy as np
 
 def create_satmask(im, extname):
-    # im is just a 2D array of pixels, not a CI_image object
+    # im is just a 2D array of pixels, not a GFA_image object
 
     par = common.gfa_misc_params()
 
@@ -16,7 +16,7 @@ def create_satmask(im, extname):
     return satmask
 
 def create_nanmask(im):
-    # im is just a 2D array of pixels, not a CI_image object
+    # im is just a 2D array of pixels, not a GFA_image object
 
     return np.logical_not(np.isfinite(im))
 
@@ -29,7 +29,7 @@ def dq_bitmask(im, extname):
     2^3 = non-finite values in image
     """
 
-    # im is just a 2D array of pixels, not a CI_image object
+    # im is just a 2D array of pixels, not a GFA_image object
 
     mask = load_calibs.read_static_mask_image(extname)
 

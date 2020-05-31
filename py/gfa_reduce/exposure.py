@@ -5,11 +5,11 @@ import astropy.io.fits as fits
 import numpy as np
 import gfa_reduce.analysis.util as util
 
-class CI_exposure:
+class GFA_exposure:
     """Object encapsulating the contents of a single CI exposure"""
 
     def __init__(self, image_list, exp_header=None, bintables=None):
-        # images is a dictionary of CI_image objects
+        # images is a dictionary of GFA_image objects
 
         par = common.gfa_misc_params()
         self.images = dict(zip(common.valid_image_extname_list(), 

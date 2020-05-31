@@ -1,5 +1,5 @@
-from gfa_reduce.image import CI_image
-from gfa_reduce.exposure import CI_exposure
+from gfa_reduce.image import GFA_image
+from gfa_reduce.exposure import GFA_exposure
 import gfa_reduce.common as common
 import gfa_reduce.xmatch.gaia as gaia
 import astropy.io.fits as fits
@@ -13,7 +13,7 @@ import time
 from gfa_reduce.ci_wcs import ccd_center_radec
 
 # in the context of this file, "image" and "exposure" generally refer to 
-# CI_image and CI_exposure objects
+# GFA_image and GFA_exposure objects
 
 def loading_image_extension_message(extname):
     print('Attempting to load image extension : ' + extname)
@@ -21,7 +21,7 @@ def loading_image_extension_message(extname):
 def load_image_from_hdu(hdu, verbose=True, cube_index=None):
     loading_image_extension_message(hdu.header['EXTNAME'])
 
-    return CI_image(hdu.data, hdu.header, cube_index=cube_index)
+    return GFA_image(hdu.data, hdu.header, cube_index=cube_index)
 
 def load_image_from_filename(fname, extname):
     assert(os.path.exists(fname))
@@ -30,7 +30,7 @@ def load_image_from_filename(fname, extname):
     assert(common.is_valid_image_extname(extname))
 
     data, header = fits.getdata(fname, extname=extname, header=True)
-    return CI_image(data, header)
+    return GFA_image(data, header)
 
 def _atomic_write(data, outname):
     # data should be either an astropy Table or an hdulist
@@ -132,7 +132,7 @@ def load_exposure(fname, verbose=True, realtime=False, cube_index=None):
             # this will crash if the binary table extension is missing...
             bintables[extname_im] = hdul[extname_tab].data
 
-    exp = CI_exposure(imlist, exp_header=exp_header, bintables=bintables)
+    exp = GFA_exposure(imlist, exp_header=exp_header, bintables=bintables)
 
     exp.set_bintable_rows()
     
@@ -196,7 +196,7 @@ def retrieve_git_rev():
 def write_image_level_outputs(exp, outdir, proc_obj, gzip=True,
                               cube_index=None, dont_write_invvar=False,
                               compress_reduced_image=False):
-    # exp is a CI_exposure object
+    # exp is a GFA_exposure object
     # outdir is the output directory (string)
 
     par = common.gfa_misc_params()
@@ -235,7 +235,7 @@ def strip_none_columns(table):
     return table
 
 def combine_per_camera_catalogs(catalogs):
-    # catalogs is the output of CI_exposure's all_source_catalogs() method
+    # catalogs is the output of GFA_exposure's all_source_catalogs() method
     # which is a dictionary of astropy QTable's, with the keys
     # being the CI camera extension names
 
