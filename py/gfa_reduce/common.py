@@ -93,11 +93,7 @@ def valid_gfa_number_list():
 def gfa_extname_to_gfa_number_dict():
     return dict(zip(valid_image_extname_list(), valid_gfa_number_list()))
 
-def ci_number_to_ci_extname_dict():
-    return dict(zip(valid_gfa_number_list(), valid_image_extname_list()))
-
 def gfa_extname_to_gfa_number(extname):
-    """ convert CI image extension name to integer CI# from DESI-3347"""
 
     # trim whitespace in case the input somehow has any
     extname = extname.replace(' ', '')
@@ -108,48 +104,16 @@ def gfa_extname_to_gfa_number(extname):
 
     return d[extname]
 
-def ci_number_to_ci_extname(num):
-    """
-    CI number refers to CI# as labeled on DESI-3347 page 4
-    """
-    assert(is_valid_ci_number(num))
-
-    d = ci_number_to_ci_extname_dict()
-
-    return d[num]
-
 def is_valid_image_extname(extname):
     return (extname in valid_image_extname_list())
 
 def is_valid_extname(extname, fz=True):
     """
     this is different from the above because when fzipped there's
-    a dummy zeroth extension with extname 'CI'
+    a dummy zeroth extension
     """
 
     return (extname in valid_extname_list(fz=fz))
-
-def is_valid_ci_number(num):
-    return (num in valid_gfa_number_list())
-
-def valid_flavor_list():
-    """
-    this includes at least 'BIAS', 'LIGHT' based on forDK.tar.gz samples
-    capitalization inconsistent in forDK.tar.gz samples
-    need to keep an eye out for additional valid flavors to add
-    """
-
-    # not sure how to deal with reduced image flavors that I've invented:
-    #     REDUCED, INVVAR, BITMASK
-    valid_flavors = ['BIAS', 'LIGHT', 'FLAT', 'MASK']
-
-    return valid_flavors
-
-def is_valid_flavor(flavor):
-    """ need to find out what the valid flavors (observation types) will be"""
-    # be case insensitive for now
-
-    return (flavor.upper() in valid_flavor_list())
 
 def mask_bit_dict():
     # keys are strings with shorthand name for each bit, values
@@ -206,7 +170,6 @@ def reduced_flavor_to_bunit(flavor):
     return d[flavor]
 
 def expid_from_filename(fname):
-    # assumes ci-????????.fits.fz or gfa-????????.fits.fz pattern
     # this is meant to be run on an input fname that is a single string
     # as opposed to an array/list of strings
 
