@@ -9,7 +9,7 @@ from astropy.table import Table
 
 # this is intended to mirror how the DESI imaging surveys access
 # Gaia, namely through the HEALPix-elized full-sky catalog at:
-#     /global/project/projectdirs/cosmo/work/gaia/chunks-gaia-dr2-astrom
+#     /global/cfs/cdirs/cosmo/work/gaia/chunks-gaia-dr2-astrom
 #
 # each catalog contains one Nside = 32 HEALPix pixel worth of Gaia souces
 # the HEALPix indices are determined using RA/Dec as longitude/latitude
