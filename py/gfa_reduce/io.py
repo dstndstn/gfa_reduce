@@ -237,9 +237,9 @@ def strip_none_columns(table):
 def combine_per_camera_catalogs(catalogs):
     # catalogs is the output of GFA_exposure's all_source_catalogs() method
     # which is a dictionary of astropy QTable's, with the keys
-    # being the CI camera extension names
+    # being the GFA camera extension names
 
-    # want to add a column to each table giving the CI camera name, then
+    # want to add a column to each table giving the GFA camera name, then
     # append the all into one per-exposure table
 
     assert(type(catalogs).__name__ == 'dict')
@@ -248,7 +248,7 @@ def combine_per_camera_catalogs(catalogs):
     for extname, tab in catalogs.items():
         if tab is not None:
             tab['camera'] = extname
-            tab['petal_loc'] = np.array([common.ci_extname_to_ci_number(extname) for extname in tab['camera']], dtype='uint8')
+            tab['petal_loc'] = np.array([common.gfa_extname_to_gfa_number(extname) for extname in tab['camera']], dtype='uint8')
             composite_list.append(tab)
 
     # handle case of no sources in any image
@@ -371,7 +371,7 @@ def gather_gaia_crossmatches(catalog):
     gaia_matches = gaia.gaia_xmatch(catalog['ra'], catalog['dec'])
 
     # avoid downstream conflict with 'ra', 'dec' columns that refer
-    # to the world coordinates of the CI detections
+    # to the world coordinates of the GFA detections
     gaia_matches.rename_column('ra', 'ra_gaia')
     gaia_matches.rename_column('dec', 'dec_gaia')
 
@@ -589,7 +589,7 @@ def write_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
 
     tab['sky_mag_ab_per_amp'] = sky_mag_ab_per_amp
     
-    tab['petal_loc'] = np.array([common.ci_extname_to_ci_number(extname) for extname in tab['camera']], dtype='uint8')
+    tab['petal_loc'] = np.array([common.gfa_extname_to_gfa_number(extname) for extname in tab['camera']], dtype='uint8')
 
     tab['expid'] = [exp.images[extname].header['EXPID'] for extname in tab['camera']]
 
@@ -697,22 +697,3 @@ def write_psf_models(exp, outdir, fname_in, cube_index=None):
     if len(hdul) > 0:
         hdul = fits.HDUList(hdul)
         _atomic_write(hdul, outname)
-
-def get_temperature_celsius(fname_in, extname):
-    # try to get CCDTEMP if it's available
-    # otherwise use the average of CI-T[1-5] from EXTNAME = 'CI' header
-
-    assert(os.path.exists(fname_in))
-    h = fits.getheader(fname_in, extname=extname)
-
-    try:
-        ccdtemp = h['CCDTEMP']
-    except:
-        # this is just a placeholder/guess -- the CCD temperature situation
-        # is a complete zoo
-        hh = fits.getheader(fname_in, extname='CI')
-        t_kw_list = ['CI-T' + str(i) for i in np.arange(1, 6)]
-
-        ccdtemp = np.mean([hh[kw] for kw in t_kw_list])
-
-    return ccdtemp

@@ -130,7 +130,6 @@ def valid_extname_list(fz=True):
     return extnames
 
 def valid_ci_number_list():
-    """ from DESI-3347 page 2 CI# labels """
 
     return [0, 2, 3, 5, 7, 8]
 
@@ -172,13 +171,13 @@ def ci_extname_to_extnum(extname, fz=True):
 
     return d[extname]
 
-def ci_extname_to_ci_number_dict():
+def gfa_extname_to_gfa_number_dict():
     return dict(zip(valid_image_extname_list(), valid_ci_number_list()))
 
 def ci_number_to_ci_extname_dict():
     return dict(zip(valid_ci_number_list(), valid_image_extname_list()))
 
-def ci_extname_to_ci_number(extname):
+def gfa_extname_to_gfa_number(extname):
     """ convert CI image extension name to integer CI# from DESI-3347"""
 
     # trim whitespace in case the input somehow has any
@@ -186,7 +185,7 @@ def ci_extname_to_ci_number(extname):
 
     assert(is_valid_extname(extname))
 
-    d = ci_extname_to_ci_number_dict()
+    d = gfa_extname_to_gfa_number_dict()
 
     return d[extname]
 
