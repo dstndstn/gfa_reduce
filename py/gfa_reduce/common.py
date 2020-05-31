@@ -41,7 +41,7 @@ def gfa_misc_params():
 
     return par
 
-def ci_camera_gain_dict():
+def gfa_camera_gain_dict():
     # HACK !!
     gains = {'GUIDE0': 3.9,
              'GUIDE2': 3.9,
@@ -51,10 +51,10 @@ def ci_camera_gain_dict():
              'GUIDE8': 3.9}
     return gains
 
-def ci_camera_gain(extname):
+def gfa_camera_gain(extname):
     assert(is_valid_extname(extname))
 
-    gains = ci_camera_gain_dict()
+    gains = gfa_camera_gain_dict()
 
     return gains[extname]
 

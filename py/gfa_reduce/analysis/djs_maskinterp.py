@@ -80,15 +80,3 @@ def average_bilinear(yval, mask):
     interp = (int0 + int1)/2.0
 
     return interp
-
-def test(axis=0):
-    mask = fits.getdata('/scratch1/scratchdirs/ameisner/dci-03336/dci-03336_bitmask.fits.gz')
-
-    im = fits.getdata('/scratch1/scratchdirs/ameisner/dci-03336/dci-03336_reduced.fits.gz')
-
-    t0 = time.time()
-    interp = maskinterp(im, mask, axis)
-    dt = time.time()-t0
-    print(dt)
-
-    return interp

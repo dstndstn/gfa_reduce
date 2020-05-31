@@ -236,7 +236,7 @@ class GFA_image:
         assert((not self.dark_subtracted) and (not self.flatfielded))
 
         ci_extname = self.header['EXTNAME']
-        gain = common.ci_camera_gain(ci_extname)
+        gain = common.gfa_camera_gain(ci_extname)
 
         var_e_sq = (common.ci_camera_readnoise(ci_extname)**2 + \
                     self.image*(self.image >= 0)*gain)
@@ -249,7 +249,7 @@ class GFA_image:
         assert(self.flatfielded)
 
         ci_extname = self.header['EXTNAME']
-        gain = common.ci_camera_gain(ci_extname)
+        gain = common.gfa_camera_gain(ci_extname)
 
         variance_adu_sq = self.var_e_sq/(gain**2)
 
@@ -298,7 +298,7 @@ class GFA_image:
         hdu.header['FLAVOR'] = flavor
 
         ci_extname = self.header['EXTNAME']
-        gain = common.ci_camera_gain(ci_extname)
+        gain = common.gfa_camera_gain(ci_extname)
         hdu.header['GAINA'] = (gain, '[e-/ADU] assumed gain')
 
         hdu.header['BUNIT'] = common.reduced_flavor_to_bunit(flavor)

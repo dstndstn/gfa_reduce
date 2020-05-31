@@ -7,7 +7,7 @@ def create_satmask(im, extname):
 
     par = common.gfa_misc_params()
 
-    gain = common.ci_camera_gain(extname)
+    gain = common.gfa_camera_gain(extname)
 
     sat_thresh = par['full_well_electrons']/gain
 

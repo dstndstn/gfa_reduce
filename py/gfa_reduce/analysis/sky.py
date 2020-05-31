@@ -22,7 +22,7 @@ def adu_to_surface_brightness(sky_adu_1pixel, acttime, extname):
 
     sky_adu_per_sec_sq_asec = sky_adu_per_sq_asec/acttime
 
-    sky_e_per_sec_sq_asec = sky_adu_per_sec_sq_asec*common.ci_camera_gain(extname)
+    sky_e_per_sec_sq_asec = sky_adu_per_sec_sq_asec*common.gfa_camera_gain(extname)
 
     return (par['nominal_zeropoint'] - 2.5*np.log10(sky_e_per_sec_sq_asec))
     
