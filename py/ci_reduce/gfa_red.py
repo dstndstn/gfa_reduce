@@ -20,7 +20,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           realtime=False, no_dark_rescaling=False, 
           dont_write_invvar=False, skip_psf_models=False,
           compress_reduced_image=False, skip_raw_imstats=False,
-          skip_astrometry=False):
+          skip_astrometry=False, no_pm_corr=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -83,8 +83,10 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         if not skip_astrometry:
             # run astrometric recalibration
             print('Attempting astrometric recalibration relative to Gaia DR2')
+
+            exp_mjd = exp.exp_header['MJD-OBS']
             astr = wcs.recalib_astrom(catalog, fname_in,
-                                      mjd=exp.exp_header['MJD-OBS'])
+                                      mjd=(None if no_pm_corr else exp_mjd))
             exp.update_wcs(astr)
             exp.recompute_catalog_radec(catalog)
 
@@ -195,6 +197,9 @@ if __name__ == "__main__":
     parser.add_argument('--skip_astrometry', default=False,
                         action='store_true',
                         help='skip astrometric recalibration')
+
+    parser.add_argument('--no_pm_corr', default=False, action='store_true',
+                        help="do not correct Gaia positions for proper motion")
     
     args = parser.parse_args()
 
@@ -209,4 +214,5 @@ if __name__ == "__main__":
           skip_psf_models=args.skip_psf_models,
           compress_reduced_image=args.compress_reduced_image,
           skip_raw_imstats=args.skip_raw_imstats,
-          skip_astrometry=args.skip_astrometry)
+          skip_astrometry=args.skip_astrometry,
+          no_pm_corr=args.no_pm_corr)
