@@ -301,7 +301,7 @@ class GFA_image:
         hdu.header['BUNIT'] = common.reduced_flavor_to_bunit(flavor)
 
         ci_num = common.gfa_extname_to_gfa_number(self.extname)
-        hdu.header['CINUM'] = (ci_num, 'CI# number from DESI-3347')
+        hdu.header['PETALLOC'] = (ci_num, 'petal number')
 
         return hdu
 
