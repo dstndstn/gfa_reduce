@@ -266,7 +266,7 @@ def dark_scaling_factor(t_master, t_image, extname):
 def read_dark_image(ci_extname, exptime, t_celsius):
     assert(common.is_valid_extname(ci_extname))
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     # try getting a master dark with an exactly matching integration time
     dark_fname = choose_master_dark(exptime, ci_extname, t_celsius)
@@ -335,7 +335,7 @@ def total_dark_image_adu(extname, exptime, t_celsius, im,
 
 def choose_master_dark(exptime, extname, gccdtemp):
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
     
     # eventually could cache the index of master darks...
     fname_index = os.path.join(os.environ[par['etc_env_var']], par['dark_index_filename'])

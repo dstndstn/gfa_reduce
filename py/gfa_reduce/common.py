@@ -3,7 +3,7 @@ import os
 
 # could add utilities re: rotation relative to CS5
 
-def ci_misc_params():
+def gfa_misc_params():
     """
     repository for various constant values that I don't want to 
     end up hardcoding in various places throughout the code base
@@ -124,7 +124,7 @@ def valid_image_extname_list():
 def valid_extname_list(fz=True):
     """ returned list is in order of CI# in DESI-3347 """
 
-    par = ci_misc_params()
+    par = gfa_misc_params()
     extnames = valid_image_extname_list() + [par['gfa_exp_extname'], par['guider_exp_extname']]
 
     return extnames
@@ -141,7 +141,7 @@ def ci_extname_to_extnum_dict(fz=True):
     for now I'm including the dummy zeroth extension in the fzipped case    
     """
 
-    par = ci_misc_params()
+    par = gfa_misc_params()
 
     if fz:
         d = {par['fz_dummy_extname']: 0, 'CIN': 1, 'CIW': 2, 'CIC': 3, 
@@ -288,7 +288,7 @@ def mask_bit_description(bitname):
     return d[bitname]
 
 def reduced_image_filename_label(flavor):
-    par = ci_misc_params()
+    par = gfa_misc_params()
 
     assert(flavor in par['reduced_image_flavors'])
 
@@ -297,7 +297,7 @@ def reduced_image_filename_label(flavor):
     return label
 
 def reduced_flavor_to_bunit(flavor):
-    par = ci_misc_params()
+    par = gfa_misc_params()
 
     assert(flavor in par['reduced_image_flavors'])
 

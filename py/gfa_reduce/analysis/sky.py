@@ -14,7 +14,7 @@ def adu_to_surface_brightness(sky_adu_1pixel, acttime, extname):
     if (sky_adu_1pixel <= 0) or (acttime <= 0):
         return np.nan
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     pixel_area_sq_asec = util.nominal_pixel_area_sq_asec(extname)
 

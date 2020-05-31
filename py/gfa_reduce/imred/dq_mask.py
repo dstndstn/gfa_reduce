@@ -5,7 +5,7 @@ import numpy as np
 def create_satmask(im, extname):
     # im is just a 2D array of pixels, not a CI_image object
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     gain = common.ci_camera_gain(extname)
 

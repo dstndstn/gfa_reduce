@@ -100,7 +100,7 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
     annulus_apertures = CircularAnnulus(positions, r_in=60.0, r_out=65.0)
     annulus_masks = annulus_apertures.to_mask(method='center')
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     b_over_a = (1.0 if (extname == 'CIC') else par['nominal_mer_cd']/par['nominal_sag_cd'])
 

@@ -11,7 +11,7 @@ class CI_exposure:
     def __init__(self, image_list, exp_header=None, bintables=None):
         # images is a dictionary of CI_image objects
 
-        par = common.ci_misc_params()
+        par = common.gfa_misc_params()
         self.images = dict(zip(common.valid_image_extname_list(), 
                                par['n_cameras']*[None]))
 

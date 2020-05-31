@@ -67,7 +67,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
     exp.estimate_all_sky_mags(careful_sky=careful_sky)
     exp.estimate_all_sky_sigmas(careful_sky=careful_sky)
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     if not no_cataloging:
         catalogs = exp.all_source_catalogs()

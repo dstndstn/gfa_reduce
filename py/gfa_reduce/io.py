@@ -83,7 +83,7 @@ def load_exposure(fname, verbose=True, realtime=False, cube_index=None):
 
     print('Attempting to load exposure : ' + fname)
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     if not realtime:
         hdul = fits.open(fname)
@@ -174,7 +174,7 @@ def reduced_image_fname(outdir, fname_in, flavor, gzip=True,
 
 def check_image_level_outputs_exist(outdir, fname_in, gzip=True,
                                     cube_index=None):
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     for flavor in par['reduced_image_flavors']:
         _ = reduced_image_fname(outdir, fname_in, flavor, gzip=gzip,
@@ -199,7 +199,7 @@ def write_image_level_outputs(exp, outdir, proc_obj, gzip=True,
     # exp is a CI_exposure object
     # outdir is the output directory (string)
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     flavors_list = par['reduced_image_flavors']
 

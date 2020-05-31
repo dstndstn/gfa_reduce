@@ -15,7 +15,7 @@ def remove_overscan(image):
 def read_bias_image(ci_extname):
     assert(common.is_valid_extname(ci_extname))
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
     bias_fname = os.path.join(os.environ[par['etc_env_var']], \
                               par['master_bias_filename'])
 
@@ -34,7 +34,7 @@ def read_flat_image(ci_extname):
     # inverse variance as well
     assert(common.is_valid_extname(ci_extname))
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
     flat_fname = os.path.join(os.environ[par['etc_env_var']], \
                               par['master_flat_filename'])
 
@@ -51,7 +51,7 @@ def read_flat_image(ci_extname):
 def read_static_mask_image(ci_extname):
     assert(common.is_valid_extname(ci_extname))
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
     mask_fname = os.path.join(os.environ[par['etc_env_var']], \
                               par['static_mask_filename'])
 

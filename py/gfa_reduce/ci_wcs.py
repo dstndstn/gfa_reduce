@@ -8,7 +8,7 @@ def nominal_tan_wcs(telra, teldec, extname):
     # Create a new WCS object.  The number of axes must be set
     # from the start
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     fname = os.path.join(os.environ[par['etc_env_var']],
                          par['headers_dummy_filename'])

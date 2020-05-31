@@ -74,7 +74,7 @@ class Overscan:
         # image should be a 2D numpy array with dimensions
         # 2248 x 1032 in the case of DESI GFA cameras
 
-        par = common.ci_misc_params()
+        par = common.gfa_misc_params()
 
         sh = image.shape
         assert(sh[0] == par['height_with_prescan_overscan'])
@@ -139,7 +139,7 @@ class CI_image:
         self.overscan = Overscan(self.image)
         self.remove_overscan()
 
-        par = common.ci_misc_params()
+        par = common.gfa_misc_params()
         # important that this saturation threshold be done on truly raw image..
         self.satmask = (self.image > par['sat_thresh_adu']).astype('byte')
         

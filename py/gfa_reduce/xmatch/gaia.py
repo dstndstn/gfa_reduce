@@ -23,7 +23,7 @@ def gaia_chunknames(ipix, ps1=False):
     # RIGHT NOW THIS ASSUMES IPIX IS AN ARRAY !! 
     # should eventually make this also work for scalar ipix
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     env_var = par['ps1_env_var'] if ps1 else par['gaia_env_var']
     gaia_dir = os.environ[env_var]

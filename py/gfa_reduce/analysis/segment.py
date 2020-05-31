@@ -10,7 +10,7 @@ def segmentation_map(image, extname, get_kernel=False):
     # in this context image means a 2D numpy array rather than a CI_image
     # object
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     fwhm_pix = par['nominal_fwhm_asec'] / \
         util.nominal_pixel_sidelen_arith(extname)

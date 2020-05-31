@@ -41,7 +41,7 @@ def has_wrong_dimensions(exp):
     return False
     
 def nominal_pixel_area_sq_asec(extname):
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     if extname == 'CIC':
         pixel_area_sq_asec = (par['nominal_cen_cd']*3600.0)**2
@@ -55,7 +55,7 @@ def nominal_pixel_sidelen_arith(extname):
     # calculate/return the nominal pixel sidelength in arcseconds
     # using the arithmetic mean of the x and y platescales
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     if extname == 'CIC':
         return par['nominal_cen_cd']*3600.0
@@ -74,7 +74,7 @@ def ci_pixel_xmax(pix_center=False, quadrant=None):
     could imagine adding a "binfac" keyword here for use in processing
     steps where I've performed an integer downbinning
     """
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     # right edge of rightmost pixel
     xmax = par['width_pix_native'] - 0.5
@@ -92,7 +92,7 @@ def ci_pixel_ymax(pix_center=False, quadrant=None):
     """
     "y" here is in CI pixel coordinates
     """
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     # right edge of rightmost pixel
     ymax = par['height_pix_native'] - 0.5
@@ -118,7 +118,7 @@ def ci_pixel_xmin(pix_center=False, quadrant=None):
         xmin += 0.5 # center of leftmost pixel
 
     if (quadrant == 1) or (quadrant == 4):
-        par = common.ci_misc_params()
+        par = common.gfa_misc_params()
         # haven't thought about whether assumption of even width matters here
         xmin += par['width_pix_native']/2
 
@@ -136,7 +136,7 @@ def ci_pixel_ymin(pix_center=False, quadrant=None):
         ymin += 0.5 # center of leftmost pixel
 
     if (quadrant == 1) or (quadrant == 2):
-        par = common.ci_misc_params()
+        par = common.gfa_misc_params()
         # haven't thought about whether assumption of even width matters here
         ymin += par['height_pix_native']/2
 
@@ -146,7 +146,7 @@ def ci_center_pix_coords():
     # native binning, this is the exact center of the image, 
     # which is at the corner of four pixels because of even sidelengths
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     x_pix_center = par['width_pix_native']*0.5 + 0.5
     y_pix_center = par['height_pix_native']*0.5 + 0.5
@@ -154,7 +154,7 @@ def ci_center_pix_coords():
     return x_pix_center, y_pix_center
 
 def ci_boundary_pixel_coords(pix_center=True):
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     x_top = np.arange(ci_pixel_xmin(pix_center=pix_center), 
                       ci_pixel_xmax(pix_center=pix_center) + 1)
@@ -203,7 +203,7 @@ def ci_downbinned_shape(binfac):
 
     assert((type(binfac).__name__ == 'int') or binfac.is_integer())
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     width_native = par['width_pix_native']
     height_native = par['height_pix_native']
@@ -452,7 +452,7 @@ def _aperture_corr_fac(psf, extname):
     return frac
 
 def zenith_zeropoint_photometric_1amp(extname, amp):
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     fname = os.path.join(os.environ[par['etc_env_var']], par['zp_filename'])
 
@@ -487,7 +487,7 @@ def zp_photometric_at_airmass(extname, airmass, amp=None):
     else:
         zp_zenith = zenith_zeropoint_photometric_1amp(extname, amp)
 
-    par = common.ci_misc_params()
+    par = common.gfa_misc_params()
 
     # account for airmass (k term from DESI-5418-v2)
     
