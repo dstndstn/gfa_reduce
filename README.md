@@ -65,6 +65,12 @@ reading auxiliary files from other places or running a `gfa_reduce` checkout loc
 
 it would be recommended to run `gfa_reduce` using a checkout of this repository's code rather than the exact NERSC location given above, as code development may be taking place within that `/global/homes/a/ameisner/gfa_reduce/py` directory
 
+to obtain a checkout of the `gfa_reduce` code
+
+    git clone https://github.com/ameisner/gfa_reduce.git
+
+`gfa_reduce` also runs on the DESI cluster computers at Kitt Peak, although no configuration example for doing so is provided here
+
 # basic examples of running the pipeline
 
 for a `gfa*.fits.fz` GFA exposure
