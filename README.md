@@ -81,6 +81,8 @@ for one frame of a `guide*.fits.fz` guider cube
 
     python -u /global/homes/a/ameisner/gfa_reduce/py/gfa_reduce/gfa_red.py /global/cfs/cdirs/desi/spectro/data/20200124/00043860/guide-00043860.fits.fz --outdir 00043860 --dont_write_invvar --compress_reduced_image --cube_index 1
 
+such `gfa_reduce` invocations print out various logging information, such as warnings and timings, which can be piped to log files for record keeping and/or debugging purposes
+
 # full help for running the pipeline
 
     gfa_reduce/py/gfa_reduce> python gfa_red.py --help
