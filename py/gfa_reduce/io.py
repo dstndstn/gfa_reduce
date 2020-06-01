@@ -376,6 +376,9 @@ def gather_gaia_crossmatches(catalog, mjd=None):
     gaia_matches.rename_column('ra', 'ra_gaia')
     gaia_matches.rename_column('dec', 'dec_gaia')
 
+    if mjd is not None:
+        gaia_matches['mjd_for_gaia'] = mjd
+
     return gaia_matches
 
 def append_gaia_crossmatches(catalog, mjd=None):
