@@ -9,9 +9,6 @@ core image analysis such as source detection, centroid measurements, flux measur
 ## py/gfa_reduce/imred/
 utilities for converting raw images to reduced images
 
-## py/gfa_reduce/plotting/
-plotting utilities
-
 ## py/gfa_reduce/xmatch/
 cross-matching utilities, such as for matching to Gaia or other external catalogs
 
@@ -41,7 +38,7 @@ input/output utilities
 # convention for pixel coordinates
 unless otherwise stated in a particular portion of the code...
 
-Throughout the codebase, pixel coordinate (0, 0) will be the **center** of the lower left pixel (where "lower left" applies in the context of the IDL/DS9 convention for 2D image display). "x" will refer to the "AXIS1" coordinate (long axis for CI cameras, a.k.a. "width"), and "y" will refer to the "AXIS2" coordinate (short axis for CI cameras, a.k.a. "height").
+Throughout the codebase, pixel coordinate (0, 0) will be the **center** of the lower left pixel (where "lower left" applies in the context of the IDL/DS9 convention for 2D image display). "x" will refer to the "AXIS1" coordinate (long axis for GFA cameras, a.k.a. "width"), and "y" will refer to the "AXIS2" coordinate (short axis for GFA cameras, a.k.a. "height").
 
 # environment
 * to access auxiliary calibration files, it will be necessary to set the `GFA_REDUCE_META` environment variable to their directory's location
@@ -58,9 +55,9 @@ Throughout the codebase, pixel coordinate (0, 0) will be the **center** of the l
 
 the following is a bash script that can be used to configure one's environment for running the `gfa_reduce` package at NERSC
 
-    source /project/projectdirs/desi/software/desi_environment.sh 18.7
+    source /global/cfs/cdirs/desi/software/desi_environment.sh master
     export PYTHONPATH=${PYTHONPATH}:/global/homes/a/ameisner/gfa_reduce/py
-    export CI_REDUCE_ETC=/project/projectdirs/desi/users/ameisner/CI/gfa_reduce_etc
-    export GAIA_CAT_DIR=/project/projectdirs/cosmo/work/gaia/chunks-gaia-dr2-astrom
+    export GFA_REDUCE_META=/global/cfs/cdirs/desi/users/ameisner/GFA/gfa_reduce_meta
+    export GAIA_CAT_DIR=/global/cfs/cdirs/cosmo/work/gaia/chunks-gaia-dr2-astrom
 
 reading auxiliary files from other places or running a `gfa_reduce` checkout located elsewhere on NERSC would require modifications of these example paths
