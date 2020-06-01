@@ -47,7 +47,7 @@ def read_gaia_cat(ra, dec, ps1=False, mjd=None):
     # is requested
     
     tablist = []
-    for f in flist:
+    for i, f in enumerate(flist):
         if ps1:
             # PS1 is not full-sky ...
             if not os.path.exists(f):
@@ -56,6 +56,8 @@ def read_gaia_cat(ra, dec, ps1=False, mjd=None):
         
         print('READING : ', f)
         tab = fits.getdata(f)
+        _ipix = fits.ColDefs([fits.Column(name=('ps1' if ps1 else 'gaia') + '_heal32_ring', format='I', array=np.ones(len(tab))*ipix_u[i])])
+        tab = (fits.BinTableHDU.from_columns(tab.columns + _ipix)).data
         tablist.append(tab)
 
     if ps1:
