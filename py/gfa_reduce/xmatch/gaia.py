@@ -111,8 +111,8 @@ def read_gaia_cat(ra, dec, ps1=False, mjd=None):
             
     return result
 
-def gaia_xmatch(ra, dec, ps1=False):
-    gaia_cat = read_gaia_cat(ra, dec, ps1=ps1)
+def gaia_xmatch(ra, dec, ps1=False, mjd=None):
+    gaia_cat = read_gaia_cat(ra, dec, ps1=ps1, mjd=mjd)
 
     if ps1 and (gaia_cat is None):
         return None

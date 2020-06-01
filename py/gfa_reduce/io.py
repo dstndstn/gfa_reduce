@@ -322,7 +322,8 @@ def get_ps1_matches(catalog):
     # handle case of exposure with no retained sources
     if catalog is None:
         return None
-    
+
+    # intentionally not sending any MJD info when doing ps1 cross-match
     ps1 = gaia.gaia_xmatch(catalog['ra'], catalog['dec'], ps1=True)
 
     if ps1 is None:
@@ -362,13 +363,13 @@ def write_ps1_matches(ps1_matches, outdir, fname_in, cube_index=None):
 
     _atomic_write(ps1_matches, outname)
     
-def gather_gaia_crossmatches(catalog):
+def gather_gaia_crossmatches(catalog, mjd=None):
 
     # handle case of exposure with no retained sources
     if catalog is None:
         return None
     
-    gaia_matches = gaia.gaia_xmatch(catalog['ra'], catalog['dec'])
+    gaia_matches = gaia.gaia_xmatch(catalog['ra'], catalog['dec'], mjd=mjd)
 
     # avoid downstream conflict with 'ra', 'dec' columns that refer
     # to the world coordinates of the GFA detections
@@ -377,8 +378,8 @@ def gather_gaia_crossmatches(catalog):
 
     return gaia_matches
 
-def append_gaia_crossmatches(catalog):
-    gaia_matches = gather_gaia_crossmatches(catalog)
+def append_gaia_crossmatches(catalog, mjd=None):
+    gaia_matches = gather_gaia_crossmatches(catalog, mjd=mjd)
 
     # handle case of exposure with no retained sources
     if gaia_matches is None:

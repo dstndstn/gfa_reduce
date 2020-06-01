@@ -60,6 +60,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
     # create data quality bitmasks
     # exp.create_all_bitmasks() # revisit this later
 
+    exp_mjd = exp.exp_header['MJD-OBS']
+    
     # go from "raw" images to "reduced" images
     exp.calibrate_pixels(do_dark_rescaling=(not no_dark_rescaling))
 
@@ -84,7 +86,6 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
             # run astrometric recalibration
             print('Attempting astrometric recalibration relative to Gaia DR2')
 
-            exp_mjd = exp.exp_header['MJD-OBS']
             astr = wcs.recalib_astrom(catalog, fname_in,
                                       mjd=(None if no_pm_corr else exp_mjd))
             exp.update_wcs(astr)
@@ -102,7 +103,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
             
         if (not no_gaia_xmatch) and (par['gaia_env_var'] in os.environ):
             print('Attempting to identify Gaia cross-matches')
-            catalog = io.append_gaia_crossmatches(catalog)
+            catalog = io.append_gaia_crossmatches(catalog,
+                mjd=(None if no_pm_corr else exp_mjd))
     else:
         catalog = None
         ps1 = None
