@@ -65,6 +65,18 @@ reading auxiliary files from other places or running a `gfa_reduce` checkout loc
 
 it would be recommended to run `gfa_reduce` using a checkout of this repository's code rather than the exact NERSC location given above, as code development may be taking place within that `/global/homes/a/ameisner/gfa_reduce/py` directory
 
+# basic examples of running the pipeline
+
+for a `gfa*.fits.fz` GFA exposure
+
+    python -u /global/homes/a/ameisner/gfa_reduce/py/gfa_reduce/gfa_red.py /global/cfs/cdirs/desi/spectro/data/20191022/00020012/gfa-00020012.fits.fz --outdir 00020012 --dont_write_invvar --compress_reduced_image
+
+for one frame of a `guide*.fits.fz` guider cube
+
+    python -u /global/homes/a/ameisner/gfa_reduce/py/gfa_reduce/gfa_red.py /global/cfs/cdirs/desi/spectro/data/20200124/00043860/guide-00043860.fits.fz --outdir 00043860 --dont_write_invvar --compress_reduced_image --cube_index 1
+
+# full help for running the pipeline
+
     gfa_reduce/py/gfa_reduce> python gfa_red.py --help
     usage: gfa_red.py [-h] [--outdir OUTDIR] [--careful_sky] [--no_cataloging]
                       [--no_gaia_xmatch] [--no_ps1_xmatch]
