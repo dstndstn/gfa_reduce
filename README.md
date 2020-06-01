@@ -59,6 +59,7 @@ the following is a bash script that can be used to configure one's environment f
     export PYTHONPATH=${PYTHONPATH}:/global/homes/a/ameisner/gfa_reduce/py
     export GFA_REDUCE_META=/global/cfs/cdirs/desi/users/ameisner/GFA/gfa_reduce_meta
     export GAIA_CAT_DIR=/global/cfs/cdirs/cosmo/work/gaia/chunks-gaia-dr2-astrom
+    export PS_CAT_DIR=/global/cfs/cdirs/desi/users/ameisner/GFA/chunks-fitscat_qz_trim
 
 reading auxiliary files from other places or running a `gfa_reduce` checkout located elsewhere on NERSC would require modifications of these example paths
 
