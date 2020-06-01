@@ -64,3 +64,37 @@ the following is a bash script that can be used to configure one's environment f
 reading auxiliary files from other places or running a `gfa_reduce` checkout located elsewhere on NERSC would require modifications of these example paths
 
 it would be recommended to run `gfa_reduce` using a checkout of this repository's code rather than the exact NERSC location given above, as code development may be taking place within that `/global/homes/a/ameisner/gfa_reduce/py` directory
+
+    gfa_reduce/py/gfa_reduce> python gfa_red.py --help
+    usage: gfa_red.py [-h] [--outdir OUTDIR] [--careful_sky] [--no_cataloging]
+                      [--no_gaia_xmatch] [--no_ps1_xmatch]
+                      [--cube_index CUBE_INDEX] [--skip_image_outputs]
+                      [--realtime] [--no_dark_rescaling] [--dont_write_invvar]
+                      [--skip_psf_models] [--compress_reduced_image]
+                      [--skip_raw_imstats] [--skip_astrometry] [--no_pm_corr]
+                      fname_in
+    
+    run full gfa_reduce pipeline on a GFA exposure
+    
+    positional arguments:
+      fname_in
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      --outdir OUTDIR       directory to write outputs in
+      --careful_sky         use image segmentation when deriving sky quantities
+      --no_cataloging       reduce image without cataloging sources
+      --no_gaia_xmatch      skip Gaia cross-match
+      --no_ps1_xmatch       skip PS1 cross-match
+      --cube_index CUBE_INDEX
+                            guide cube index
+      --skip_image_outputs  skip writing of full-frame image outputs
+      --realtime            avoid crashing on partially written raw files
+      --no_dark_rescaling   skip empirical rescaling of dark current
+      --dont_write_invvar   don't write out invvar maps
+      --skip_psf_models     skip generating per-camera PSF models
+      --compress_reduced_image
+                            compress reduced image output file
+      --skip_raw_imstats    skip computing of raw image pixel statistics
+      --skip_astrometry     skip astrometric recalibration
+      --no_pm_corr          do not correct Gaia positions for proper motion
