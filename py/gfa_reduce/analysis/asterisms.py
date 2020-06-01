@@ -117,7 +117,7 @@ def pattern_match(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5,
         cat = downselected_star_sample(cat, n_desi_max)
 
     par = common.gfa_misc_params()
-    fname_wcs_templates = os.environ['GFA_REDUCE_ETC'] + '/' + par['headers_dummy_filename']
+    fname_wcs_templates = os.environ['GFA_REDUCE_META'] + '/' + par['headers_dummy_filename']
 
     assert(os.path.exists(fname_wcs_templates))
 

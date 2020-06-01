@@ -10,7 +10,7 @@ def nominal_tan_wcs(telra, teldec, extname):
 
     par = common.gfa_misc_params()
 
-    fname = os.path.join(os.environ[par['etc_env_var']],
+    fname = os.path.join(os.environ[par['meta_env_var']],
                          par['headers_dummy_filename'])
 
     h = fits.getheader(fname, extname=extname)

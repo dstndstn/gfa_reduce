@@ -276,7 +276,7 @@ def read_dark_image(extname, exptime, t_celsius):
     # REVISIT THIS LATER TO DO BETTER
     if dark_fname is None:
         print('could not find a master dark with ORIGTIME matching EXPTIME')
-        dark_fname = os.path.join(os.environ[par['etc_env_var']], \
+        dark_fname = os.path.join(os.environ[par['meta_env_var']], \
                                   par['master_dark_filename'])
 
     print('Attempting to read master dark : ' + dark_fname + 
@@ -338,7 +338,7 @@ def choose_master_dark(exptime, extname, gccdtemp):
     par = common.gfa_misc_params()
     
     # eventually could cache the index of master darks...
-    fname_index = os.path.join(os.environ[par['etc_env_var']], par['dark_index_filename'])
+    fname_index = os.path.join(os.environ[par['meta_env_var']], par['dark_index_filename'])
 
     print('Reading master dark index table : ' + fname_index)
     
@@ -359,5 +359,5 @@ def choose_master_dark(exptime, extname, gccdtemp):
 
     fname = str[indmin]['FNAME_FULL'].replace(' ', '').split('/')[-1]
 
-    fname = os.path.join(os.environ[par['etc_env_var']] + '/master_dark_library', fname)
+    fname = os.path.join(os.environ[par['meta_env_var']] + '/master_dark_library', fname)
     return fname

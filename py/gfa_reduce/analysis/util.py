@@ -447,7 +447,7 @@ def _aperture_corr_fac(psf, extname):
 def zenith_zeropoint_photometric_1amp(extname, amp):
     par = common.gfa_misc_params()
 
-    fname = os.path.join(os.environ[par['etc_env_var']], par['zp_filename'])
+    fname = os.path.join(os.environ[par['meta_env_var']], par['zp_filename'])
 
     # would be better to cache this, but it's of order ~10 kb ..
     tab = fits.getdata(fname)

@@ -12,7 +12,7 @@ def gfa_misc_params():
     width_pix_native = 2048
     height_pix_native = 1032
 
-    par = {'etc_env_var': 'GFA_REDUCE_ETC',
+    par = {'meta_env_var': 'GFA_REDUCE_META',
            'gaia_env_var': 'GAIA_CAT_DIR',
            'ps1_env_var' : 'PS_CAT_DIR',
            'width_pix_native': width_pix_native,
