@@ -379,6 +379,8 @@ def gather_gaia_crossmatches(catalog, mjd=None):
     if mjd is not None:
         gaia_matches['mjd_for_gaia'] = mjd
 
+    catalog['gaia_motion_corr'] = int(mjd is not None)
+        
     return gaia_matches
 
 def append_gaia_crossmatches(catalog, mjd=None):
