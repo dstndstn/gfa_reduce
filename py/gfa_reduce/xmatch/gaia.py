@@ -58,8 +58,14 @@ def read_gaia_cat(ra, dec, ps1=False, mjd=None):
         tab = fits.getdata(f)
         _ipix = fits.ColDefs([fits.Column(name=('ps1' if ps1 else 'gaia') + '_heal32_ring', format='I', array=np.ones(len(tab))*ipix_u[i])])
         tab = (fits.BinTableHDU.from_columns(tab.columns + _ipix)).data
-        tablist.append(tab)
+        if (not ps1) and (mjd is not None):
+            # save a copy of the "original" Gaia (RA, Dec) coords straight from the Gaia DR2 catalog
+            radec_orig = fits.ColDefs([fits.Column(name='ra_gaia_orig', format='D', array=tab['ra']), fits.Column(name='dec_gaia_orig', format='D', array=tab['dec'])])
 
+            tab = (fits.BinTableHDU.from_columns(tab.columns + radec_orig)).data
+
+        tablist.append(tab)
+        
     if ps1:
         if len(tablist) == 0:
             return None
@@ -76,7 +82,7 @@ def read_gaia_cat(ra, dec, ps1=False, mjd=None):
             assert(mjd >= 58757.0) # 2019Oct01 at 00:00:00
             assert(np.isfinite(mjd))
             assert(isinstance(mjd, float))
-
+            
             print('CORRECTING GAIA POSITIONS FOR PROPER MOTION WHEN POSSIBLE')
             
             # 2015-01-01 00:00:00.000 UTC <-> MJD = 57023
