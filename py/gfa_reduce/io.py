@@ -612,6 +612,11 @@ def write_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
 
     tab['skydec'] = [exp.images[extname].try_retrieve_meta_keyword('SKYDEC', placeholder=np.nan) for extname in tab['camera']]
 
+    # zenith distance using approximate center of the field given by SKYRA, SKYDEC
+    # could imagine instead using the approximate center of each GFA *camera* when computing the zenith distance for each _ccds table row
+
+    tab['zenith_dist_deg'] = [util._zenith_distance(t['skyra'], t['skydec'], t['lst_deg']) for t in tab]
+    
     tab['domshutl'] = np.array(nrows*[exp.try_retrieve_header_card('DOMSHUTL', placeholder='')], dtype='U8')
     tab['domshutu'] = np.array(nrows*[exp.try_retrieve_header_card('DOMSHUTU', placeholder='')], dtype='U8')
     tab['pmcover'] = exp.try_retrieve_header_card('PMCOVER', placeholder='')

@@ -665,3 +665,24 @@ def interp_lst(mjd, eph=None):
         lst += 360.0
 
     return lst
+
+def _zenith_distance(ra, dec, lst_deg):
+
+    # output value should be in degrees
+
+    if np.isnan(ra) or np.isnan(dec) or np.isnan(lst_deg):
+        return np.nan
+    
+    # for now assume scalar inputs, can work on vectorization later if desired
+
+    # not sure where I got this from, might be better to switch to
+    # exact same latitude used by desimeter
+    
+    kpno_latitude = 31.9639671 # absorb this 'special number' into common.py
+    
+    c = SkyCoord(ra*u.deg, dec*u.deg)
+    zenith = SkyCoord(lst_deg*u.deg, kpno_latitude*u.deg)
+
+    dangle = c.separation(zenith)
+
+    return dangle.deg
