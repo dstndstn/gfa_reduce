@@ -627,7 +627,10 @@ def load_lst():
 def interp_lst(mjd, eph=None):
 
     # for now assume that mjd is a scalar, can deal with vectorization later..
-    
+
+    if (mjd is None) or (mjd == 0) or (np.isnan(mjd)):
+        return np.nan
+        
     if eph is None:
         eph = load_lst()
 
