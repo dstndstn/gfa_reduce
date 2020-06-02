@@ -604,7 +604,7 @@ def write_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
     tab['mjd'] = [exp.images[extname].try_retrieve_meta_keyword('MJD-OBS', placeholder=0.0) for extname in tab['camera']]
 
     eph = util.load_lst()
-    tab['lst'] = [util.interp_lst(t['mjd'], eph=eph) for t in tab]
+    tab['lst_deg'] = [util.interp_lst(t['mjd'], eph=eph) for t in tab]
 
     tab['program'] = [str(exp.images[extname].try_retrieve_meta_keyword('PROGRAM', placeholder='')) for extname in tab['camera']]
 
