@@ -2,6 +2,6 @@
 gfa_reduce
 =========
 
-A package for reducing DESI GFA images.
+A pipeline for performing off-line reductions of DESI GFA images.
 
 """
