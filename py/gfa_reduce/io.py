@@ -613,7 +613,6 @@ def write_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
     tab['skydec'] = [exp.images[extname].try_retrieve_meta_keyword('SKYDEC', placeholder=np.nan) for extname in tab['camera']]
 
     # zenith distance using approximate center of the field given by SKYRA, SKYDEC
-    # could imagine instead using the approximate center of each GFA *camera* when computing the zenith distance for each _ccds table row
 
     tab['zenith_dist_deg'] = [util._zenith_distance(t['skyra'], t['skydec'], t['lst_deg']) for t in tab]
     
@@ -668,6 +667,10 @@ def write_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
     tab['moon_sep_deg'] = util.moon_separation(tab['moonra'], tab['moondec'],
                                                tab['racen'], tab['deccen'])
 
+    # per-camera zenith distance -- will only be accurate to the extent that
+    # each camera's WCS recalibration succeeded
+    tab['zd_deg_per_gfa'] = [util._zenith_distance(t['racen'], t['deccen'], t['lst_deg']) for t in tab]
+    
     tab['zp_adu_per_s'] = [exp.images[extname].compute_zeropoint(ps1) for extname in tab['camera']]
 
     tab['transparency'] = [util.transparency_from_zeropoint(tab[i]['zp_adu_per_s'], tab[i]['airmass'], tab[i]['camera']) for i in range(len(tab))]
