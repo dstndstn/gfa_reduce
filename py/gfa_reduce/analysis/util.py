@@ -675,10 +675,9 @@ def _zenith_distance(ra, dec, lst_deg):
     
     # for now assume scalar inputs, can work on vectorization later if desired
 
-    # not sure where I got this from, might be better to switch to
-    # exact same latitude used by desimeter
+    par = common.gfa_misc_params()
     
-    kpno_latitude = 31.9639671 # absorb this 'special number' into common.py
+    kpno_latitude =  par['kpno_lat_deg']
     
     c = SkyCoord(ra*u.deg, dec*u.deg)
     zenith = SkyCoord(lst_deg*u.deg, kpno_latitude*u.deg)
