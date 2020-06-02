@@ -614,8 +614,8 @@ def _test_gauss2d_fit():
 def load_lst():
     par = common.gfa_misc_params()
 
-    # eventually put 'gfa_ephemeris.fits' file name info into gfa_misc_params
-    fname = os.path.join(os.environ[par['meta_env_var']], 'gfa_ephemeris.fits')
+    fname = os.path.join(os.environ[par['meta_env_var']],
+                         par['ephem_filename'])
 
     print('READING EPHEMERIS FILE : ', fname)
     assert(os.path.exists(fname))

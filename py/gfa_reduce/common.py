@@ -37,7 +37,8 @@ def gfa_misc_params():
            'headers_dummy_filename' : 'dummy_with_headers_gaia.zenith.fits.gz',
            'reduced_image_flavors' : ['REDUCED', 'INVVAR', 'BITMASK'],
            'kterm' : 0.114,
-           'zp_filename' : 'dense_field_zeropoints-combined.all_cameras.fits'}
+           'zp_filename' : 'dense_field_zeropoints-combined.all_cameras.fits',
+           'ephem_filename' : 'gfa_ephemeris.fits'}
 
     return par
 
