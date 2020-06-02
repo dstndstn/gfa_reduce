@@ -609,3 +609,54 @@ def _test_gauss2d_fit():
     res = _fit_gauss2d(tab[0]['XCENTROID_PSF'], tab[0]['YCENTROID_PSF'], psf)
 
     return res
+
+# maybe this belongs in "io" ...
+def load_lst():
+    par = common.gfa_misc_params()
+
+    # eventually put 'gfa_ephemeris.fits' file name info into gfa_misc_params
+    fname = os.path.join(os.environ[par['meta_env_var']], 'gfa_ephemeris.fits')
+
+    print('READING EPHEMERIS FILE : ', fname)
+    assert(os.path.exists(fname))
+
+    eph = fits.getdata(fname)
+
+    return eph
+
+def interp_lst(mjd, eph=None):
+
+    # for now assume that mjd is a scalar, can deal with vectorization later..
+    
+    if eph is None:
+        eph = load_lst()
+
+    ind_upper = np.searchsorted(eph['MJD'], mjd)
+
+    assert(ind_upper > 0)
+    assert(ind_upper != len(eph))
+
+    ind_lower = ind_upper - 1
+
+    mjd_upper = eph['MJD'][ind_upper]
+    mjd_lower = eph['MJD'][ind_lower]
+
+    assert(mjd_upper >= mjd)
+    assert(mjd_lower <= mjd)
+
+    lst_upper = eph['LST_DEG'][ind_upper]
+    lst_lower = eph['LST_DEG'][ind_lower]
+
+    if (lst_lower > lst_upper):
+        lst_lower -= 360.0
+
+    lst = ((mjd - mjd_lower)*lst_upper + (mjd_upper - mjd)*lst_lower)/(mjd_upper-mjd_lower)
+    
+    # bound to be within 0 -> 360
+
+    assert(lst < 360)
+
+    if (lst < 0):
+        lst += 360.0
+
+    return lst
