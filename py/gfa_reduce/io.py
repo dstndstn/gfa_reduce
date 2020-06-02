@@ -626,7 +626,6 @@ def write_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
     tab['t_c_for_dark_is_guess'] = [int(exp.images[extname].t_c_for_dark_is_guess) for extname in tab['camera']]
     tab['time_s_for_dark'] = [exp.images[extname].time_s_for_dark for extname in tab['camera']]
 
-    tab['airmass'] = exp.try_retrieve_header_card('AIRMASS', placeholder=np.nan)
     tab['night'] = exp.try_retrieve_header_card('NIGHT', placeholder='')
 
     tab['focus'] = exp.try_retrieve_header_card('FOCUS', placeholder='')
@@ -670,10 +669,20 @@ def write_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
     # per-camera zenith distance -- will only be accurate to the extent that
     # each camera's WCS recalibration succeeded
     tab['zd_deg_per_gfa'] = [util._zenith_distance(t['racen'], t['deccen'], t['lst_deg']) for t in tab]
+
+    tab['header_airmass'] = exp.try_retrieve_header_card('AIRMASS', placeholder=np.nan)
+
+    # this should make the airmass properly evolve
+    # with time for guide cube outputs
+    tab['airmass'] = 1.0/np.cos(tab['zenith_dist_deg']/(180.0/np.pi))
+
+    # this per-camera version of airmass should also evolve
+    # properly with time for guide cube outputs
+    tab['airmass_per_gfa'] = 1.0/np.cos(tab['zd_deg_per_gfa']/(180.0/np.pi))
     
     tab['zp_adu_per_s'] = [exp.images[extname].compute_zeropoint(ps1) for extname in tab['camera']]
 
-    tab['transparency'] = [util.transparency_from_zeropoint(tab[i]['zp_adu_per_s'], tab[i]['airmass'], tab[i]['camera']) for i in range(len(tab))]
+    tab['transparency'] = [util.transparency_from_zeropoint(tab[i]['zp_adu_per_s'], tab[i]['airmass_per_gfa'], tab[i]['camera']) for i in range(len(tab))]
     
     prescan_overscan_ccds_table(tab, exp)
     high_level_ccds_metrics(tab, catalog, exp)
