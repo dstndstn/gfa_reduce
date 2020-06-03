@@ -602,9 +602,9 @@ def _fit_moffat2d(xcen, ycen, image):
     return res
     
 def _test_gauss2d_fit():
-    tab = fits.getdata('/project/projectdirs/desi/users/ameisner/GFA/run/psf_flux_weighted_centroid/20200131/00045485/gfa-00045485_ccds.fits')
+    tab = fits.getdata('/global/cfs/cdirs/desi/users/ameisner/GFA/run/psf_flux_weighted_centroid/20200131/00045485/gfa-00045485_ccds.fits')
 
-    psf = fits.getdata('/project/projectdirs/desi/users/ameisner/GFA/run/psf_flux_weighted_centroid/20200131/00045485/gfa-00045485_psfs.fits')
+    psf = fits.getdata('/global/cfs/cdirs/desi/users/ameisner/GFA/run/psf_flux_weighted_centroid/20200131/00045485/gfa-00045485_psfs.fits')
 
     res = _fit_gauss2d(tab[0]['XCENTROID_PSF'], tab[0]['YCENTROID_PSF'], psf)
 
