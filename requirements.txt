@@ -1,6 +1,7 @@
-astropy==2.0.7
-matplotlib==2.1.2
-healpy==1.11.0
-scipy==1.1.0
-photutils==0.4
 numpy==1.13.3
+healpy==1.12.9
+fitsio==0.9.11
+matplotlib==2.1.2
+astropy==2.0.7
+photutils==0.4
+scipy==1.1.0
