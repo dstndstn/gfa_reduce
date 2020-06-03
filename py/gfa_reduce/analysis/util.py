@@ -685,3 +685,27 @@ def _zenith_distance(ra, dec, lst_deg):
     dangle = c.separation(zenith)
 
     return dangle.deg
+
+def _get_ha(ra_deg, lst_deg, mountdec):
+
+    # add/implement hours boolean kw arg at some point
+
+    # for now assume scalar inputs, can work on vectorization later if desired
+
+    if mountdec > 90:
+        ra_deg -= 180.0
+
+    if ra_deg >= 360:
+        ra_deg -= 360.0
+    elif ra_deg < 0:
+        ra_deg += 360.0
+    
+    if (np.abs(lst_deg - ra_deg) > 180) and ((lst_deg - ra_deg) > 0):
+        lst_deg -= 360.0
+    if (np.abs(lst_deg - ra_deg) > 180) and ((lst_deg - ra_deg) < 0):
+        lst_deg += 360.0
+
+    ha = lst_deg - ra_deg
+
+    return ha
+        

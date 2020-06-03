@@ -611,7 +611,7 @@ def write_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
     tab['skyra'] = [exp.images[extname].try_retrieve_meta_keyword('SKYRA', placeholder=np.nan) for extname in tab['camera']]
 
     tab['skydec'] = [exp.images[extname].try_retrieve_meta_keyword('SKYDEC', placeholder=np.nan) for extname in tab['camera']]
-
+    
     # zenith distance using approximate center of the field given by SKYRA, SKYDEC
 
     tab['zenith_dist_deg'] = [util._zenith_distance(t['skyra'], t['skydec'], t['lst_deg']) for t in tab]
@@ -663,6 +663,13 @@ def write_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
         tab['racen'][i] = racen
         tab['deccen'][i] = deccen
 
+    tab['mountha_header'] = exp.try_retrieve_header_card('MOUNTHA', placeholder=np.nan)
+    tab['mountdec_header'] = exp.try_retrieve_header_card('MOUNTDEC', placeholder=np.nan)
+
+    tab['ha_deg'] = [util._get_ha(t['skyra'], t['lst_deg'], t['mountdec_header']) for t in tab]
+
+    tab['ha_deg_per_gfa'] = [util._get_ha(t['racen'], t['lst_deg'], t['mountdec_header']) for t in tab]
+    
     tab['moon_sep_deg'] = util.moon_separation(tab['moonra'], tab['moondec'],
                                                tab['racen'], tab['deccen'])
 
