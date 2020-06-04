@@ -113,7 +113,7 @@ def read_gaia_cat(ra, dec, ps1=False, mjd=None):
             assert(np.isfinite(mjd))
             assert(isinstance(mjd, float))
             
-            print('CORRECTING GAIA POSITIONS FOR PROPER MOTION WHEN POSSIBLE')
+            print('CORRECTING GAIA POSITIONS FOR MOTION WHEN POSSIBLE')
             
             # 2015-01-01 00:00:00.000 UTC <-> MJD = 57023
             # a year is 365.25 days according to some definition
@@ -128,15 +128,23 @@ def read_gaia_cat(ra, dec, ps1=False, mjd=None):
             # the division by cos(Dec) could cause problems if there were a
             # Gaia source at Dec of exactly +/- 90 deg
             
-            ra_corr = result['ra'] + ((mjd - mjd_gaia)/365.25)*result['pmra']/np.cos(result['dec']/(180.0/np.pi))/(3600.0*1000.0)
+            ra_corr = result['ra'] + ((mjd - mjd_gaia)/365.25)*result['pmra']/(np.cos(result['dec']/(180.0/np.pi))*3600.0*1000.0)
             dec_corr = result['dec'] + ((mjd - mjd_gaia)/365.25)*result['pmdec']/(3600.0*1000.0)
+
+            dra_pi_asec, ddec_pi_asec = parallax_offsets(ra_corr, dec_corr, mjd, result['parallax']/1000.0)
+
+            dra_pi_asec = np.array(dra_pi_asec)
+            ddec_pi_asec = np.array(ddec_pi_asec)
+            
+            ra_corr += dra_pi_asec/(np.cos(result['dec']/(180.0/np.pi))*3600.0)
+            dec_corr += ddec_pi_asec/3600.0
             
             full_solution = np.isfinite(result['pmra'])
             result['ra'][full_solution] = ra_corr[full_solution]
             result['dec'][full_solution] = dec_corr[full_solution]
 
             print('adjusted ', np.sum(full_solution), ' of ', len(result),
-                  ' Gaia source positions for proper motion')
+                  ' Gaia source positions for proper motion and parallax')
 
             assert(np.sum(np.isfinite(result['ra'])) == len(result))
             assert(np.sum(np.isfinite(result['dec'])) == len(result))
