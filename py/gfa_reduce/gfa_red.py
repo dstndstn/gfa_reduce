@@ -20,7 +20,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           realtime=False, no_dark_rescaling=False, 
           dont_write_invvar=False, skip_psf_models=False,
           compress_reduced_image=False, skip_raw_imstats=False,
-          skip_astrometry=False, no_pm_corr=False):
+          skip_astrometry=False, no_pm_pi_corr=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -87,7 +87,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
             print('Attempting astrometric recalibration relative to Gaia DR2')
 
             astr = wcs.recalib_astrom(catalog, fname_in,
-                                      mjd=(None if no_pm_corr else exp_mjd))
+                                      mjd=(None if no_pm_pi_corr else exp_mjd))
             exp.update_wcs(astr)
             exp.recompute_catalog_radec(catalog)
 
@@ -104,7 +104,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         if (not no_gaia_xmatch) and (par['gaia_env_var'] in os.environ):
             print('Attempting to identify Gaia cross-matches')
             catalog = io.append_gaia_crossmatches(catalog,
-                mjd=(None if no_pm_corr else exp_mjd))
+                mjd=(None if no_pm_pi_corr else exp_mjd))
     else:
         catalog = None
         ps1 = None
@@ -200,8 +200,8 @@ if __name__ == "__main__":
                         action='store_true',
                         help='skip astrometric recalibration')
 
-    parser.add_argument('--no_pm_corr', default=False, action='store_true',
-                        help="do not correct Gaia positions for proper motion")
+    parser.add_argument('--no_pm_pi_corr', default=False, action='store_true',
+        help="do not correct Gaia positions for proper motion or parallax")
     
     args = parser.parse_args()
 
@@ -217,4 +217,4 @@ if __name__ == "__main__":
           compress_reduced_image=args.compress_reduced_image,
           skip_raw_imstats=args.skip_raw_imstats,
           skip_astrometry=args.skip_astrometry,
-          no_pm_corr=args.no_pm_corr)
+          no_pm_pi_corr=args.no_pm_pi_corr)
