@@ -34,6 +34,19 @@ def parallax_factors(ra, dec, mjd):
 
     return P_alpha, P_delta
 
+def parallax_offsets(ra, dec, mjd, pi):
+
+    # pi is the parallax in units of ARCSECONDS
+
+    # return value is in arcseconds as well
+
+    P_alpha, P_delta = parallax_factors(ra, dec, mjd)
+
+    dra_asec_angular = pi*P_alpha
+    ddec_asec = pi*P_delta
+
+    return dra_asec_angular, ddec_asec
+
 def gaia_chunknames(ipix, ps1=False):
     # could add checks to make sure that all ipix values are 
     # sane HEALPix pixel indices
