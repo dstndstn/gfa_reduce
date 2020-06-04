@@ -6,6 +6,8 @@ import os
 from astropy.coordinates import SkyCoord
 from astropy import units as u
 from astropy.table import Table
+import astropy.coordinates as coords
+from astropy.time import Time
 
 # this is intended to mirror how the DESI imaging surveys access
 # Gaia, namely through the HEALPix-elized full-sky catalog at:
@@ -16,6 +18,21 @@ from astropy.table import Table
 # HEALPix indexing is ring-ordered
 
 nside = 32
+
+def parallax_factors(ra, dec, mjd):
+
+    # expecting ra, dec, mjd to be arrays of equal length/shape
+
+    eph = coords.get_body_barycentric('earth', Time(mjd, format='mjd'))
+
+    fac = 180.0/np.pi
+
+    P_alpha = eph.x*np.sin(ra/fac) - eph.y*np.cos(ra/fac)
+    P_delta = eph.x*np.cos(ra/fac)*np.sin(dec/fac) + \
+              eph.y*np.sin(ra/fac)*np.sin(dec/fac) - \
+              eph.z*np.cos(dec/fac)
+
+    return P_alpha, P_delta
 
 def gaia_chunknames(ipix, ps1=False):
     # could add checks to make sure that all ipix values are 
