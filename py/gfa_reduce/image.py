@@ -12,8 +12,10 @@ from scipy.stats import scoreatpercentile
 import gfa_reduce.analysis.util as util
 
 class PSF:
-    def __init__(self, cube, im_header):
+    def __init__(self, cube, im_header, cube_index):
         self.psf_image = np.median(cube, 2) # seems to work even for nstars = 1
+
+        self.cube_index = cube_index
 
         sh = self.psf_image.shape
         assert(sh[0] == sh[1])
@@ -49,6 +51,9 @@ class PSF:
          hdu.header['NSTARS'] = self.nstars
          hdu.header['FIBFRAC'] = self.fiber_fracflux if np.isfinite(self.fiber_fracflux) else 0.0 # ??
          hdu.header['EXPID'] = self.im_header['EXPID']
+
+         if self.cube_index is not None:
+             hdu.header['CUBE_IND'] = self.cube_index
 
          # guide*.fits.fz GUIDE? extensions apparently don't have NIGHT
          # or any other date-related information available
@@ -570,7 +575,7 @@ class GFA_image:
             self.psf = None
             print("WARNING: did not find any PSF 'stars' for " + self.extname)
         else:
-            self.psf = PSF(cube, self.header)
+            self.psf = PSF(cube, self.header, self.cube_index)
 
     def compute_zeropoint(self, ps1_matched_catalog):
         if ps1_matched_catalog is None:
