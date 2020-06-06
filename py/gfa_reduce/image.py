@@ -19,7 +19,10 @@ class PSF:
         assert(sh[0] == sh[1])
 
         self.sidelen = sh[0]
-        
+
+        self.im_header = im_header # header of the full-frame single-camera
+                                   # GFA image
+
         bgmask = util._stamp_radius_mask(sh[0])
         self.psf_image -= np.median(self.psf_image[bgmask])
 
@@ -45,6 +48,13 @@ class PSF:
          hdu.header['EXTNAME'] = self.extname
          hdu.header['NSTARS'] = self.nstars
          hdu.header['FIBFRAC'] = self.fiber_fracflux if np.isfinite(self.fiber_fracflux) else 0.0 # ??
+         hdu.header['EXPID'] = self.im_header['EXPID']
+
+         # guide*.fits.fz GUIDE? extensions apparently don't have NIGHT
+         # or any other date-related information available
+         if 'NIGHT' in self.im_header:
+             hdu.header['NIGHT'] = self.im_header['NIGHT']
+
          return hdu
 
     def flux_weighted_centroid(self):
