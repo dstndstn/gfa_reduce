@@ -12,7 +12,7 @@ from scipy.stats import scoreatpercentile
 import gfa_reduce.analysis.util as util
 
 class PSF:
-    def __init__(self, cube, extname):
+    def __init__(self, cube, im_header):
         self.psf_image = np.median(cube, 2) # seems to work even for nstars = 1
 
         sh = self.psf_image.shape
@@ -27,11 +27,12 @@ class PSF:
 
         self.fiber_fracflux = util._fiber_fracflux(self.psf_image)
         
-        self.extname = extname
+        self.extname = im_header['EXTNAME']
         self.nstars = cube.shape[2]
         self.cube = cube # maybe get rid of this eventually to save memory
 
-        self.aper_corr_fac = util._aperture_corr_fac(self.psf_image, extname)
+        self.aper_corr_fac = util._aperture_corr_fac(self.psf_image,
+                                                     self.extname)
 
         self.flux_weighted_centroid()
 
@@ -559,7 +560,7 @@ class GFA_image:
             self.psf = None
             print("WARNING: did not find any PSF 'stars' for " + self.extname)
         else:
-            self.psf = PSF(cube, self.extname)        
+            self.psf = PSF(cube, self.header)
 
     def compute_zeropoint(self, ps1_matched_catalog):
         if ps1_matched_catalog is None:
