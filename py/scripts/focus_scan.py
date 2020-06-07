@@ -10,7 +10,7 @@ def focus_plots(night, expids,
                basedir='/n/home/datasystems/users/ameisner/reduced/focus',
                outdir='/n/home/desiobserver/focus_scan', no_popups=False):
 
-    plt.figure(1, figsize=(12, 9))
+    plt.figure(1, figsize=(12.0*(len(expids)/7.0), 9))
     extnames = ['GUIDE0', 'GUIDE2', 'GUIDE3', 'GUIDE5', 'GUIDE7', 'GUIDE8']
 
     focus_z = []
@@ -56,6 +56,11 @@ def focus_plots(night, expids,
     plt.savefig(os.path.join(outdir, 'stamps_focus_scan-' + str(expid_min).zfill(8)+'.png'), bbox_inches='tight')
     #plt.cla()
 
+    # doesn't make sense to fit a parabola to < 3 data points...
+    if len(focus_z) < 3:
+        print('NOT ENOUGH EXPOSURES AVAILABLE TO FIT A PARABOLA')
+        return
+    
     plt.figure(200)
     
     asec_per_pix = 0.205
