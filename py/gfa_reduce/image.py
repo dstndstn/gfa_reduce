@@ -70,7 +70,7 @@ class PSF:
          hdu.header['FIBFRAC'] = self.fiber_fracflux if np.isfinite(self.fiber_fracflux) else 0.0 # ??
          hdu.header['EXPID'] = self.im_header['EXPID']
          hdu.header['CBOX'] = self.cbox
-         hdu.header['CFAILED'] = self.psf_centroiding_failed # maybe want this in _ccds table also..
+         hdu.header['CFAILED'] = self.psf_centroiding_failed
 
          if self.cube_index is not None:
              hdu.header['CUBE_IND'] = self.cube_index
