@@ -36,12 +36,29 @@ class PSF:
         self.nstars = cube.shape[2]
         self.cube = cube # maybe get rid of this eventually to save memory
 
+        self.cbox = 7
         self.flux_weighted_centroid()
-        
+
+        # don't send the centroids to _aperture_corr_fac since
+        # I want the aperture correction factor to have any
+        # average off-centering baked in to correct for any such
+        # off-centering in the catalog aperture fluxes
         self.aper_corr_fac = util._aperture_corr_fac(self.psf_image)
 
-        self.fiber_fracflux = util._fiber_fracflux(self.psf_image)
-        
+        self.fiber_fracflux = util._fiber_fracflux(self.psf_image,
+                                                   x_centroid=self.xcen_flux_weighted,
+                                                   y_centroid=self.ycen_flux_weighted)
+
+        if self.fiber_fracflux < 0.5:
+            self.cbox += (4.0/3.0)*10*(0.5 - max(self.fiber_fracflux, 0))
+            assert(self.cbox >= 7)
+
+            self.flux_weighted_centroid()
+
+            self.fiber_fracflux = util._fiber_fracflux(self.psf_image,
+                                                       x_centroid=self.xcen_flux_weighted,
+                                                       y_centroid=self.ycen_flux_weighted)
+            
         self.fit_gaussian_fwhm()
 
     def to_hdu(self, primary=False):
@@ -52,6 +69,7 @@ class PSF:
          hdu.header['NSTARS'] = self.nstars
          hdu.header['FIBFRAC'] = self.fiber_fracflux if np.isfinite(self.fiber_fracflux) else 0.0 # ??
          hdu.header['EXPID'] = self.im_header['EXPID']
+         hdu.header['CBOX'] = self.cbox
 
          if self.cube_index is not None:
              hdu.header['CUBE_IND'] = self.cube_index
@@ -67,7 +85,7 @@ class PSF:
         x_start = y_start = self.sidelen // 2
         
         xcen, ycen, _ = djs_photcen(x_start, y_start, self.psf_image,
-                                    cbox=7,
+                                    cbox=self.cbox,
                                     cmaxiter=10, cmaxshift=0.0,
                                     ceps=0.0)
 
