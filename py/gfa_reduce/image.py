@@ -59,7 +59,7 @@ class PSF:
                                                        x_centroid=self.xcen_flux_weighted,
                                                        y_centroid=self.ycen_flux_weighted)
             
-        self.fit_gaussian_fwhm()
+        self.fit_moffat_fwhm()
 
     def to_hdu(self, primary=False):
          # still need to put metadata into header
@@ -92,7 +92,7 @@ class PSF:
         self.xcen_flux_weighted = xcen
         self.ycen_flux_weighted = ycen
 
-    def fit_gaussian_fwhm(self):
+    def fit_moffat_fwhm(self):
         res = util._fit_moffat2d(self.xcen_flux_weighted, self.ycen_flux_weighted, self.psf_image)
 
         # check for success of minimization ?
