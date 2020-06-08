@@ -48,7 +48,7 @@ def nominal_pixel_area_sq_asec(extname):
 
     return pixel_area_sq_asec
 
-def nominal_pixel_sidelen_arith(extname):
+def nominal_pixel_sidelen_arith():
     # calculate/return the nominal pixel sidelength in arcseconds
     # using the arithmetic mean of the x and y platescales
 
@@ -396,7 +396,8 @@ def _resize(arr, fac):
     
     return np.repeat(np.repeat(arr, fac, axis=0), fac, axis=1)
 
-def _fiber_fracflux(psf):
+def _fiber_fracflux(psf, x_centroid=None, y_centroid=None,
+                    fib_rad_pix=None):
 
     # not really sure if this edge case will ever happen ??
     if (np.sum(psf) <= 0):
@@ -404,13 +405,23 @@ def _fiber_fracflux(psf):
         
     binfac = 11
 
-    fib_diam = 107.0/15.0 # GFA pixels
+    if fib_rad_pix is None:
+        fib_diam = 107.0/15.0 # GFA pixels
 
-    fib_rad = fib_diam/2.0 # GFA pixels
+        fib_rad = fib_diam/2.0 # GFA pixels
+    else:
+        fib_rad = fib_rad_pix
 
     sidelen = psf.shape[0] # assume square..
 
-    mask, radius = _stamp_radius_mask(sidelen*binfac, return_radius=True)
+    if x_centroid is not None:
+        x_centroid *= binfac
+    if y_centroid is not None:
+        y_centroid *= binfac
+
+    mask, radius = _stamp_radius_mask(sidelen*binfac, return_radius=True,
+                                      x_centroid=x_centroid,
+                                      y_centroid=y_centroid)
     
     _psf = _resize(psf, binfac)
 
@@ -422,35 +433,18 @@ def _fiber_fracflux(psf):
 
     return frac
 
-def _aperture_corr_fac(psf, extname):
-
-    # not really sure if this edge case will ever happen ??
-    if (np.sum(psf) <= 0):
-        return np.nan
-
-    binfac = 11
+def _aperture_corr_fac(psf, x_centroid=None, y_centroid=None):
 
     # would be good to not have this hardcoded...
     rad_asec = 1.5 # corresponds to my _3 aperture fluxes
 
-    asec_per_pix = nominal_pixel_sidelen_arith(extname)
-
+    asec_per_pix = nominal_pixel_sidelen_arith()
     rad_pix = rad_asec/asec_per_pix
 
-    sidelen = psf.shape[0] # assume square..
-
-    mask, radius = _stamp_radius_mask(sidelen*binfac, return_radius=True)
+    return _fiber_fracflux(psf, x_centroid=x_centroid,
+                           y_centroid=y_centroid,
+                           fib_rad_pix=rad_pix)
     
-    _psf = _resize(psf, binfac)
-
-    _mask = np.logical_not(mask)
-
-    in_aper = (radius <= rad_pix*binfac)
-
-    frac = np.sum(_psf*_mask*in_aper)/np.sum(_psf*_mask)
-
-    return frac
-
 def zenith_zeropoint_photometric_1amp(extname, amp):
     par = common.gfa_misc_params()
 

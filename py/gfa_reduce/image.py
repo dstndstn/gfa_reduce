@@ -31,17 +31,17 @@ class PSF:
 
         self.psf_image /= np.max(self.psf_image)
 
-        self.fiber_fracflux = util._fiber_fracflux(self.psf_image)
         
         self.extname = im_header['EXTNAME']
         self.nstars = cube.shape[2]
         self.cube = cube # maybe get rid of this eventually to save memory
 
-        self.aper_corr_fac = util._aperture_corr_fac(self.psf_image,
-                                                     self.extname)
-
         self.flux_weighted_centroid()
+        
+        self.aper_corr_fac = util._aperture_corr_fac(self.psf_image)
 
+        self.fiber_fracflux = util._fiber_fracflux(self.psf_image)
+        
         self.fit_gaussian_fwhm()
 
     def to_hdu(self, primary=False):

@@ -34,7 +34,7 @@ def overall_image_fwhm(tab, bad_amps=None, snr_thresh=20):
     # this is a temporary HACK -- should really take into account 
     # the PA and directionality of the platescale when doing this
 
-    asec_per_pix = util.nominal_pixel_sidelen_arith(tab[0]['camera'])
+    asec_per_pix = util.nominal_pixel_sidelen_arith()
 
     fwhm_asec= asec_per_pix*fwhm_pix
 

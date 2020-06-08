@@ -13,7 +13,7 @@ def segmentation_map(image, extname, get_kernel=False):
     par = common.gfa_misc_params()
 
     fwhm_pix = par['nominal_fwhm_asec'] / \
-        util.nominal_pixel_sidelen_arith(extname)
+        util.nominal_pixel_sidelen_arith()
 
     threshold = detect_threshold(image, snr=2.0)
     

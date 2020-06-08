@@ -81,7 +81,7 @@ def aper_rad_pix(extname):
     # than hardcoding right here
     rad_asec = [0.5, 0.75, 1.0, 1.5, 2.0, 3.5, 5.0, 7.0]
 
-    asec_per_pix = util.nominal_pixel_sidelen_arith(extname)
+    asec_per_pix = util.nominal_pixel_sidelen_arith()
 
     rad_pix = [r/asec_per_pix for r in rad_asec]
 
