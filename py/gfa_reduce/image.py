@@ -66,6 +66,7 @@ class PSF:
          f = (fits.PrimaryHDU if primary else fits.ImageHDU)
          hdu = f(self.psf_image)
          hdu.header['EXTNAME'] = self.extname
+         hdu.header['PETALLOC'] = common.gfa_extname_to_gfa_number(self.extname)
          hdu.header['NSTARS'] = self.nstars
          hdu.header['FIBFRAC'] = self.fiber_fracflux if np.isfinite(self.fiber_fracflux) else 0.0 # ??
          hdu.header['EXPID'] = self.im_header['EXPID']
