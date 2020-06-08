@@ -658,6 +658,8 @@ def write_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
 
     tab['psf_fwhm_asec'] = [(exp.images[extname].psf.moffat_fwhm_asec if exp.images[extname].psf is not None else np.nan) for extname in tab['camera']]
 
+    tab['psf_centroid_cbox'] = [(float(exp.images[extname].psf.cbox) if exp.images[extname].psf is not None else np.nan) for extname in tab['camera']]
+
     tab['psf_centroid_failed'] =  [(exp.images[extname].psf.psf_centroiding_failed if exp.images[extname].psf is not None else 0) for extname in tab['camera']]
     
     for i, extname in enumerate(tab['camera']):
