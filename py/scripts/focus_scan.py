@@ -7,8 +7,9 @@ import matplotlib.pyplot as plt
 import argparse
 
 def focus_plots(night, expids,
-               basedir='/n/home/datasystems/users/ameisner/reduced/focus',
-               outdir='/n/home/desiobserver/focus_scan', no_popups=False):
+                basedir='/n/home/datasystems/users/ameisner/reduced/focus',
+                outdir='/n/home/desiobserver/focus_scan', no_popups=False,
+                dont_plot_centroid=False):
 
     plt.figure(1, figsize=(12.0*(len(expids)/7.0), 9))
     extnames = ['GUIDE0', 'GUIDE2', 'GUIDE3', 'GUIDE5', 'GUIDE7', 'GUIDE8']
@@ -44,7 +45,7 @@ def focus_plots(night, expids,
             plt.text(5, 44, str(expid) + '; ' + extname, color='r', fontsize=9)
             plt.text(10, 3.5, 'z = ' + str(int(float(ccds[0]['FOCUS'].split(',')[2]))), color='r')
             
-            if np.isfinite(ccds[j]['XCENTROID_PSF']) and np.isfinite(ccds[j]['YCENTROID_PSF']):
+            if np.isfinite(ccds[j]['XCENTROID_PSF']) and np.isfinite(ccds[j]['YCENTROID_PSF']) and (not dont_plot_centroid):
                 plt.scatter([ccds[j]['XCENTROID_PSF']], [ccds[j]['YCENTROID_PSF']], marker='.', c='r')
 
     
@@ -123,6 +124,9 @@ if __name__ == "__main__":
     parser.add_argument('--no_popups', default=False, action='store_true',
                         help='write PNGs without popping up plot windows')
 
+    parser.add_argument('--dont_plot_centroid', default=False, action='store_true',
+                        help='do not overplot centroid location on each postage stamp')
+
     args = parser.parse_args()
 
     expids = args.first_expid + np.arange(7, dtype=int)
@@ -132,4 +136,5 @@ if __name__ == "__main__":
     print(args.basedir)
     
     outdir = args.outdir if os.path.exists(args.outdir) else '.'
-    focus_plots(args.night[0], expids, basedir=args.basedir, outdir=outdir, no_popups=args.no_popups)
+    focus_plots(args.night[0], expids, basedir=args.basedir, outdir=outdir, no_popups=args.no_popups,
+                dont_plot_centroid=args.dont_plot_centroid)
