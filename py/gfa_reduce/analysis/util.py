@@ -347,23 +347,30 @@ def _shift_stamp(stamp, dx, dy):
     # note ordering of dx and dy ...
     return shift(stamp, [dy, dx], order=order, mode=mode, output=output)
 
-def _stamp_radius_mask(sidelen, return_radius=False):
+def _stamp_radius_mask(sidelen, return_radius=False,
+                       x_centroid=None, y_centroid=None):
     # assume square for now
     # assume odd side length
 
     assert(sidelen == np.round(sidelen))
     assert(sidelen % 2 == 1)
     
-    xbox = np.arange(sidelen*sidelen, dtype=int) // sidelen
-    ybox = np.arange(sidelen*sidelen, dtype=int) % sidelen
+    ybox = np.arange(sidelen*sidelen, dtype=int) // sidelen
+    xbox = np.arange(sidelen*sidelen, dtype=int) % sidelen
 
-    xbox -= sidelen // 2
-    ybox -= sidelen // 2
+    if x_centroid is None:
+        x_centroid = sidelen // 2
+
+    if y_centroid is None:
+        y_centroid = sidelen // 2
 
     xbox = xbox.astype('float')
     ybox = ybox.astype('float')
+        
+    xbox -= x_centroid
+    ybox -= y_centroid
 
-    dist = np.sqrt(np.power(xbox, 2)+ np.power(ybox, 2))
+    dist = np.sqrt(np.power(xbox, 2) + np.power(ybox, 2))
 
     mask = dist.reshape((sidelen, sidelen)) > (sidelen // 2)
 
