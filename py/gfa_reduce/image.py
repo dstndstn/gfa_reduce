@@ -10,6 +10,7 @@ from astropy import wcs
 from astropy.stats import mad_std
 from scipy.stats import scoreatpercentile
 import gfa_reduce.analysis.util as util
+from gfa_reduce.analysis.djs_photcen import djs_photcen
 
 class PSF:
     def __init__(self, cube, im_header, cube_index):
@@ -63,16 +64,15 @@ class PSF:
          return hdu
 
     def flux_weighted_centroid(self):
-        assert(self.sidelen % 2 == 1)
-    
-        ybox = np.arange(self.sidelen*self.sidelen, dtype=int) // self.sidelen
-        xbox = np.arange(self.sidelen*self.sidelen, dtype=int) % self.sidelen
+        x_start = y_start = self.sidelen // 2
+        
+        xcen, ycen, _ = djs_photcen(x_start, y_start, self.psf_image,
+                                    cbox=7,
+                                    cmaxiter=10, cmaxshift=0.0,
+                                    ceps=0.0)
 
-        xbox = xbox.astype('float')
-        ybox = ybox.astype('float')
-
-        self.xcen_flux_weighted = np.sum(xbox*np.ravel(self.psf_image))/np.sum(self.psf_image)
-        self.ycen_flux_weighted = np.sum(ybox*np.ravel(self.psf_image))/np.sum(self.psf_image)
+        self.xcen_flux_weighted = xcen
+        self.ycen_flux_weighted = ycen
 
     def fit_gaussian_fwhm(self):
         res = util._fit_moffat2d(self.xcen_flux_weighted, self.ycen_flux_weighted, self.psf_image)

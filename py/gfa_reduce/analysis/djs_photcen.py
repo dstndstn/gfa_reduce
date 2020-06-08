@@ -36,7 +36,7 @@ def djs_photcen(xcen, ycen, image, cbox=7, cmaxiter=10, cmaxshift=0.0,
 
         if (iStart >= naxis1) or (iEnd <= 0):
             print('Error - No pixels in X range')
-            return -1
+            return xcen_orig, ycen_orig, 1
         iLen = iEnd - iStart # note the lack of "+ 1" at end here !
 
         yRad = min([Radius, max(ycen, 0), max(naxis2-ycen, 0)])
@@ -45,7 +45,7 @@ def djs_photcen(xcen, ycen, image, cbox=7, cmaxiter=10, cmaxshift=0.0,
 
         if (jStart >= naxis2) or (jEnd <= 0):
             print, 'Error - No pixels in Y range'
-            return -1
+            return xcen_orig, ycen_orig, 1
         jLen = jEnd - jStart # note the lack of "+ 1" at end here !
 
         xA = iStart + np.arange(iLen) - 0.5 - xcen
