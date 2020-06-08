@@ -70,6 +70,7 @@ class PSF:
          hdu.header['FIBFRAC'] = self.fiber_fracflux if np.isfinite(self.fiber_fracflux) else 0.0 # ??
          hdu.header['EXPID'] = self.im_header['EXPID']
          hdu.header['CBOX'] = self.cbox
+         hdu.header['CFAILED'] = self.psf_centroiding_failed # maybe want this in _ccds table also..
 
          if self.cube_index is not None:
              hdu.header['CUBE_IND'] = self.cube_index
@@ -84,13 +85,14 @@ class PSF:
     def flux_weighted_centroid(self):
         x_start = y_start = self.sidelen // 2
         
-        xcen, ycen, _ = djs_photcen(x_start, y_start, self.psf_image,
+        xcen, ycen, q = djs_photcen(x_start, y_start, self.psf_image,
                                     cbox=self.cbox,
                                     cmaxiter=10, cmaxshift=0.0,
                                     ceps=0.0)
 
         self.xcen_flux_weighted = xcen
         self.ycen_flux_weighted = ycen
+        self.psf_centroiding_failed = q
 
     def fit_moffat_fwhm(self):
         res = util._fit_moffat2d(self.xcen_flux_weighted, self.ycen_flux_weighted, self.psf_image)
