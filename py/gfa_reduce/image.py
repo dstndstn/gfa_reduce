@@ -91,6 +91,8 @@ class PSF:
          f = (fits.PrimaryHDU if primary else fits.ImageHDU)
          hdu = f(self.cube)
 
+         self.psf_image_header(hdu)
+
          return hdu
      
     def flux_weighted_centroid(self):
