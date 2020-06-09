@@ -65,6 +65,9 @@ if __name__ == "__main__":
 
     parser.add_argument('--no_pm_pi_corr', default=False, action='store_true',
         help="do not correct Gaia positions for proper motion or parallax")
+
+    parser.add_argument('--write_psf_cubes', default=False, action='store_true',
+        help="write image cubes of sources used to build PSF models")
     
     args = parser.parse_args()
     
@@ -97,4 +100,5 @@ if __name__ == "__main__":
               compress_reduced_image=args.compress_reduced_image,
               skip_raw_imstats=args.skip_raw_imstats,
               skip_astrometry=args.skip_astrometry,
-              no_pm_pi_corr=args.no_pm_pi_corr)
+              no_pm_pi_corr=args.no_pm_pi_corr,
+              write_psf_cubes=args.write_psf_cubes)
