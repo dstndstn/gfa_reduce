@@ -61,9 +61,8 @@ class PSF:
             
         self.fit_moffat_fwhm()
 
-    def to_hdu(self, primary=False):
-         f = (fits.PrimaryHDU if primary else fits.ImageHDU)
-         hdu = f(self.psf_image)
+    def psf_image_header(self, hdu):
+        
          hdu.header['EXTNAME'] = self.extname
          hdu.header['PETALLOC'] = common.gfa_extname_to_gfa_number(self.extname)
          hdu.header['NSTARS'] = self.nstars
@@ -80,6 +79,12 @@ class PSF:
          if 'NIGHT' in self.im_header:
              hdu.header['NIGHT'] = self.im_header['NIGHT']
 
+    def to_hdu(self, primary=False):
+         f = (fits.PrimaryHDU if primary else fits.ImageHDU)
+         hdu = f(self.psf_image)
+
+         self.psf_image_header(hdu)
+         
          return hdu
 
     def cube_to_hdu(self, primary=False):
