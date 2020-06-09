@@ -62,7 +62,6 @@ class PSF:
         self.fit_moffat_fwhm()
 
     def to_hdu(self, primary=False):
-         # still need to put metadata into header
          f = (fits.PrimaryHDU if primary else fits.ImageHDU)
          hdu = f(self.psf_image)
          hdu.header['EXTNAME'] = self.extname
@@ -83,6 +82,12 @@ class PSF:
 
          return hdu
 
+    def cube_to_hdu(self, primary=False):
+         f = (fits.PrimaryHDU if primary else fits.ImageHDU)
+         hdu = f(self.cube)
+
+         return hdu
+     
     def flux_weighted_centroid(self):
         x_start = y_start = self.sidelen // 2
 

@@ -704,7 +704,7 @@ def write_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
 
     _atomic_write(tab, outname)
 
-def write_psf_models(exp, outdir, fname_in, cube_index=None):
+def write_psf_models(exp, outdir, fname_in, cube_index=None, cubes=False):
 
     assert(os.path.exists(outdir))
 
@@ -716,7 +716,9 @@ def write_psf_models(exp, outdir, fname_in, cube_index=None):
 
     assert(outname[-5:] == '.fits')
 
-    outname = outname.replace('.fits', '_psfs.fits')
+    suffix = '_psfcubes.fits' if cubes else '_psfs.fits'
+
+    outname = outname.replace('.fits', suffix)
 
     if cube_index is not None:
         outname = outname.replace('.fits',
@@ -729,7 +731,14 @@ def write_psf_models(exp, outdir, fname_in, cube_index=None):
         if image is None:
             continue
         if image.psf is not None:
-            hdul.append(image.psf.to_hdu(primary=(len(hdul) == 0)))
+            is_primary = (len(hdul) == 0)
+
+            if not cubes:
+                hdu = image.psf.to_hdu(primary=is_primary)
+            else:
+                hdu = image.psf.cube_to_hdu(primary=is_primary)
+
+            hdul.append(hdu)
 
     if len(hdul) > 0:
         hdul = fits.HDUList(hdul)
