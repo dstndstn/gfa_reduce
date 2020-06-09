@@ -53,7 +53,7 @@ class PSF:
             self.cbox += (4.0/3.0)*10*(0.5 - max(self.fiber_fracflux, 0))
             assert(self.cbox >= 7)
 
-            self.flux_weighted_centroid()
+            self.flux_weighted_centroid() # should i also send the initial djs_photcen (x_start, y_start) here ?
 
             self.fiber_fracflux = util._fiber_fracflux(self.psf_image,
                                                        x_centroid=self.xcen_flux_weighted,
@@ -85,6 +85,8 @@ class PSF:
 
     def flux_weighted_centroid(self):
         x_start = y_start = self.sidelen // 2
+
+        print('djs_photcen using cbox = ', self.cbox, ' x_start = ', x_start, ' y_start = ', y_start)
         
         xcen, ycen, q = djs_photcen(x_start, y_start, self.psf_image,
                                     cbox=self.cbox,

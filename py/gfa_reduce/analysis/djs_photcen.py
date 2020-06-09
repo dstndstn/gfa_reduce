@@ -34,6 +34,8 @@ def djs_photcen(xcen, ycen, image, cbox=7, cmaxiter=10, cmaxshift=0.0,
         iStart = np.floor(xcen + 0.5 - xRad)
         iEnd = np.ceil(xcen - 0.5 + xRad) + 1 # + 1 is for numpy indexing
 
+        iEnd = min(iEnd, naxis1) # this isn't in IDL version, which is concerning
+
         if (iStart >= naxis1) or (iEnd <= 0):
             print('Error - No pixels in X range')
             return xcen_orig, ycen_orig, 1
@@ -43,8 +45,10 @@ def djs_photcen(xcen, ycen, image, cbox=7, cmaxiter=10, cmaxshift=0.0,
         jStart = np.floor(ycen + 0.5 - yRad)
         jEnd = np.ceil(ycen - 0.5 + yRad) + 1 # + 1 is for numpy indexing
 
+        jEnd = min(jEnd, naxis2) # this isn't in IDL version, which is concerning
+
         if (jStart >= naxis2) or (jEnd <= 0):
-            print, 'Error - No pixels in Y range'
+            print('Error - No pixels in Y range')
             return xcen_orig, ycen_orig, 1
         jLen = jEnd - jStart # note the lack of "+ 1" at end here !
 
