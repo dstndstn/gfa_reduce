@@ -135,10 +135,10 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
             io.write_ps1_matches(ps1, outdir, fname_in,
                                  cube_index=cube_index)
             if not skip_psf_models:
-                io.write_psf_models(exp, outdir, fname_in,
+                io.write_psfs(exp, outdir, fname_in,
                                     cube_index=cube_index)
                 if write_psf_cubes:
-                    io.write_psf_models(exp, outdir, fname_in,
+                    io.write_psfs(exp, outdir, fname_in,
                                         cube_index=cube_index, cubes=True)
 
     print('Successfully finished reducing ' + fname_in)
