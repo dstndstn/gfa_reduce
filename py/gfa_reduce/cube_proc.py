@@ -71,7 +71,10 @@ if __name__ == "__main__":
 
     parser.add_argument('--write_detmap', default=False, action='store_true',
                         help="write detection map")
-    
+
+    parser.add_argument('--write_full_detlist', default=False, action='store_true',
+                        help="write out the initial, full list of detections")
+
     args = parser.parse_args()
     
     fname_in = args.fname_in[0]
@@ -105,4 +108,5 @@ if __name__ == "__main__":
               skip_astrometry=args.skip_astrometry,
               no_pm_pi_corr=args.no_pm_pi_corr,
               write_psf_cubes=args.write_psf_cubes,
-              write_detmap=args.write_detmap)
+              write_detmap=args.write_detmap,
+              write_full_detlist=args.write_full_detlist)
