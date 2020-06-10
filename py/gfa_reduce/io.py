@@ -749,3 +749,27 @@ def write_psfs(exp, outdir, fname_in, cube_index=None, cubes=False):
     if len(hdul) > 0:
         hdul = fits.HDUList(hdul)
         _atomic_write(hdul, outname)
+
+def write_full_detlists(exp, outdir, fname_in, cube_index=None):
+
+    assert(os.path.exists(outdir))
+
+    outname = os.path.join(outdir, os.path.basename(fname_in))
+
+    # get rid of any ".fz" or ".gz" present in input filename
+    outname = outname.replace('.fz', '')
+    outname = outname.replace('.gz', '')
+
+    assert(outname[-5:] == '.fits')
+
+    outname = outname.replace('.fits', '_detlist.fits')
+
+    if cube_index is not None:
+        outname = outname.replace('.fits',
+                                  '-' + str(cube_index).zfill(5) + '.fits')
+
+    tables = [image.full_detlist for image in exp.images.values()]
+
+    tab = vstack(tables)
+
+    _atomic_write(tab, outname)

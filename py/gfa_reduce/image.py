@@ -192,6 +192,7 @@ class GFA_image:
 
         self.store_detmap = store_detmap
         self.detmap = None
+        self.full_detlist = None
         
         par = common.gfa_misc_params()
         # important that this saturation threshold be done on truly raw image..
@@ -456,8 +457,18 @@ class GFA_image:
         print('Attempting to catalog sources in ' + self.extname +  
               ' image')
 
-        tab, detmap = phot.get_source_list(self.image, self.bitmask, 
-                                           self.extname, self.ivar_adu)
+        # tab is a culled and augmented list of sources including e.g.,
+        # refined centroids and photometry
+
+        # alldet is just the initial, raw list of all detections with
+        # no culling applied
+        tab, detmap, alldet = phot.get_source_list(self.image, self.bitmask,
+                                                   self.extname, self.ivar_adu)
+
+        # always store this since it shouldn't be consuming any
+        # appreciable amount of memory
+        alldet['extname'] = self.extname
+        self.full_detlist = alldet # should be an astropy Table
 
         if self.store_detmap:
             self.detmap = detmap

@@ -12,6 +12,7 @@ from photutils import CircularAperture, CircularAnnulus, EllipticalAperture
 import gfa_reduce.common as common
 import gfa_reduce.analysis.djs_maskinterp as djs_maskinterp
 import photutils
+import copy
 
 def slices_to_table(slices, detsn, extname):
     nslc = len(slices)
@@ -302,7 +303,9 @@ def get_source_list(image, bitmask, extname, ivar_adu, thresh=5):
 
     slices = detect_sources(detsn, thresh)
 
-    tab = slices_to_table(slices, detsn, extname)
+    all_detections = slices_to_table(slices, detsn, extname)
+
+    tab = copy.deepcopy(all_detections)
 
     refine_centroids(tab, image, bitmask, ivar_adu)
 
@@ -316,8 +319,8 @@ def get_source_list(image, bitmask, extname, ivar_adu, thresh=5):
     tab = tab[(tab['min_edge_dist_pix'] > -5)]
 
     if len(tab) == 0:
-        return None, detsn
+        return None, detsn, all_detections
 
     do_aper_phot(image, tab, extname, ivar_adu)
 
-    return tab, detsn
+    return tab, detsn, all_detections

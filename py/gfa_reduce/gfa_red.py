@@ -21,7 +21,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           dont_write_invvar=False, skip_psf_models=False,
           compress_reduced_image=False, skip_raw_imstats=False,
           skip_astrometry=False, no_pm_pi_corr=False, write_psf_cubes=False,
-          write_detmap=False):
+          write_detmap=False, write_full_detlist=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -144,6 +144,9 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
                     io.write_psfs(exp, outdir, fname_in,
                                         cube_index=cube_index, cubes=True)
 
+            if write_full_detlist:
+                io.write_full_detlists(exp, outdir, fname_in, cube_index=cube_index)
+
     print('Successfully finished reducing ' + fname_in)
 
     dt = time.time() - t0
@@ -214,6 +217,9 @@ if __name__ == "__main__":
 
     parser.add_argument('--write_detmap', default=False, action='store_true',
                         help="write detection map")
+
+    parser.add_argument('--write_full_detlist', default=False, action='store_true',
+                        help="write out the initial, full list of detections")
     
     args = parser.parse_args()
 
@@ -231,4 +237,5 @@ if __name__ == "__main__":
           skip_astrometry=args.skip_astrometry,
           no_pm_pi_corr=args.no_pm_pi_corr,
           write_psf_cubes=args.write_psf_cubes,
-          write_detmap=args.write_detmap)
+          write_detmap=args.write_detmap,
+          write_full_detlist=args.write_full_detlist)
