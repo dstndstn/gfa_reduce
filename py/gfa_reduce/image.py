@@ -176,7 +176,7 @@ class Overscan:
 class GFA_image:
     """Single GFA image from one GFA exposure"""
 
-    def __init__(self, image, header, cube_index=None):
+    def __init__(self, image, header, cube_index=None, store_detmap=False):
         if cube_index is None:
             self.image = image.astype('float32')
             self.nframe = 1
@@ -190,6 +190,9 @@ class GFA_image:
         self.overscan = Overscan(self.image)
         self.remove_overscan()
 
+        self.store_detmap = store_detmap
+        self.detmap = None
+        
         par = common.gfa_misc_params()
         # important that this saturation threshold be done on truly raw image..
         self.satmask = (self.image > par['sat_thresh_adu']).astype('byte')
@@ -330,6 +333,7 @@ class GFA_image:
         #     REDUCED - reduced image
         #     BITMASK - data quality bitmask
         #     INVVAR - inverse variance image
+        #     DETMAP - detection significance map
 
         # if no flavor is specified then assume ".image" attribute is desired
         # data for this HDU
@@ -343,6 +347,9 @@ class GFA_image:
             hdu.header = dq_mask.add_dq_bitmask_header_cards(hdu.header)
         elif (flavor == 'INVVAR'):
             hdu = f(self.ivar_adu.astype('float32'), header=self.header)
+        elif (flavor == 'DETMAP'):
+            assert(self.detmap is not None)
+            hdu = f(self.detmap.astype('float32'), header=self.header)
 
         hdu.header['FLAVOR'] = flavor
 
@@ -449,9 +456,14 @@ class GFA_image:
         print('Attempting to catalog sources in ' + self.extname +  
               ' image')
 
-        tab = phot.get_source_list(self.image, self.bitmask, 
-                                   self.extname, self.ivar_adu)
+        tab, detmap = phot.get_source_list(self.image, self.bitmask, 
+                                           self.extname, self.ivar_adu)
 
+        if self.store_detmap:
+            self.detmap = detmap
+
+        del detmap
+        
         n_sources = (len(tab) if tab is not None else 0)
 
         print('Found ' + str(n_sources) + ' sources in ' +

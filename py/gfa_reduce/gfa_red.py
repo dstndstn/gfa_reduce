@@ -20,7 +20,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           realtime=False, no_dark_rescaling=False, 
           dont_write_invvar=False, skip_psf_models=False,
           compress_reduced_image=False, skip_raw_imstats=False,
-          skip_astrometry=False, no_pm_pi_corr=False, write_psf_cubes=False):
+          skip_astrometry=False, no_pm_pi_corr=False, write_psf_cubes=False,
+          write_detmap=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -45,7 +46,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         io.check_image_level_outputs_exist(outdir, fname_in, gzip=True,
                                            cube_index=cube_index)
 
-    exp = io.load_exposure(fname_in, cube_index=cube_index, realtime=realtime)
+    exp = io.load_exposure(fname_in, cube_index=cube_index, realtime=realtime,
+                           store_detmap=write_detmap)
 
     # check for simulated data
     if (exp is None) or util.has_wrong_dimensions(exp):
@@ -123,7 +125,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
             io.write_image_level_outputs(exp, outdir, proc_obj, gzip=True,
                                          cube_index=cube_index,
                                          dont_write_invvar=dont_write_invvar,
-                                         compress_reduced_image=compress_reduced_image)
+                                         compress_reduced_image=compress_reduced_image,
+                                         write_detmap=write_detmap)
 
         # make this work correctly in the case that --no_cataloging is set
         io.write_ccds_table(imstats, catalog, exp, outdir, proc_obj,
@@ -208,6 +211,9 @@ if __name__ == "__main__":
 
     parser.add_argument('--write_psf_cubes', default=False, action='store_true',
         help="write image cubes of sources used to build PSF models")
+
+    parser.add_argument('--write_detmap', default=False, action='store_true',
+                        help="write detection map")
     
     args = parser.parse_args()
 
@@ -224,4 +230,5 @@ if __name__ == "__main__":
           skip_raw_imstats=args.skip_raw_imstats,
           skip_astrometry=args.skip_astrometry,
           no_pm_pi_corr=args.no_pm_pi_corr,
-          write_psf_cubes=args.write_psf_cubes)
+          write_psf_cubes=args.write_psf_cubes,
+          write_detmap=args.write_detmap)

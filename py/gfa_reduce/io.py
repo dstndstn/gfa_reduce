@@ -18,10 +18,11 @@ from gfa_reduce.gfa_wcs import ccd_center_radec
 def loading_image_extension_message(extname):
     print('Attempting to load image extension : ' + extname)
 
-def load_image_from_hdu(hdu, verbose=True, cube_index=None):
+def load_image_from_hdu(hdu, verbose=True, cube_index=None, store_detmap=False):
     loading_image_extension_message(hdu.header['EXTNAME'])
 
-    return GFA_image(hdu.data, hdu.header, cube_index=cube_index)
+    return GFA_image(hdu.data, hdu.header, cube_index=cube_index,
+                     store_detmap=store_detmap)
 
 def load_image_from_filename(fname, extname):
     assert(os.path.exists(fname))
@@ -78,7 +79,8 @@ def realtime_raw_read(fname, delay=2.0, max_attempts=5):
 
     return hdul
 
-def load_exposure(fname, verbose=True, realtime=False, cube_index=None):
+def load_exposure(fname, verbose=True, realtime=False, cube_index=None,
+                  store_detmap=False):
     assert(os.path.exists(fname))
 
     print('Attempting to load exposure : ' + fname)
@@ -117,7 +119,7 @@ def load_exposure(fname, verbose=True, realtime=False, cube_index=None):
     assert(((not is_cube) and (cube_index is not None)) == False)
     
     try:
-        imlist = [load_image_from_hdu(hdul[ind], verbose=verbose, cube_index=cube_index) for ind in w_im]
+        imlist = [load_image_from_hdu(hdul[ind], verbose=verbose, cube_index=cube_index, store_detmap=store_detmap) for ind in w_im]
     except Exception as e:
         print('failed to load exposure at image list creation stage')
         print(e)
@@ -195,13 +197,17 @@ def retrieve_git_rev():
 
 def write_image_level_outputs(exp, outdir, proc_obj, gzip=True,
                               cube_index=None, dont_write_invvar=False,
-                              compress_reduced_image=False):
+                              compress_reduced_image=False,
+                              write_detmap=False):
     # exp is a GFA_exposure object
     # outdir is the output directory (string)
 
     par = common.gfa_misc_params()
 
     flavors_list = par['reduced_image_flavors']
+
+    if not write_detmap:
+        flavors_list.remove('DETMAP')
 
     if dont_write_invvar:
         flavors_list.remove('INVVAR')
