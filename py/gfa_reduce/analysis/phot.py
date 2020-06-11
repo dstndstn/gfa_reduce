@@ -233,15 +233,15 @@ def refine_centroids(tab, image, bitmask, ivar_adu):
     sig_adu = aper_phot_unc_map(ivar_adu)
 
     for i in range(nobj):
-        ix_guess = int(round(tab[i]['xcen_init']))
-        iy_guess = int(round(tab[i]['ycen_init']))
+        ix_guess = int(round(tab[i]['xcen_detmap_fw']))
+        iy_guess = int(round(tab[i]['ycen_detmap_fw']))
         min_edge_dist = util.min_edge_dist_pix(ix_guess, iy_guess)
 
         # if the centering box extends outside of image, don't
         # try to do any refinement of the centroid
         if min_edge_dist < half:
-            xcentroid[i] = tab[i]['xcen_init']
-            ycentroid[i] = tab[i]['ycen_init']
+            xcentroid[i] = tab[i]['xcen_detmap_fw']
+            ycentroid[i] = tab[i]['ycen_detmap_fw']
             dxcentroid[i] = np.nan
             dycentroid[i] = np.nan
             sig_major_pix[i] = -1 # dummy value
@@ -270,8 +270,8 @@ def refine_centroids(tab, image, bitmask, ivar_adu):
         sig_ycen = np.sqrt(var_ycen)
 
         if (not np.isfinite(_xcentroid)) or (not np.isfinite(_ycentroid)):
-            xcentroid[i] = tab[i]['xcen_init']
-            ycentroid[i] = tab[i]['ycen_init']
+            xcentroid[i] = tab[i]['xcen_detmap_fw']
+            ycentroid[i] = tab[i]['ycen_detmap_fw']
             dxcentroid[i] = np.nan
             dycentroid[i] = np.nan
             sig_major_pix[i] = -1
