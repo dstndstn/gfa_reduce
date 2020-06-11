@@ -467,7 +467,8 @@ class GFA_image:
 
         # always store this since it shouldn't be consuming any
         # appreciable amount of memory
-        alldet['extname'] = self.extname
+        if len(alldet) > 0:
+            alldet['extname'] = self.extname
         self.full_detlist = alldet # should be an astropy Table
 
         if self.store_detmap:
