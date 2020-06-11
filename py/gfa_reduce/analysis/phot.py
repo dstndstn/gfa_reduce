@@ -11,6 +11,7 @@ from photutils import aperture_photometry
 from photutils import CircularAperture, CircularAnnulus, EllipticalAperture
 import gfa_reduce.common as common
 import gfa_reduce.analysis.djs_maskinterp as djs_maskinterp
+from gfa_reduce.analysis.djs_photcen import _loop_djs_photcen
 import photutils
 import copy
 
@@ -41,7 +42,7 @@ def slices_to_table(slices, detsn, extname):
 
     return tab
 
-def detmap_centroids(tab):
+def detmap_centroids(tab, detmap):
 
     # tab should be a table of detections like that output by the
     # slices_to_table function
@@ -52,7 +53,23 @@ def detmap_centroids(tab):
     # cbox ceiling at 25 pixels?
     # cbox floor at 7 pixels?
 
-    return None
+    cbox = (tab['detmap_sidelen_x'] + tab['detmap_sidelen_y'])/ 2.0
+    cbox_upper = 31
+    cbox_lower = 9
+    cbox = np.maximum(cbox, cbox_lower)
+    cbox = np.minimum(cbox, cbox_upper)
+
+    assert(np.sum(cbox > cbox_upper) == 0)
+    assert(np.sum(cbox < cbox_lower) == 0)
+
+    results = _loop_djs_photcen(tab['xcen_init'], tab['ycen_init'], detmap,
+                                cbox=cbox)
+
+    tab['detmap_cbox'] = cbox
+    tab['xcen_detmap_fw'] = results['x_djs']
+    tab['ycen_detmap_fw'] = results['y_djs']
+
+    return tab
 
 def _get_area_from_ap(ap):
     # this is to try and work around the photutils API change
@@ -321,6 +338,8 @@ def get_source_list(image, bitmask, extname, ivar_adu, thresh=5):
     slices = detect_sources(detsn, thresh)
 
     all_detections = slices_to_table(slices, detsn, extname)
+
+    all_detections = detmap_centroids(all_detections, detsn)
 
     tab = copy.deepcopy(all_detections)
 
