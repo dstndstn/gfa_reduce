@@ -98,3 +98,41 @@ def djs_photcen(xcen, ycen, image, cbox=7, cmaxiter=10, cmaxshift=0.0,
 # want a wrapper function that takes list of (x, y) pairs and then
 # does a for loop over the list of pairs, calling djs_photcen once
 # for each pair
+
+def _loop_djs_photcen(xcen, ycen, image, cbox=7, cmaxiter=10, cmaxshift=0.0,
+                      ceps=0.0):
+
+    from astropy.table import Table
+
+    # assume cmaxiter, cmaxshift, ceps are scalar
+    # cbox can be an array though
+    assert(len(xcen) == len(ycen))
+
+    n = len(xcen)
+
+    if isinstance(cbox, float) or isinstance(cbox, int):
+        cbox = [cbox]*n
+    else:
+        assert(len(cbox) == n)
+
+    x_djs = np.zeros(n, dtype=float)
+    y_djs = np.zeros(n, dtype=float)
+    qmaxshift = np.zeros(n, dtype=int)
+    for i in range(n):
+        result = djs_photcen(xcen[i], ycen[i], image, cbox=cbox[i],
+                             cmaxiter=cmaxiter, cmaxshift=cmaxshift,
+                             ceps=ceps)
+
+        x_djs[i] = result[0]
+        y_djs[i] = result[1]
+        qmaxshift[i] = result[2]
+
+    results = Table()
+    results['x_djs'] = x_djs
+    results['y_djs'] = y_djs
+    results['qmaxshift'] = qmaxshift
+    results['x_start'] = xcen
+    results['y_start'] = ycen
+    results['cbox'] = cbox
+
+    return results
