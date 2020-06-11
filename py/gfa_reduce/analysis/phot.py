@@ -22,6 +22,7 @@ def slices_to_table(slices, detsn, extname):
     xmax = np.zeros(nslc, dtype='int')
     ymin = np.zeros(nslc, dtype='int')
     ymax = np.zeros(nslc, dtype='int')
+
     detmap_peak = np.zeros(nslc)
 
     for i, slc in enumerate(slices):
@@ -33,9 +34,25 @@ def slices_to_table(slices, detsn, extname):
         ymax[i] = slc[0].stop
         detmap_peak[i] = np.max(detsn[slc])
 
-    tab = Table([xcen, ycen, xmin, xmax, ymin, ymax, detmap_peak], names=('xcen_init', 'ycen_init', 'detmap_xmin', 'detmap_xmax', 'detmap_ymin', 'detmap_ymax', 'detmap_peak'))
+    detmap_sidelen_x = xmax - xmin # no + 1 here due to slice convention
+    detmap_sidelen_y = ymax - ymin # no + 1 here due to slice convention
+
+    tab = Table([xcen, ycen, xmin, xmax, ymin, ymax, detmap_sidelen_x, detmap_sidelen_y, detmap_peak], names=('xcen_init', 'ycen_init', 'detmap_xmin', 'detmap_xmax', 'detmap_ymin', 'detmap_ymax', 'detmap_sidelen_x', 'detmap_sidelen_y', 'detmap_peak'))
 
     return tab
+
+def detmap_centroids(tab):
+
+    # tab should be a table of detections like that output by the
+    # slices_to_table function
+    
+    # construct lists of starting guess (x, y) pixel coordinates
+    # and cbox sizes
+
+    # cbox ceiling at 25 pixels?
+    # cbox floor at 7 pixels?
+
+    return None
 
 def _get_area_from_ap(ap):
     # this is to try and work around the photutils API change
