@@ -17,10 +17,12 @@ def plot_one_row(ind, inv=None, outdir=None, basedir=None,
     expids = row['EXPIDS'][row['EXPIDS'] != -1]
 
     if basedir is None:
-        basedir = '/global/cfs/cdirs/desi/users/ameisner/GFA/reduced/v0011'
+        basedir = '/global/cfs/cdirs/desi/users/ameisner/GFA/reduced/v0014'
 
     if outdir is None:
         outdir = '/global/cscratch1/sd/ameisner/focus_plots'
+        if dont_plot_centroid:
+            outdir = outdir + '_no_centroid'
 
     print('Working on index : ', ind)
     focus_plots(night, expids, basedir=basedir, outdir=outdir,
