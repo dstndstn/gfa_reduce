@@ -298,8 +298,8 @@ def refine_centroids(tab, image, bitmask, ivar_adu):
 
     tab['no_centroid_refinement'] = no_centroid_refinement.astype(int)
     tab['centroid_refinement_fail'] = centroid_refinement_fail.astype(int)
-    tab['xcentroid'] = xcentroid
-    tab['ycentroid'] = ycentroid
+    tab['xcentroid'] = tab['xcen_detmap_fw'] # HACK !!!!!
+    tab['ycentroid'] = tab['ycen_detmap_fw'] # HACK !!!!!
     tab['sig_major_pix'] = sig_major_pix
     tab['sig_minor_pix'] = sig_minor_pix
     tab['ellipticity'] = ellipticity
