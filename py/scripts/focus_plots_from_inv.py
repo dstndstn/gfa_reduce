@@ -7,7 +7,7 @@ fname_inv = '/global/homes/a/ameisner/gfa/pro/focus_scan_inventory-thru_20200315
 
 def plot_one_row(ind, inv=None, outdir=None, basedir=None,
                  dont_plot_centroid=False, n_stars_min=3,
-                 skip_low_n_stamps=True):
+                 skip_low_n_stamps=True, extnames_exclude=[]):
 
     if inv is None:
         inv = fits.getdata(fname_inv)
@@ -28,7 +28,9 @@ def plot_one_row(ind, inv=None, outdir=None, basedir=None,
     print('Working on index : ', ind)
     focus_plots(night, expids, basedir=basedir, outdir=outdir,
                 no_popups=True, dont_plot_centroid=dont_plot_centroid,
-                n_stars_min=n_stars_min, skip_low_n_stamps=skip_low_n_stamps)
+                n_stars_min=n_stars_min,
+                skip_low_n_stamps=skip_low_n_stamps,
+                extnames_exclude=extnames_exclude)
 
 def _loop(indstart=0, nproc=None, skip_low_n_stamps=True):
 

@@ -16,7 +16,7 @@ def focus_plots(night, expids,
                 basedir='/n/home/datasystems/users/ameisner/reduced/focus',
                 outdir='/n/home/desiobserver/focus_scan', no_popups=False,
                 dont_plot_centroid=False, n_stars_min=-1, skip_low_n_stamps=False,
-                flag_bad_denoising=True):
+                flag_bad_denoising=True, extnames_exclude=[]):
 
     # do i also want a separate boolean keyword arg to leave out low N cases
     # from the parabola fits as well??
@@ -45,7 +45,7 @@ def focus_plots(night, expids,
         hdul = fits.open(fname)
         extnames_present = [hdu.header['EXTNAME'] for hdu in hdul]
         for j, extname in enumerate(extnames):
-            if extname not in extnames_present:
+            if (extname not in extnames_present) or (extname in extnames_exclude):
                 continue
             print(i, j)
 
