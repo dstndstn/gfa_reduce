@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 fname_inv = '/global/homes/a/ameisner/gfa/pro/focus_scan_inventory-thru_20200315.fits'
 
 def plot_one_row(ind, inv=None, outdir=None, basedir=None,
-                 dont_plot_centroid=False, n_stars_min=3):
+                 dont_plot_centroid=False, n_stars_min=3,
+                 skip_low_n_stamps=True):
 
     if inv is None:
         inv = fits.getdata(fname_inv)
@@ -27,9 +28,9 @@ def plot_one_row(ind, inv=None, outdir=None, basedir=None,
     print('Working on index : ', ind)
     focus_plots(night, expids, basedir=basedir, outdir=outdir,
                 no_popups=True, dont_plot_centroid=dont_plot_centroid,
-                n_stars_min=n_stars_min)
+                n_stars_min=n_stars_min, skip_low_n_stamps=skip_low_n_stamps)
 
-def _loop(indstart=0, nproc=None):
+def _loop(indstart=0, nproc=None, skip_low_n_stamps=True):
 
     inv = fits.getdata(fname_inv)
 
@@ -39,5 +40,5 @@ def _loop(indstart=0, nproc=None):
     indend = min(indstart + nproc, len(inv))
     
     for ind in np.arange(indstart, indend):
-        plot_one_row(ind, inv=inv)
+        plot_one_row(ind, inv=inv, skip_low_n_stamps=skip_low_n_stamps)
         plt.cla()

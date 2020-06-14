@@ -15,7 +15,10 @@ def color_frame(sidelen):
 def focus_plots(night, expids,
                 basedir='/n/home/datasystems/users/ameisner/reduced/focus',
                 outdir='/n/home/desiobserver/focus_scan', no_popups=False,
-                dont_plot_centroid=False, n_stars_min=-1):
+                dont_plot_centroid=False, n_stars_min=-1, skip_low_n_stamps=False):
+
+    # do i also want a separate boolean keyword arg to leave out low N cases
+    # from the parabola fits as well??
 
     plt.figure(1, figsize=(12.0*(len(expids)/7.0), 9))
     extnames = ['GUIDE0', 'GUIDE2', 'GUIDE3', 'GUIDE5', 'GUIDE7', 'GUIDE8']
@@ -44,15 +47,24 @@ def focus_plots(night, expids,
             if extname not in extnames_present:
                 continue
             print(i, j)
+
+            im, h = fits.getdata(fname, extname=extname, header=True)
+
+            n_stars = h['NSTARS']
+
+            if n_stars < n_stars_min:
+                print('expid = ', h['EXPID'], ' ; extname = ', h['EXTNAME'], ' has too few contributing sources')
+                if skip_low_n_stamps:
+                    continue
+
             plt.subplot(6, len(expids), len(expids)*j + i +  1)
             plt.xticks([])
             plt.yticks([])
-            im, h = fits.getdata(fname, extname=extname, header=True)
+                
             plt.imshow(im, interpolation='nearest', origin='lower', cmap='gray_r', vmin=0.01)
             n_stamps_plotted += 1
-            n_stars = h['NSTARS']
+
             if n_stars < n_stars_min:
-                print('expid = ', h['EXPID'], ' ; extname = ', h['EXTNAME'], ' has too few contributing sources')
                 color_frame(im.shape[0])
                 
             plt.text(5, 44, str(expid) + '; ' + extname, color='r', fontsize=9)
@@ -70,7 +82,7 @@ def focus_plots(night, expids,
     if n_stamps_plotted > 0:
         plt.savefig(os.path.join(outdir, 'stamps_focus_scan-' + str(expid_min).zfill(8)+'.png'), bbox_inches='tight')
     else:
-        print('WARNING : NO PSF MODELS WERE CREATED IN ANY IMAGES !!!')
+        print('WARNING : NO GOOD PSF MODELS TO PLOT FOR ANY IMAGES !!!')
 
     # doesn't make sense to fit a parabola to < 3 data points...
     if len(focus_z) < 3:
