@@ -118,14 +118,19 @@ def focus_plots(night, expids,
     
     plt.plot(xsamp, ysamp)
 
-    zmin = -coeff[1]/(2*coeff[0])
-
-    min_fwhm_fit_asec = coeff[0]*(zmin**2) + coeff[1]*zmin + coeff[2]
     
     yrange = [np.min(fwhm_asec), np.max(fwhm_asec)]
     plt.text(focus_z[2], yrange[0] + 0.8*(yrange[1]-yrange[0]), 'best FWHM (meas) : ' + '{:.2f}'.format(np.min(fwhm_asec)))
-    plt.text(focus_z[2], yrange[0] + 0.7*(yrange[1]-yrange[0]), 'best FWHM (fit) : ' + '{:.2f}'.format(min_fwhm_fit_asec))
-    plt.text(focus_z[2], yrange[0] + 0.9*(yrange[1]-yrange[0]), 'best focus : ' + str(int(np.round(zmin))))
+
+    # only calculate the model-based minimum FWHM value if parabola opens upward...
+    if coeff[0] > 0:
+        zmin = -coeff[1]/(2*coeff[0])
+        min_fwhm_fit_asec = coeff[0]*(zmin**2) + coeff[1]*zmin + coeff[2]
+        plt.text(focus_z[2], yrange[0] + 0.7*(yrange[1]-yrange[0]), 'best FWHM (fit) : ' + '{:.2f}'.format(min_fwhm_fit_asec))
+        plt.text(focus_z[2], yrange[0] + 0.9*(yrange[1]-yrange[0]), 'best focus : ' + str(int(np.round(zmin))))
+    else:
+        print('WARNING: BEST-FIT PARABOLA DOES NOT OPEN UPWARD')
+        plt.text(focus_z[2], yrange[0] + 0.9*(yrange[1]-yrange[0]), 'best focus : N/A')
     
     plt.savefig(os.path.join(outdir, 'fit_focus_scan-' + str(expid_min).zfill(8) + '.png'), bbox_inches='tight')
     if not no_popups:
