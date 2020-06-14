@@ -6,16 +6,17 @@ import os
 import matplotlib.pyplot as plt
 import argparse
 
-def color_frame(sidelen):
-    x = [0, 0, sidelen-1, sidelen-1, 0]
-    y = [0, sidelen-1, sidelen-1, 0, 0]
+def color_frame(sidelen, delta_pix=0, color='orange'):
+    x = [0 + delta_pix, 0 + delta_pix, sidelen -1 - delta_pix, sidelen - 1 - delta_pix, 0 + delta_pix]
+    y = [0 + delta_pix, sidelen - 1 - delta_pix, sidelen - 1 - delta_pix, 0 + delta_pix, 0 + delta_pix]
 
-    plt.plot(x, y, c='orange', linewidth=2)
+    plt.plot(x, y, c=color, linewidth=2)
 
 def focus_plots(night, expids,
                 basedir='/n/home/datasystems/users/ameisner/reduced/focus',
                 outdir='/n/home/desiobserver/focus_scan', no_popups=False,
-                dont_plot_centroid=False, n_stars_min=-1, skip_low_n_stamps=False):
+                dont_plot_centroid=False, n_stars_min=-1, skip_low_n_stamps=False,
+                flag_bad_denoising=True):
 
     # do i also want a separate boolean keyword arg to leave out low N cases
     # from the parabola fits as well??
@@ -60,13 +61,21 @@ def focus_plots(night, expids,
             plt.subplot(6, len(expids), len(expids)*j + i +  1)
             plt.xticks([])
             plt.yticks([])
-                
+
             plt.imshow(im, interpolation='nearest', origin='lower', cmap='gray_r', vmin=0.01)
             n_stamps_plotted += 1
 
             if n_stars < n_stars_min:
                 color_frame(im.shape[0])
-                
+
+            ccd = ccds[ccds['EXTNAME'].replace(' ', '') == extname]
+
+            assert(len(ccd) == 1)
+
+            if flag_bad_denoising and (ccd[0]['NPIX_BAD_TOTAL'] >= 10):
+                delta_pix = 1 if (n_stars < n_stars_min) else 0
+                color_frame(im.shape[0], delta_pix=delta_pix, color='#4ff222')
+
             plt.text(5, 44, str(expid) + '; ' + extname, color='r', fontsize=9)
             plt.text(10, 3.5, 'z = ' + str(int(float(ccds[0]['FOCUS'].split(',')[2]))), color='r')
             
