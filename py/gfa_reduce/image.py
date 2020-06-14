@@ -577,7 +577,7 @@ class GFA_image:
         if len(_catalog) == 0:
             return None
         
-        keep = util.use_for_fwhm_meas(_catalog, bad_amps=bad_amps) & (_catalog['min_edge_dist_pix'] > (half + 0.5)) & (_catalog['aper_sum_bkgsub_3'] > 0)
+        keep = util.use_for_fwhm_meas(_catalog, bad_amps=bad_amps, no_sig_major_cut=True) & (_catalog['min_edge_dist_pix'] > (half + 0.5)) & (_catalog['aper_sum_bkgsub_3'] > 0)
         
         if np.sum(keep) == 0:
             return None

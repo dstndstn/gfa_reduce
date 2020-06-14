@@ -348,7 +348,7 @@ def get_source_list(image, bitmask, extname, ivar_adu, thresh=5):
     # attempt to remove hot pixels, think this is safe since i end up
     # rejecting (sig_major_pix <= 1) sources when computing
     # overall FWHM and recalibrating the astrometry
-    tab = tab[tab['sig_major_pix'] > 1.0]
+    ### tab = tab[tab['sig_major_pix'] > 1.0] # HACK !!!!!
     
     add_metadata_columns(tab, bitmask)
 
