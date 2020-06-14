@@ -19,6 +19,7 @@ def focus_plots(night, expids,
 
     # PSF stamps plot
     plt.subplots_adjust(hspace=0.01, wspace=0.01)
+    n_stamps_plotted = 0
     for i, expid in enumerate(expids):
         fname = basedir + '/' + night + '/' + str(expid).zfill(8) + '/gfa-' + str(expid).zfill(8) + '_psfs.fits'
         print(fname)
@@ -42,6 +43,7 @@ def focus_plots(night, expids,
             plt.yticks([])
             im = fits.getdata(fname, extname=extname)
             plt.imshow(im, interpolation='nearest', origin='lower', cmap='gray_r', vmin=0.01)
+            n_stamps_plotted += 1
             plt.text(5, 44, str(expid) + '; ' + extname, color='r', fontsize=9)
             plt.text(10, 3.5, 'z = ' + str(int(float(ccds[0]['FOCUS'].split(',')[2]))), color='r')
             
@@ -54,8 +56,10 @@ def focus_plots(night, expids,
     print(focus_z)
     print(fwhm_pix)
 
-    plt.savefig(os.path.join(outdir, 'stamps_focus_scan-' + str(expid_min).zfill(8)+'.png'), bbox_inches='tight')
-    #plt.cla()
+    if n_stamps_plotted > 0:
+        plt.savefig(os.path.join(outdir, 'stamps_focus_scan-' + str(expid_min).zfill(8)+'.png'), bbox_inches='tight')
+    else:
+        print('WARNING : NO PSF MODELS WERE CREATED IN ANY IMAGES !!!')
 
     # doesn't make sense to fit a parabola to < 3 data points...
     if len(focus_z) < 3:
