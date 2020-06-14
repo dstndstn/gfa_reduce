@@ -6,10 +6,16 @@ import os
 import matplotlib.pyplot as plt
 import argparse
 
+def color_frame(sidelen):
+    x = [0, 0, sidelen-1, sidelen-1, 0]
+    y = [0, sidelen-1, sidelen-1, 0, 0]
+
+    plt.plot(x, y, c='orange', linewidth=2)
+
 def focus_plots(night, expids,
                 basedir='/n/home/datasystems/users/ameisner/reduced/focus',
                 outdir='/n/home/desiobserver/focus_scan', no_popups=False,
-                dont_plot_centroid=False):
+                dont_plot_centroid=False, n_stars_min=-1):
 
     plt.figure(1, figsize=(12.0*(len(expids)/7.0), 9))
     extnames = ['GUIDE0', 'GUIDE2', 'GUIDE3', 'GUIDE5', 'GUIDE7', 'GUIDE8']
@@ -41,9 +47,14 @@ def focus_plots(night, expids,
             plt.subplot(6, len(expids), len(expids)*j + i +  1)
             plt.xticks([])
             plt.yticks([])
-            im = fits.getdata(fname, extname=extname)
+            im, h = fits.getdata(fname, extname=extname, header=True)
             plt.imshow(im, interpolation='nearest', origin='lower', cmap='gray_r', vmin=0.01)
             n_stamps_plotted += 1
+            n_stars = h['NSTARS']
+            if n_stars < n_stars_min:
+                print('expid = ', h['EXPID'], ' ; extname = ', h['EXTNAME'], ' has too few contributing sources')
+                color_frame(im.shape[0])
+                
             plt.text(5, 44, str(expid) + '; ' + extname, color='r', fontsize=9)
             plt.text(10, 3.5, 'z = ' + str(int(float(ccds[0]['FOCUS'].split(',')[2]))), color='r')
             
