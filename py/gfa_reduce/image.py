@@ -58,7 +58,11 @@ class PSF:
             self.fiber_fracflux = util._fiber_fracflux(self.psf_image,
                                                        x_centroid=self.xcen_flux_weighted,
                                                        y_centroid=self.ycen_flux_weighted)
-            
+
+        if (np.abs(self.xcen_flux_weighted - (self.sidelen // 2)) > 1) or (np.abs(self.ycen_flux_weighted - (self.sidelen // 2)) > 1):
+            self.xcen_flux_weighted = float(self.sidelen // 2)
+            self.ycen_flux_weighted = float(self.sidelen // 2)
+
         self.fit_moffat_fwhm()
 
     def psf_image_header(self, hdu):
