@@ -17,6 +17,19 @@ def _write_coeff(outdir, first_expid, focus_z, coeff):
     tab['expid_min'] = [first_expid]
     tab['poly_coeff'] = [coeff]
     tab['n_fwhm_meas'] = [len(focus_z)]
+    tab['z_min_fit'] = [np.min(focus_z)]
+    tab['z_max_fit'] = [np.max(focus_z)]
+
+    zmin = -coeff[1]/(2*coeff[0]) if (coeff[0] > 0) else np.nan
+
+    min_fwhm_fit_asec = (coeff[0]*(zmin**2) + coeff[1]*zmin + coeff[2]) if np.isfinite(zmin) else np.nan
+
+    tab['model_best_z'] = [zmin]
+    tab['model_min_fwhm_asec'] = [min_fwhm_fit_asec]
+
+    tab['minimum_scanned'] = [int((zmin >= np.min(focus_z)) and (zmin <= np.max(focus_z)))]
+    
+    # maybe add something about the residual RMS here ?
 
     outname = 'poly_coeff-' + str(first_expid).zfill(8) + '.fits'
 
