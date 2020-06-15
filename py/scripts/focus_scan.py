@@ -6,7 +6,7 @@ import os
 import matplotlib.pyplot as plt
 import argparse
 
-def _write_coeff(outdir, first_expid, focus_z, coeff, fwhm_asec):
+def _write_coeff(outdir, first_expid, focus_z, coeff, fwhm_asec, expid_used):
     from astropy.table import Table
 
     tab = Table()
@@ -14,6 +14,7 @@ def _write_coeff(outdir, first_expid, focus_z, coeff, fwhm_asec):
     assert(len(coeff) == 3)
     assert(len(focus_z) >= 3)
     assert(len(fwhm_asec) == len(focus_z))
+    assert(len(expid_used) == len(focus_z))
 
     tab['first_expid'] = [first_expid]
     tab['poly_coeff'] = [coeff]
@@ -41,12 +42,19 @@ def _write_coeff(outdir, first_expid, focus_z, coeff, fwhm_asec):
 
     tab['resid_rms_asec'] = [rms]
 
+    # try to package in the actual list of (FWHM, expid, focus_z)  values
+    n_exp_max = 21 # 3x longer focus sequence than usual
+    n_pad = n_exp_max - len(fwhm_asec)
+
+    tab['fwhm_asec_values'] = [np.concatenate([fwhm_asec, np.full(n_pad, np.nan)])]
+    tab['expid_values'] = [np.concatenate([expid_used, np.full(n_pad, -1)])]
+
     outname = 'poly_coeff-' + str(first_expid).zfill(8) + '.fits'
 
     outname = os.path.join(outdir, outname)
 
     tab.write(outname, format='fits')
-
+    
 def color_frame(sidelen, delta_pix=0, color='orange'):
     x = [0 + delta_pix, 0 + delta_pix, sidelen -1 - delta_pix, sidelen - 1 - delta_pix, 0 + delta_pix]
     y = [0 + delta_pix, sidelen - 1 - delta_pix, sidelen - 1 - delta_pix, 0 + delta_pix, 0 + delta_pix]
@@ -67,6 +75,7 @@ def focus_plots(night, expids,
 
     focus_z = []
     fwhm_pix = []
+    expid_used = []
 
     # PSF stamps plot
     plt.subplots_adjust(hspace=0.01, wspace=0.01)
@@ -82,6 +91,7 @@ def focus_plots(night, expids,
         if np.sum(np.isfinite(ccds['PSF_FWHM_PIX'])) != 0:
             fwhm_pix.append(np.median(ccds['PSF_FWHM_PIX'][np.isfinite(ccds['PSF_FWHM_PIX'])]))
             focus_z.append(float(ccds[0]['FOCUS'].split(',')[2]))
+            expid_used.append(expid)
             
         hdul = fits.open(fname)
         extnames_present = [hdu.header['EXTNAME'] for hdu in hdul]
@@ -185,7 +195,7 @@ def focus_plots(night, expids,
         plt.show()
 
     if write_coeff:
-        _write_coeff(outdir, np.min(expids), focus_z, coeff, fwhm_asec)
+        _write_coeff(outdir, np.min(expids), focus_z, coeff, fwhm_asec, expid_used)
     
 def _test():
     night = '20200131'
