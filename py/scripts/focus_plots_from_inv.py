@@ -30,7 +30,7 @@ def plot_one_row(ind, inv=None, outdir=None, basedir=None,
                 no_popups=True, dont_plot_centroid=dont_plot_centroid,
                 n_stars_min=n_stars_min,
                 skip_low_n_stamps=skip_low_n_stamps,
-                extnames_exclude=extnames_exclude)
+                extnames_exclude=extnames_exclude, write_coeff=True)
 
 def _loop(indstart=0, nproc=None, skip_low_n_stamps=True):
 

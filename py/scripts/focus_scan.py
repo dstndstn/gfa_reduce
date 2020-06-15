@@ -6,6 +6,24 @@ import os
 import matplotlib.pyplot as plt
 import argparse
 
+def _write_coeff(outdir, first_expid, focus_z, coeff):
+    from astropy.table import Table
+
+    tab = Table()
+
+    assert(len(coeff) == 3)
+    assert(len(focus_z) >= 3)
+
+    tab['expid_min'] = [first_expid]
+    tab['poly_coeff'] = [coeff]
+    tab['n_fwhm_meas'] = [len(focus_z)]
+
+    outname = 'poly_coeff-' + str(first_expid).zfill(8) + '.fits'
+
+    outname = os.path.join(outdir, outname)
+
+    tab.write(outname, format='fits')
+
 def color_frame(sidelen, delta_pix=0, color='orange'):
     x = [0 + delta_pix, 0 + delta_pix, sidelen -1 - delta_pix, sidelen - 1 - delta_pix, 0 + delta_pix]
     y = [0 + delta_pix, sidelen - 1 - delta_pix, sidelen - 1 - delta_pix, 0 + delta_pix, 0 + delta_pix]
@@ -16,7 +34,7 @@ def focus_plots(night, expids,
                 basedir='/n/home/datasystems/users/ameisner/reduced/focus',
                 outdir='/n/home/desiobserver/focus_scan', no_popups=False,
                 dont_plot_centroid=False, n_stars_min=-1, skip_low_n_stamps=False,
-                flag_bad_denoising=True, extnames_exclude=[]):
+                flag_bad_denoising=True, extnames_exclude=[], write_coeff=False):
 
     # do i also want a separate boolean keyword arg to leave out low N cases
     # from the parabola fits as well??
@@ -136,6 +154,9 @@ def focus_plots(night, expids,
     plt.savefig(os.path.join(outdir, 'fit_focus_scan-' + str(expid_min).zfill(8) + '.png'), bbox_inches='tight')
     if not no_popups:
         plt.show()
+
+    if write_coeff:
+        _write_coeff(outdir, np.min(expids), focus_z, coeff)
     
 def _test():
     night = '20200131'
