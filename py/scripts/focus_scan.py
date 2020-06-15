@@ -6,19 +6,21 @@ import os
 import matplotlib.pyplot as plt
 import argparse
 
-def _write_coeff(outdir, first_expid, focus_z, coeff):
+def _write_coeff(outdir, first_expid, focus_z, coeff, fwhm_asec):
     from astropy.table import Table
 
     tab = Table()
 
     assert(len(coeff) == 3)
     assert(len(focus_z) >= 3)
+    assert(len(fwhm_asec) == len(focus_z))
 
-    tab['expid_min'] = [first_expid]
+    tab['first_expid'] = [first_expid]
     tab['poly_coeff'] = [coeff]
     tab['n_fwhm_meas'] = [len(focus_z)]
     tab['z_min_fit'] = [np.min(focus_z)]
     tab['z_max_fit'] = [np.max(focus_z)]
+    tab['meas_min_fwhm_asec'] = [np.min(fwhm_asec)]
 
     zmin = -coeff[1]/(2*coeff[0]) if (coeff[0] > 0) else np.nan
 
@@ -30,6 +32,14 @@ def _write_coeff(outdir, first_expid, focus_z, coeff):
     tab['minimum_scanned'] = [int((zmin >= np.min(focus_z)) and (zmin <= np.max(focus_z)))]
     
     # maybe add something about the residual RMS here ?
+
+    fwhm_model_pred = coeff[0]*(np.power(focus_z, 2)) + coeff[1]*focus_z + coeff[2]
+
+    diff = fwhm_asec - fwhm_model_pred
+
+    rms = np.sqrt(np.mean(np.power(diff, 2)))
+
+    tab['resid_rms_asec'] = [rms]
 
     outname = 'poly_coeff-' + str(first_expid).zfill(8) + '.fits'
 
@@ -175,7 +185,7 @@ def focus_plots(night, expids,
         plt.show()
 
     if write_coeff:
-        _write_coeff(outdir, np.min(expids), focus_z, coeff)
+        _write_coeff(outdir, np.min(expids), focus_z, coeff, fwhm_asec)
     
 def _test():
     night = '20200131'
