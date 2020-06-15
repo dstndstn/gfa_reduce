@@ -48,6 +48,7 @@ def _write_coeff(outdir, first_expid, focus_z, coeff, fwhm_asec, expid_used):
 
     tab['fwhm_asec_values'] = [np.concatenate([fwhm_asec, np.full(n_pad, np.nan)])]
     tab['expid_values'] = [np.concatenate([expid_used, np.full(n_pad, -1)])]
+    tab['focus_z_values'] = [np.concatenate([focus_z, np.full(n_pad, np.nan)])]
 
     outname = 'poly_coeff-' + str(first_expid).zfill(8) + '.fits'
 
