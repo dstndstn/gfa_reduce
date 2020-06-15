@@ -119,6 +119,8 @@ def focus_plots(night, expids,
     print(focus_z)
     print(fwhm_pix)
 
+    fwhm_pix = np.array(fwhm_pix)
+    
     if n_stamps_plotted > 0:
         plt.savefig(os.path.join(outdir, 'stamps_focus_scan-' + str(expid_min).zfill(8)+'.png'), bbox_inches='tight')
     else:
@@ -128,13 +130,17 @@ def focus_plots(night, expids,
     if len(focus_z) < 3:
         print('NOT ENOUGH EXPOSURES AVAILABLE TO FIT A PARABOLA')
         return
+
+    asec_per_pix = 0.205
+    
+    if (n_stamps_plotted == 0) and (np.min(fwhm_pix*asec_per_pix) < 0.4 ):
+        return
     
     plt.figure(200)
-    
-    asec_per_pix = 0.205
+
 
     focus_z = np.array(focus_z)
-    fwhm_asec = np.array(fwhm_pix)*asec_per_pix
+    fwhm_asec = fwhm_pix*asec_per_pix
     plt.scatter(focus_z, fwhm_asec)
     plt.xlabel('focus z (micron)')
     plt.ylabel('FWHM (asec)')
