@@ -55,6 +55,22 @@ def _write_coeff(outdir, first_expid, focus_z, coeff, fwhm_asec, expid_used):
     outname = os.path.join(outdir, outname)
 
     tab.write(outname, format='fits')
+
+def _trim_fit_inputs(expid_used, fwhm_pix, focus_z):
+    if len(expid_used) <= 7:
+        return expid_used, fwhm_pix, focus_z
+
+    indmin = np.argmin(fwhm_pix)
+
+    diff = np.abs(np.arange(len(expid_used)) - indmin)
+
+    keep = (diff <= 4)
+
+    expid_used = expid_used[keep]
+    fwhm_pix = fwhm_pix[keep]
+    focus_z = focus_z[keep]
+
+    return expid_used, fwhm_pix, focus_z
     
 def color_frame(sidelen, delta_pix=0, color='orange'):
     x = [0 + delta_pix, 0 + delta_pix, sidelen -1 - delta_pix, sidelen - 1 - delta_pix, 0 + delta_pix]
@@ -141,6 +157,10 @@ def focus_plots(night, expids,
     print(fwhm_pix)
 
     fwhm_pix = np.array(fwhm_pix)
+    focus_z = np.array(focus_z)
+    expid_used = np.array(expid_used)
+
+    expid_used, fwhm_pix, focus_z = _trim_fit_inputs(expid_used, fwhm_pix, focus_z)
     
     if n_stamps_plotted > 0:
         plt.savefig(os.path.join(outdir, 'stamps_focus_scan-' + str(expid_min).zfill(8)+'.png'), bbox_inches='tight')
@@ -160,7 +180,6 @@ def focus_plots(night, expids,
     plt.figure(200)
 
 
-    focus_z = np.array(focus_z)
     fwhm_asec = fwhm_pix*asec_per_pix
     plt.scatter(focus_z, fwhm_asec)
     plt.xlabel('focus z (micron)')
