@@ -535,7 +535,7 @@ def _gauss2d_profile(sidelen, xcen, ycen, peak_val, sigma, bg=0):
 
     return prof
 
-def _moffat2d_profile(sidelen, xcen, ycen, peak_val, fwhm, bg=0, beta=2.8):
+def _moffat2d_profile(sidelen, xcen, ycen, peak_val, fwhm, bg=0, beta=3.5):
 
 
     alpha = fwhm/(2.0*np.sqrt(2**(1/beta) - 1))
