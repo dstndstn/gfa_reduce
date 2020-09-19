@@ -155,7 +155,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           ' UTC')
 
 if __name__ == "__main__":
-    descr = 'run full gfa_reduce pipeline on a GFA exposure'
+    descr = 'run the gfa_reduce pipeline on a GFA exposure'
     parser = argparse.ArgumentParser(description=descr)
     parser.add_argument('fname_in', type=str, nargs=1)
 
