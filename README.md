@@ -95,7 +95,7 @@ such `gfa_reduce` invocations print out various logging information, such as war
                       [--write_psf_cubes] [--write_detmap] [--write_full_detlist]
                       fname_in
 
-    run full gfa_reduce pipeline on a GFA exposure
+    run the gfa_reduce pipeline on a GFA exposure
 
     positional arguments:
       fname_in
