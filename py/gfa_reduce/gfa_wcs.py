@@ -4,6 +4,25 @@ from astropy import wcs
 import os
 import gfa_reduce.common as common
 
+def local_tan_wcs(telra, teldec, extname):
+    wcs_big = nominal_tan_wcs(telra, teldec, extname)
+
+    crval1, crval2 = ccd_center_radec(wcs_big)
+
+    par = common.gfa_misc_params()
+
+    fname = os.path.join(os.environ[par['meta_env_var']],
+                         'dummy_with_headers_local_SIP.zenith.fits.gz')
+
+    h = fits.getheader(fname, extname=extname)
+
+    h['CRVAL1'] = float(crval1)
+    h['CRVAL2'] = float(crval2)
+
+    w = wcs.WCS(h)
+
+    return w
+
 def nominal_tan_wcs(telra, teldec, extname):
     # Create a new WCS object.  The number of axes must be set
     # from the start
