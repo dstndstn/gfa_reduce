@@ -88,17 +88,18 @@ such `gfa_reduce` invocations print out various logging information, such as war
     gfa_reduce/py/gfa_reduce> python gfa_red.py --help
     usage: gfa_red.py [-h] [--outdir OUTDIR] [--careful_sky] [--no_cataloging]
                       [--no_gaia_xmatch] [--no_ps1_xmatch]
-                      [--cube_index CUBE_INDEX] [--skip_image_outputs]
-                      [--realtime] [--no_dark_rescaling] [--dont_write_invvar]
-                      [--skip_psf_models] [--compress_reduced_image]
-                      [--skip_raw_imstats] [--skip_astrometry] [--no_pm_corr]
+		      [--cube_index CUBE_INDEX] [--skip_image_outputs]
+		      [--realtime] [--no_dark_rescaling] [--dont_write_invvar]
+		      [--skip_psf_models] [--compress_reduced_image]
+                      [--skip_raw_imstats] [--skip_astrometry] [--no_pm_pi_corr]
+		      [--write_psf_cubes] [--write_detmap] [--write_full_detlist]
                       fname_in
-    
+
     run full gfa_reduce pipeline on a GFA exposure
-    
+
     positional arguments:
       fname_in
-    
+
     optional arguments:
       -h, --help            show this help message and exit
       --outdir OUTDIR       directory to write outputs in
@@ -117,4 +118,7 @@ such `gfa_reduce` invocations print out various logging information, such as war
                             compress reduced image output file
       --skip_raw_imstats    skip computing of raw image pixel statistics
       --skip_astrometry     skip astrometric recalibration
-      --no_pm_corr          do not correct Gaia positions for proper motion
+      --no_pm_pi_corr       do not correct Gaia positions for proper motion or parallax
+      --write_psf_cubes     write image cubes of sources used to build PSF models
+      --write_detmap        write detection map
+      --write_full_detlist  write out the initial, full list of detections
