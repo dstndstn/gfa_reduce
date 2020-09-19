@@ -711,6 +711,8 @@ def write_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
 
     _atomic_write(tab, outname)
 
+    return tab
+
 def write_psfs(exp, outdir, fname_in, cube_index=None, cubes=False):
 
     assert(os.path.exists(outdir))

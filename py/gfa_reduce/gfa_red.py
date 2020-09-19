@@ -7,6 +7,7 @@ from datetime import datetime
 import gfa_reduce.analysis.util as util
 import gfa_reduce.common as common
 import gfa_reduce.analysis.recalib_astrom as wcs
+import gfa_reduce.analysis.dm as dm
 import time
 
 class ProcObj():
@@ -21,7 +22,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           dont_write_invvar=False, skip_psf_models=False,
           compress_reduced_image=False, skip_raw_imstats=False,
           skip_astrometry=False, no_pm_pi_corr=False, write_psf_cubes=False,
-          write_detmap=False, write_full_detlist=False, max_cbox=31):
+          write_detmap=False, write_full_detlist=False, max_cbox=31,
+          fieldmodel=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -129,8 +131,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
                                          write_detmap=write_detmap)
 
         # make this work correctly in the case that --no_cataloging is set
-        io.write_ccds_table(imstats, catalog, exp, outdir, proc_obj,
-                            cube_index=cube_index, ps1=ps1)
+        ccds = io.write_ccds_table(imstats, catalog, exp, outdir, proc_obj,
+                                   cube_index=cube_index, ps1=ps1)
         
         if not no_cataloging:
             io.write_exposure_source_catalog(catalog, outdir, proc_obj, exp,
@@ -147,6 +149,12 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
             if write_full_detlist:
                 io.write_full_detlists(exp, outdir, fname_in, cube_index=cube_index)
 
+    # desimeter fieldmodel if applicable
+    if (not skip_astrometry) and fieldmodel:
+        # should probably log the timing of this step
+        fm = dm.fit_dm_fieldmodel(exp.exp_header, ccds, catalog)
+        print('desimeter RMS_ARCSEC = ', fm.rms_arcsec)
+    
     print('Successfully finished reducing ' + fname_in)
 
     dt = time.time() - t0
@@ -223,6 +231,9 @@ if __name__ == "__main__":
 
     parser.add_argument('--max_cbox', default=31, type=int,
                         help="maximum centroiding box size (pixels)")
+
+    parser.add_argument('--fieldmodel', default=False, action='store_true',
+                        help="fit and write desimeter field model")
     
     args = parser.parse_args()
 
@@ -242,4 +253,4 @@ if __name__ == "__main__":
           write_psf_cubes=args.write_psf_cubes,
           write_detmap=args.write_detmap,
           write_full_detlist=args.write_full_detlist,
-          max_cbox=args.max_cbox)
+          max_cbox=args.max_cbox, fieldmodel=args.fieldmodel)
