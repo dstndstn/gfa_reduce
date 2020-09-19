@@ -260,6 +260,8 @@ class GFA_image:
         self.time_s_for_dark = None
 
         self.psf = None
+
+        self.max_cbox = 31
         
     def create_dq_mask(self, dark_image):
         if self.bitmask is not None:
@@ -467,7 +469,8 @@ class GFA_image:
         # alldet is just the initial, raw list of all detections with
         # no culling applied
         tab, detmap, alldet = phot.get_source_list(self.image, self.bitmask,
-                                                   self.extname, self.ivar_adu)
+                                                   self.extname, self.ivar_adu,
+                                                   max_cbox=self.max_cbox)
 
         # always store this since it shouldn't be consuming any
         # appreciable amount of memory

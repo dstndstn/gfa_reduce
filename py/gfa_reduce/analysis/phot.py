@@ -42,7 +42,7 @@ def slices_to_table(slices, detsn, extname):
 
     return tab
 
-def detmap_centroids(tab, detmap):
+def detmap_centroids(tab, detmap, max_cbox=31):
 
     # tab should be a table of detections like that output by the
     # slices_to_table function
@@ -54,7 +54,7 @@ def detmap_centroids(tab, detmap):
     # cbox floor at 7 pixels?
 
     cbox = (tab['detmap_sidelen_x'] + tab['detmap_sidelen_y'])/ 2.0
-    cbox_upper = 31
+    cbox_upper = max_cbox
     cbox_lower = 9
     cbox = np.maximum(cbox, cbox_lower)
     cbox = np.minimum(cbox, cbox_upper)
@@ -325,7 +325,8 @@ def add_metadata_columns(tab, bitmask):
 
     tab['dq_flags'] = bitmask[iys, ixs].astype('uint8')
 
-def get_source_list(image, bitmask, extname, ivar_adu, thresh=5):
+def get_source_list(image, bitmask, extname, ivar_adu, thresh=5,
+                    max_cbox=31):
 
     par = common.mask_bit_dict()
     
@@ -339,7 +340,7 @@ def get_source_list(image, bitmask, extname, ivar_adu, thresh=5):
 
     all_detections = slices_to_table(slices, detsn, extname)
 
-    all_detections = detmap_centroids(all_detections, detsn)
+    all_detections = detmap_centroids(all_detections, detsn, max_cbox=max_cbox)
 
     tab = copy.deepcopy(all_detections)
 

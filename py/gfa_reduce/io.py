@@ -80,7 +80,7 @@ def realtime_raw_read(fname, delay=2.0, max_attempts=5):
     return hdul
 
 def load_exposure(fname, verbose=True, realtime=False, cube_index=None,
-                  store_detmap=False):
+                  store_detmap=False, max_cbox=31):
     assert(os.path.exists(fname))
 
     print('Attempting to load exposure : ' + fname)
@@ -134,7 +134,8 @@ def load_exposure(fname, verbose=True, realtime=False, cube_index=None,
             # this will crash if the binary table extension is missing...
             bintables[extname_im] = hdul[extname_tab].data
 
-    exp = GFA_exposure(imlist, exp_header=exp_header, bintables=bintables)
+    exp = GFA_exposure(imlist, exp_header=exp_header, bintables=bintables,
+                       max_cbox=max_cbox)
 
     exp.set_bintable_rows()
     

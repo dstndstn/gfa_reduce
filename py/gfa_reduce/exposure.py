@@ -8,7 +8,8 @@ import gfa_reduce.analysis.util as util
 class GFA_exposure:
     """Object encapsulating the contents of a single GFA exposure"""
 
-    def __init__(self, image_list, exp_header=None, bintables=None):
+    def __init__(self, image_list, exp_header=None, bintables=None,
+                 max_cbox=31):
         # images is a dictionary of GFA_image objects
 
         par = common.gfa_misc_params()
@@ -24,6 +25,8 @@ class GFA_exposure:
         self.exp_header = exp_header
         self.pixels_calibrated = None
         self.bintables = bintables
+        self.max_cbox = max_cbox
+        self.assign_max_cbox() # to the per-camera images ...
         
     def assign_one_image(self, image):
         extname = (image.header)['EXTNAME']
@@ -32,6 +35,10 @@ class GFA_exposure:
     def assign_image_list(self, image_list):
         for image in image_list:
             self.assign_one_image(image)
+
+    def assign_max_cbox(self):
+        for image in self.images.values():
+            image.max_cbox = self.max_cbox
 
     def subtract_bias(self):
         print('Attempting to subtract bias...')

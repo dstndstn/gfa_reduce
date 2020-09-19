@@ -21,7 +21,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           dont_write_invvar=False, skip_psf_models=False,
           compress_reduced_image=False, skip_raw_imstats=False,
           skip_astrometry=False, no_pm_pi_corr=False, write_psf_cubes=False,
-          write_detmap=False, write_full_detlist=False):
+          write_detmap=False, write_full_detlist=False, max_cbox=31):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -47,7 +47,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
                                            cube_index=cube_index)
 
     exp = io.load_exposure(fname_in, cube_index=cube_index, realtime=realtime,
-                           store_detmap=write_detmap)
+                           store_detmap=write_detmap, max_cbox=max_cbox)
 
     # check for simulated data
     if (exp is None) or util.has_wrong_dimensions(exp):
@@ -220,6 +220,9 @@ if __name__ == "__main__":
 
     parser.add_argument('--write_full_detlist', default=False, action='store_true',
                         help="write out the initial, full list of detections")
+
+    parser.add_argument('--max_cbox', default=31, type=int,
+                        help="maximum centroiding box size (pixels)")
     
     args = parser.parse_args()
 
@@ -238,4 +241,5 @@ if __name__ == "__main__":
           no_pm_pi_corr=args.no_pm_pi_corr,
           write_psf_cubes=args.write_psf_cubes,
           write_detmap=args.write_detmap,
-          write_full_detlist=args.write_full_detlist)
+          write_full_detlist=args.write_full_detlist,
+          max_cbox=args.max_cbox)
