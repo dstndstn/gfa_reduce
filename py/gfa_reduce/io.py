@@ -568,26 +568,8 @@ def dark_current_ccds_table(tab, exp):
     tab['dark_rescale_ncalls'] = dark_rescale_ncalls
     tab['dark_rescale_converged'] = dark_rescale_converged
     
-def write_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
-                     ps1=None):
-
-    assert(os.path.exists(outdir))
-
-    outname = os.path.join(outdir, os.path.basename(proc_obj.fname_in))
-
-    # get rid of any ".fz" or ".gz" present in input filename
-    outname = outname.replace('.fz', '')
-    outname = outname.replace('.gz', '')
-
-    assert(outname[-5:] == '.fits')
-
-    outname = outname.replace('.fits', '_ccds.fits')
-
-    if cube_index is not None:
-        outname = outname.replace('.fits',
-                                  '-' + str(cube_index).zfill(5) + '.fits')
-    
-    assert(not os.path.exists(outname))
+def assemble_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
+                        ps1=None):
 
     nrows = len(tab)
     
@@ -706,12 +688,32 @@ def write_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
     high_level_ccds_metrics(tab, catalog, exp)
     astrom_ccds_table(tab, exp)
     dark_current_ccds_table(tab, exp)
+
+    return tab
+
+def write_ccds_table(tab, outdir, proc_obj, cube_index=None):
+
+    assert(os.path.exists(outdir))
+
+    outname = os.path.join(outdir, os.path.basename(proc_obj.fname_in))
+
+    # get rid of any ".fz" or ".gz" present in input filename
+    outname = outname.replace('.fz', '')
+    outname = outname.replace('.gz', '')
+
+    assert(outname[-5:] == '.fits')
+
+    outname = outname.replace('.fits', '_ccds.fits')
+
+    if cube_index is not None:
+        outname = outname.replace('.fits',
+                                  '-' + str(cube_index).zfill(5) + '.fits')
+
+    assert(not os.path.exists(outname))
     
     print('Attempting to write CCDs table to ' + outname)
 
     _atomic_write(tab, outname)
-
-    return tab
 
 def write_psfs(exp, outdir, fname_in, cube_index=None, cubes=False):
 

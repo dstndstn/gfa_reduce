@@ -131,9 +131,11 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
                                          write_detmap=write_detmap)
 
         # make this work correctly in the case that --no_cataloging is set
-        ccds = io.write_ccds_table(imstats, catalog, exp, outdir, proc_obj,
+        ccds = io.assemble_ccds_table(imstats, catalog, exp, outdir, proc_obj,
                                    cube_index=cube_index, ps1=ps1)
         
+        io.write_ccds_table(ccds, outdir, proc_obj, cube_index=cube_index)
+
         if not no_cataloging:
             io.write_exposure_source_catalog(catalog, outdir, proc_obj, exp,
                                              cube_index=cube_index)
