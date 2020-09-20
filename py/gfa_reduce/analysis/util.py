@@ -267,7 +267,15 @@ def expid_from_raw_filename(fname):
 
     f = f.split('-', 1)[1]
 
-    return int(f[0:8])
+    string = f[0:8]
+
+    # hack for special PlateMaker acquisition image file names
+    pos = string.find('.')
+
+    if pos != -1:
+        string = string[0:pos]
+    
+    return int(string)
 
 def average_bintable_metadata(tab):
 

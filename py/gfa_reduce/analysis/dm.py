@@ -42,11 +42,16 @@ def fit_dm_fieldmodel(header, ccds, _catalog):
     fm.dec = header['TARGTDEC'] # other option is SKYDEC
     fm.expid = header['EXPID']
     hexrot_string = (header['FOCUS'].split(','))[5]
+    hexrot_string = hexrot_string.replace(']', '') # hack for PlateMaker files
     fm.hexrot_deg = float(hexrot_string)/3600.0
 
-    fm.adc1 = header['ADC1PHI']
-    fm.adc2 = header['ADC2PHI']
+    fm.adc1 = header['ADC1PHI'] if 'ADC1PHI' in header else 0.0
+    fm.adc2 = header['ADC2PHI'] if 'ADC2PHI' in header else 0.0
 
+    for kw in ['ADC1PHI', 'ADC2PHI']:
+        if kw not in header:
+            print('WARNING: ' + kw + ' missing !!! assuming ' + kw + ' = 0.0')
+    
     fm.mjd = np.mean(catalog['mjd_obs'])
     fm.lst = mjd2lst(fm.mjd)
 

@@ -5,7 +5,7 @@ import astropy.io.fits as fits
 # an initial guess (SKYRA, SKYDEC) of the field of view center
 # mainly going to be a wrapper for asterisms.pattern_match
 
-def recalib_astrom(cat, fname_raw, mjd=None):
+def recalib_astrom(cat, fname_raw, mjd=None, h=None):
     # cat should be the catalog for an entire exposure
 
     if cat is None:
@@ -13,10 +13,11 @@ def recalib_astrom(cat, fname_raw, mjd=None):
         
     extnames = np.unique(cat['camera'])
 
-    try:
-        h = fits.getheader(fname_raw, extname='GFA')
-    except:
-        h = fits.getheader(fname_raw, extname='GUIDER')
+    if h is None:
+        try:
+            h = fits.getheader(fname_raw, extname='GFA')
+        except:
+            h = fits.getheader(fname_raw, extname='GUIDER')
 
     gaia = gaia_cat_for_exp(h['SKYRA'], h['SKYDEC'], mjd=mjd)
     result = []

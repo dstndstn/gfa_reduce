@@ -91,7 +91,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
             print('Attempting astrometric recalibration relative to Gaia DR2')
 
             astr = wcs.recalib_astrom(catalog, fname_in,
-                                      mjd=(None if no_pm_pi_corr else exp_mjd))
+                                      mjd=(None if no_pm_pi_corr else exp_mjd),
+                                      h=exp.exp_header)
             exp.update_wcs(astr)
             exp.recompute_catalog_radec(catalog)
 
