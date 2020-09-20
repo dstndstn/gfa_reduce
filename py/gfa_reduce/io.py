@@ -796,6 +796,8 @@ def write_dm_fieldmodel(fm, outdir, fname_in, cube_index=None):
         outname = outname.replace('.json',
                                   '-' + str(cube_index).zfill(5) + '.json')
 
-    # this writing is not 'atomic' -- should probably fix this at some point
-    with open(outname, 'w') as file:
+    outname_tmp = outname + '.tmp'
+    with open(outname_tmp, 'w') as file:
         file.write(fm.tojson())
+
+    os.rename(outname_tmp, outname)
