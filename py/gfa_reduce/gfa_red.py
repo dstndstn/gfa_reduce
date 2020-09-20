@@ -153,7 +153,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
     if (not skip_astrometry) and fieldmodel:
         # should probably log the timing of this step
         fm = dm.fit_dm_fieldmodel(exp.exp_header, ccds, catalog)
-        print('desimeter RMS_ARCSEC = ', fm.rms_arcsec)
+        io.write_dm_fieldmodel(fm, outdir, fname_in, cube_index=cube_index)
     
     print('Successfully finished reducing ' + fname_in)
 

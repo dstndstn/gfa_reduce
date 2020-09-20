@@ -776,3 +776,26 @@ def write_full_detlists(exp, outdir, fname_in, cube_index=None):
     tab = vstack(tables)
 
     _atomic_write(tab, outname)
+
+def write_dm_fieldmodel(fm, outdir, fname_in, cube_index=None):
+    # fm should be a desimeter fieldmodel object
+
+    assert(os.path.exists(outdir))
+
+    outname = os.path.join(outdir, os.path.basename(fname_in))
+
+    # get rid of any ".fz" or ".gz" present in input filename
+    outname = outname.replace('.fz', '')
+    outname = outname.replace('.gz', '')
+
+    assert(outname[-5:] == '.fits')
+
+    outname = outname.replace('.fits', '_fieldmodel.json')
+
+    if cube_index is not None:
+        outname = outname.replace('.json',
+                                  '-' + str(cube_index).zfill(5) + '.json')
+
+    # this writing is not 'atomic' -- should probably fix this at some point
+    with open(outname, 'w') as file:
+        file.write(fm.tojson())
