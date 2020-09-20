@@ -23,7 +23,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           compress_reduced_image=False, skip_raw_imstats=False,
           skip_astrometry=False, no_pm_pi_corr=False, write_psf_cubes=False,
           write_detmap=False, write_full_detlist=False, max_cbox=31,
-          fieldmodel=False):
+          fieldmodel=False, dont_write_catalog=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -138,8 +138,9 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
         io.write_ccds_table(ccds, outdir, proc_obj, cube_index=cube_index)
 
         if not no_cataloging:
-            io.write_exposure_source_catalog(catalog, outdir, proc_obj, exp,
-                                             cube_index=cube_index)
+            if not dont_write_catalog:
+                io.write_exposure_source_catalog(catalog, outdir, proc_obj, exp,
+                                                 cube_index=cube_index)
             io.write_ps1_matches(ps1, outdir, fname_in,
                                  cube_index=cube_index)
             if not skip_psf_models:
@@ -237,6 +238,9 @@ if __name__ == "__main__":
 
     parser.add_argument('--fieldmodel', default=False, action='store_true',
                         help="fit and write desimeter field model")
+
+    parser.add_argument('--dont_write_catalog', default=False, action='store_true',
+                        help="don't write source catalog")
     
     args = parser.parse_args()
 
@@ -256,4 +260,5 @@ if __name__ == "__main__":
           write_psf_cubes=args.write_psf_cubes,
           write_detmap=args.write_detmap,
           write_full_detlist=args.write_full_detlist,
-          max_cbox=args.max_cbox, fieldmodel=args.fieldmodel)
+          max_cbox=args.max_cbox, fieldmodel=args.fieldmodel,
+          dont_write_catalog=args.dont_write_catalog)
