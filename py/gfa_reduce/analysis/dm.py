@@ -3,8 +3,11 @@ from desimeter.time import mjd2lst
 from desimeter.fieldmodel import FieldModel
 import copy
 from astropy.table import Table
+import time
 
 def fit_dm_fieldmodel(header, ccds, _catalog):
+    t0 = time.time()
+    
     fm = FieldModel()
 
     catalog = copy.deepcopy(_catalog)
@@ -54,4 +57,6 @@ def fit_dm_fieldmodel(header, ccds, _catalog):
     # any other metadata that I want to record?
     fm.n_cameras = len(np.unique(catalog['extname']))
 
+    dt = time.time()-t0
+    print('total time taken to derive desimeter FieldModel : ', dt, ' seconds')
     return fm
