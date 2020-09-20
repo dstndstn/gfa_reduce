@@ -41,7 +41,8 @@ def fit_dm_fieldmodel(header, ccds, _catalog):
     fm.ra  = header['TARGTRA'] # other option is SKYRA
     fm.dec = header['TARGTDEC'] # other option is SKYDEC
     fm.expid = header['EXPID']
-    fm.hexrot_deg = float(header['FOCUS'][5])/3600.0 # change this?
+    hexrot_string = (header['FOCUS'].split(','))[5]
+    fm.hexrot_deg = float(hexrot_string)/3600.0
 
     fm.adc1 = header['ADC1PHI']
     fm.adc2 = header['ADC2PHI']
