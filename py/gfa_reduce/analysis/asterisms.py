@@ -60,8 +60,7 @@ def gaia_cat_for_exp(racen, deccen, mjd=None):
     gaia = gaia_xmatch.read_gaia_cat(ra_pixcenters, dec_pixcenters, mjd=mjd)
     return gaia
 
-def pattern_match(catalog, skyra, skydec, extname='GUIDE0', arcmin_max=3.5,
-                  gaia=None):
+def pattern_match(catalog, skyra, skydec, extname, gaia, arcmin_max):
 
     # cat needs to have fields xcentroid and ycentroid
     # skyra, skydec are the initial guesses of the 

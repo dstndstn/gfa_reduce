@@ -30,9 +30,7 @@ def recalib_astrom(cat, fname_raw, mjd=None, h=None):
         _cat = cat[(cat['camera'] == extname) & (cat['sig_major_pix'] > 1.0) & (cat['min_edge_dist_pix'] > 3)] # 3 is a fairly arbitrary guess
         if len(_cat) < 2:
             _cat = cat[cat['camera'] == extname]
-        result.append(pattern_match(_cat,
-                                    h['SKYRA'], h['SKYDEC'],
-                                    extname=extname, gaia=gaia,
-                                    arcmin_max=arcmin_max))
+        result.append(pattern_match(_cat, h['SKYRA'], h['SKYDEC'],
+                                    extname, gaia, arcmin_max))
 
     return result
