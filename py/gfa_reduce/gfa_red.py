@@ -19,7 +19,7 @@ def acquire_field(fname_in):
     fm = _proc(fname_in, no_ps1_xmatch=True, skip_image_outputs=True,
                dont_write_invvar=True, skip_psf_models=True,
                dont_write_catalog=True, dont_write_ccds=True,
-               return_fieldmodel=True)
+               return_fieldmodel=True, multiproc=True)
 
     return fm
 
@@ -32,7 +32,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           skip_astrometry=False, no_pm_pi_corr=False, write_psf_cubes=False,
           write_detmap=False, write_full_detlist=False, max_cbox=31,
           fieldmodel=False, dont_write_catalog=False,
-          dont_write_ccds=False, return_fieldmodel=False):
+          dont_write_ccds=False, return_fieldmodel=False,
+          multiproc=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -101,7 +102,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
 
             astr = wcs.recalib_astrom(catalog, fname_in,
                                       mjd=(None if no_pm_pi_corr else exp_mjd),
-                                      h=exp.exp_header)
+                                      h=exp.exp_header, mp=multiproc)
             exp.update_wcs(astr)
             exp.recompute_catalog_radec(catalog)
 
@@ -257,7 +258,10 @@ if __name__ == "__main__":
 
     parser.add_argument('--dont_write_ccds', default=False, action='store_true',
                         help="don't write CCDs table")
-    
+
+    parser.add_argument('--multiproc', default=False, action='store_true',
+                        help="use multiprocessing to decrease wall time")
+
     args = parser.parse_args()
 
     fname_in = args.fname_in[0]
@@ -278,4 +282,5 @@ if __name__ == "__main__":
           write_full_detlist=args.write_full_detlist,
           max_cbox=args.max_cbox, fieldmodel=args.fieldmodel,
           dont_write_catalog=args.dont_write_catalog,
-          dont_write_ccds=args.dont_write_ccds)
+          dont_write_ccds=args.dont_write_ccds,
+          multiproc=args.multiproc)
