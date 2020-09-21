@@ -15,6 +15,14 @@ class ProcObj():
         self.fname_in = fname_in
         self.gitrev = gitrev
 
+def acquire_field(fname_in):
+    fm = _proc(fname_in, no_ps1_xmatch=True, skip_image_outputs=True,
+               dont_write_invvar=True, skip_psf_models=True,
+               dont_write_catalog=True, dont_write_ccds=True,
+               return_fieldmodel=True)
+
+    return fm
+
 def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           no_gaia_xmatch=False, no_ps1_xmatch=False,
           cube_index=None, skip_image_outputs=False,
@@ -24,7 +32,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           skip_astrometry=False, no_pm_pi_corr=False, write_psf_cubes=False,
           write_detmap=False, write_full_detlist=False, max_cbox=31,
           fieldmodel=False, dont_write_catalog=False,
-          dont_write_ccds=False):
+          dont_write_ccds=False, return_fieldmodel=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -114,9 +122,11 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
     else:
         catalog = None
         ps1 = None
-            
-    # try to write image-level outputs if outdir is specified
 
+    # make this work correctly in the case that --no_cataloging is set
+    ccds = io.assemble_ccds_table(imstats, catalog, exp, outdir, proc_obj,
+                                  cube_index=cube_index, ps1=ps1)
+    
     if write_outputs:
 
         if not os.path.exists(outdir):
@@ -131,10 +141,6 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
                                          dont_write_invvar=dont_write_invvar,
                                          compress_reduced_image=compress_reduced_image,
                                          write_detmap=write_detmap)
-
-        # make this work correctly in the case that --no_cataloging is set
-        ccds = io.assemble_ccds_table(imstats, catalog, exp, outdir, proc_obj,
-                                   cube_index=cube_index, ps1=ps1)
 
         if not dont_write_ccds:
             io.write_ccds_table(ccds, outdir, proc_obj, cube_index=cube_index)
@@ -156,10 +162,11 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
                 io.write_full_detlists(exp, outdir, fname_in, cube_index=cube_index)
 
     # desimeter fieldmodel if applicable
-    if (not skip_astrometry) and fieldmodel:
+    if (not skip_astrometry) and (fieldmodel or return_fieldmodel):
         # should probably log the timing of this step
         fm = dm.fit_dm_fieldmodel(exp.exp_header, ccds, catalog)
-        io.write_dm_fieldmodel(fm, outdir, fname_in, cube_index=cube_index)
+        if not return_fieldmodel:
+            io.write_dm_fieldmodel(fm, outdir, fname_in, cube_index=cube_index)
     
     print('Successfully finished reducing ' + fname_in)
 
@@ -167,6 +174,10 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
     print('GFA reduction pipeline took ' + '{:.2f}'.format(dt) + ' seconds')
     print('GFA reduction pipeline completed at: ' + str(datetime.utcnow()) + 
           ' UTC')
+
+    # for field acquisition mode
+    if return_fieldmodel:
+        return fm
 
 if __name__ == "__main__":
     descr = 'run the gfa_reduce pipeline on a GFA exposure'
