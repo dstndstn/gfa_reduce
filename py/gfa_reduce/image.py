@@ -519,18 +519,16 @@ class GFA_image:
             self.image = _image
 
     def update_wcs(self, d):
-        # d is a dictionary with xshift_best, yshift_best, astr_guess
+        # d is a dictionary with xshift_best, yshift_best
         # for this EXTNAME
 
         assert(d['extname'] == self.extname)
 
-        wcs = d['astr_guess']
-        wcs.wcs.crpix = wcs.wcs.crpix + np.array([d['xshift_best'], d['yshift_best']])
-        self.wcs = wcs
+        self.wcs.wcs.crpix = self.wcs.wcs.crpix + np.array([d['xshift_best'], d['yshift_best']])
 
         # also want to update the header
 
-        new_wcs_header_cards = wcs.to_header()
+        new_wcs_header_cards = self.wcs.to_header()
         new_wcs_header_cards['CONTRAST'] = d['contrast']
 
         for k,v in new_wcs_header_cards.items():
