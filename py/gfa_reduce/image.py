@@ -460,8 +460,6 @@ class GFA_image:
         return catalog
 
     def catalog_sources(self):
-        print('Attempting to catalog sources in ' + self.extname +  
-              ' image')
 
         # tab is a culled and augmented list of sources including e.g.,
         # refined centroids and photometry

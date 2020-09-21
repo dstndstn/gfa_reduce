@@ -328,6 +328,8 @@ def add_metadata_columns(tab, bitmask):
 def get_source_list(image, bitmask, extname, ivar_adu, thresh=5,
                     max_cbox=31):
 
+    print('Attempting to catalog sources in ' + extname + ' image')
+
     par = common.mask_bit_dict()
     
     image = djs_maskinterp.average_bilinear(image, (np.bitwise_and(bitmask, 1) != 0))
