@@ -20,6 +20,8 @@ def recalib_astrom(cat, fname_raw, mjd=None, h=None):
             h = fits.getheader(fname_raw, extname='GUIDER')
 
     gaia = gaia_cat_for_exp(h['SKYRA'], h['SKYDEC'], mjd=mjd)
+    # conserve memory
+    gaia = gaia[['ra', 'dec']] # only columns needed for pattern matching
     result = []
 
     arcmin_max = 6.0
