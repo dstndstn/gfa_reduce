@@ -4,6 +4,8 @@ import gfa_reduce.dark_current as dark_current
 import astropy.io.fits as fits
 import numpy as np
 import gfa_reduce.analysis.util as util
+import gfa_reduce.analysis.phot as phot
+from multiprocessing import Pool
 
 class GFA_exposure:
     """Object encapsulating the contents of a single GFA exposure"""
@@ -143,13 +145,43 @@ class GFA_exposure:
                       ' background sigma = ' + 
                       '{:.2f}'.format(im.empirical_bg_sigma) + ' ADU')
 
-    def all_source_catalogs(self):
+    def all_source_catalogs(self, mp=False):
         tables = dict(zip(self.images.keys(), len(self.images.keys())*[None]))
 
-        for extname, im in self.images.items():
-            if im is not None:
-                tables[extname] = im.catalog_sources()
+        if not mp:
+            for extname, im in self.images.items():
+                if im is not None:
+                    # tab is a culled and augmented list of sources including e.g.,
+                    # refined centroids and photometry
 
+                    # alldet is just the initial, raw list of all detections with
+                    # no culling applied
+
+                    tab, detmap, alldet, image = phot.get_source_list(im.image,
+                                                                      im.bitmask,
+                                                                      im.extname,
+                                                                      im.ivar_adu,
+                                                                      max_cbox=im.max_cbox)
+
+                    tables[extname] = im.ingest_cataloging_results(tab, detmap,
+                                                                   alldet, image)
+
+        else:
+            args = []
+            for extname, im in self.images.items():
+                if im is not None:
+                    args.append((im.image, im.bitmask, im.extname, im.ivar_adu, im.max_cbox))
+
+            print('Running source cataloging for all guide cameras in parallel...')
+            nproc = len(args)
+            assert(nproc <= 6)
+            p = Pool(nproc)
+            results = p.starmap(phot.get_source_list, args)
+
+            for i, result in enumerate(results):
+                extname = args[i][2] # hopefully this indexing doesn't change...
+                tables[extname] = self.images[extname].ingest_cataloging_results(*result)
+            
         # do I also want to store the tables as an attribute belonging to
         # this exposure object?
         return tables

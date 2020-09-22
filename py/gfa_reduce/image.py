@@ -2,7 +2,7 @@ import gfa_reduce.common as common
 import gfa_reduce.imred.dq_mask as dq_mask
 import gfa_reduce.analysis.sky as sky
 import gfa_reduce.analysis.segment as segment
-import gfa_reduce.analysis.phot as phot
+import gfa_reduce.analysis.phot as phot # may not be needed anymore?
 from gfa_reduce.gfa_wcs import nominal_tan_wcs
 import numpy as np
 import astropy.io.fits as fits
@@ -459,7 +459,12 @@ class GFA_image:
 
         return catalog
 
-    def ingest_cataloging_results(self, tab, detmap, alldet):
+    def ingest_cataloging_results(self, tab, detmap, alldet, image):
+
+        # image gets modified slightly during source detection stage
+        # specifically via djs_maskinterp attempting to interpolate
+        # over bad pixels
+        self.image = image
 
         # always store alldet since it shouldn't be consuming any
         # appreciable amount of memory
@@ -490,21 +495,6 @@ class GFA_image:
 
         util.add_ampname_to_catalog(tab)
         util.sanity_check_catalog(tab)
-        return tab
-
-    def catalog_sources(self):
-
-        # tab is a culled and augmented list of sources including e.g.,
-        # refined centroids and photometry
-
-        # alldet is just the initial, raw list of all detections with
-        # no culling applied
-        tab, detmap, alldet = phot.get_source_list(self.image, self.bitmask,
-                                                   self.extname, self.ivar_adu,
-                                                   max_cbox=self.max_cbox)
-
-        tab = self.ingest_cataloging_results(tab, detmap, alldet)
-
         return tab
 
     def initialize_wcs(self):

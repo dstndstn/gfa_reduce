@@ -325,8 +325,7 @@ def add_metadata_columns(tab, bitmask):
 
     tab['dq_flags'] = bitmask[iys, ixs].astype('uint8')
 
-def get_source_list(image, bitmask, extname, ivar_adu, thresh=5,
-                    max_cbox=31):
+def get_source_list(image, bitmask, extname, ivar_adu, max_cbox=31, thresh=5):
 
     print('Attempting to catalog sources in ' + extname + ' image')
 
@@ -362,4 +361,7 @@ def get_source_list(image, bitmask, extname, ivar_adu, thresh=5,
 
     do_aper_phot(image, tab, extname, ivar_adu)
 
-    return tab, detsn, all_detections
+    # add 'image' to set of outputs since it gets modified
+    # and this modification won't persist into the GFA_image object
+    # when this is being run via multiprocessing
+    return tab, detsn, all_detections, image

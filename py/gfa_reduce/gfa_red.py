@@ -86,7 +86,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
     par = common.gfa_misc_params()
 
     if not no_cataloging:
-        catalogs = exp.all_source_catalogs()
+        catalogs = exp.all_source_catalogs(mp=multiproc)
 
         for extname, cat in catalogs.items():
             if cat is not None:
