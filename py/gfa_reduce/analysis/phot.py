@@ -105,6 +105,7 @@ def detect_sources(detsn, thresh):
     return slices
 
 def aper_phot_unc_map(ivar):
+
     regfac = 0.01
     return np.power(ivar + (ivar == 0)*regfac*np.mean(ivar), -0.5)
 
@@ -122,9 +123,12 @@ def aper_rad_pix(extname):
 
     return rad_pix
 
-def do_aper_phot(data, catalog, extname, ivar_adu):
+def do_aper_phot(data, catalog, extname, ivar_adu, sig_adu=None):
     # catalog should be the catalog with refined centroids 
     # for **one GFA camera**
+
+    if sig_adu is None:
+        sig_adu = aper_phot_unc_map(ivar_adu)
 
     print('Attempting to do aperture photometry')
     positions = list(zip(catalog['xcentroid'], catalog['ycentroid']))
@@ -160,7 +164,7 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
 
     bkg_median = np.array(bkg_median)
     phot = aperture_photometry(data, apertures, 
-                               error=aper_phot_unc_map(ivar_adu))
+                               error=sig_adu)
 
     for i, aperture in enumerate(apertures):
         aper_bkg_tot = bkg_median*_get_area_from_ap(aperture)
@@ -172,7 +176,7 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
     ###
     del phot
     phot = aperture_photometry(data, apertures_ell, 
-                               error=aper_phot_unc_map(ivar_adu))
+                               error=sig_adu)
     for i, aperture in enumerate(apertures_ell):
         aper_bkg_tot = bkg_median*_get_area_from_ap(aperture)
         catalog['aper_ell_sum_bkgsub_' + str(i)] = phot['aperture_sum_' + str(i)] - aper_bkg_tot
@@ -184,7 +188,7 @@ def do_aper_phot(data, catalog, extname, ivar_adu):
     ###
     del phot
     phot = aperture_photometry(data, aper_fib, 
-                               error=aper_phot_unc_map(ivar_adu))
+                               error=sig_adu)
 
     aper_bkg_tot = bkg_median*_get_area_from_ap(aper_fib)
     catalog['aper_sum_bkgsub_fib'] = phot['aperture_sum'] - aper_bkg_tot
@@ -205,10 +209,14 @@ def get_nominal_fwhm_pix(extname):
 
     return nominal_fwhm_pix
 
-def refine_centroids(tab, image, bitmask, ivar_adu):
+def refine_centroids(tab, image, bitmask, ivar_adu, sig_adu=None):
     # input table tab gets augmented with additional columns
 
     print('Attempting to refine initial centroids')
+
+    if sig_adu is None:
+        aper_phot_unc_map(ivar_adu)
+
     # could scale this based on the typical size of the slices
     boxsize = 11
 
@@ -229,8 +237,6 @@ def refine_centroids(tab, image, bitmask, ivar_adu):
 
     no_centroid_refinement = np.zeros(nobj, dtype=bool)
     centroid_refinement_fail = np.zeros(nobj, dtype=bool)
-
-    sig_adu = aper_phot_unc_map(ivar_adu)
 
     for i in range(nobj):
         ix_guess = int(round(tab[i]['xcen_detmap_fw']))
@@ -345,7 +351,9 @@ def get_source_list(image, bitmask, extname, ivar_adu, max_cbox=31, thresh=5):
 
     tab = copy.deepcopy(all_detections)
 
-    refine_centroids(tab, image, bitmask, ivar_adu)
+    # only compute this 'sigma map' once to avoid wasted processing time
+    sig_adu_map = aper_phot_unc_map(ivar_adu)
+    refine_centroids(tab, image, bitmask, ivar_adu, sig_adu=sig_adu_map)
 
     # attempt to remove hot pixels, think this is safe since i end up
     # rejecting (sig_major_pix <= 1) sources when computing
@@ -359,7 +367,7 @@ def get_source_list(image, bitmask, extname, ivar_adu, max_cbox=31, thresh=5):
     if len(tab) == 0:
         return None, detsn, all_detections
 
-    do_aper_phot(image, tab, extname, ivar_adu)
+    do_aper_phot(image, tab, extname, ivar_adu, sig_adu=sig_adu_map)
 
     # add 'image' to set of outputs since it gets modified
     # and this modification won't persist into the GFA_image object
