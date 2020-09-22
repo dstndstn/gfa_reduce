@@ -145,7 +145,7 @@ class GFA_exposure:
                       ' background sigma = ' + 
                       '{:.2f}'.format(im.empirical_bg_sigma) + ' ADU')
 
-    def all_source_catalogs(self, mp=False):
+    def all_source_catalogs(self, mp=False, run_aper_phot=True):
         tables = dict(zip(self.images.keys(), len(self.images.keys())*[None]))
 
         if not mp:
@@ -161,7 +161,8 @@ class GFA_exposure:
                                                                       im.bitmask,
                                                                       im.extname,
                                                                       im.ivar_adu,
-                                                                      max_cbox=im.max_cbox)
+                                                                      max_cbox=im.max_cbox,
+                                                                      run_aper_phot=run_aper_phot)
 
                     tables[extname] = im.ingest_cataloging_results(tab, detmap,
                                                                    alldet, image)
@@ -170,7 +171,7 @@ class GFA_exposure:
             args = []
             for extname, im in self.images.items():
                 if im is not None:
-                    args.append((im.image, im.bitmask, im.extname, im.ivar_adu, im.max_cbox))
+                    args.append((im.image, im.bitmask, im.extname, im.ivar_adu, im.max_cbox, run_aper_phot))
 
             print('Running source cataloging for all guide cameras in parallel...')
             nproc = len(args)

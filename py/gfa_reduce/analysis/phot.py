@@ -331,7 +331,8 @@ def add_metadata_columns(tab, bitmask):
 
     tab['dq_flags'] = bitmask[iys, ixs].astype('uint8')
 
-def get_source_list(image, bitmask, extname, ivar_adu, max_cbox=31, thresh=5):
+def get_source_list(image, bitmask, extname, ivar_adu, max_cbox=31,
+                    run_aper_phot=True, thresh=5):
 
     print('Attempting to catalog sources in ' + extname + ' image')
 
@@ -367,7 +368,8 @@ def get_source_list(image, bitmask, extname, ivar_adu, max_cbox=31, thresh=5):
     if len(tab) == 0:
         return None, detsn, all_detections
 
-    do_aper_phot(image, tab, extname, ivar_adu, sig_adu=sig_adu_map)
+    if run_aper_phot:
+        do_aper_phot(image, tab, extname, ivar_adu, sig_adu=sig_adu_map)
 
     # add 'image' to set of outputs since it gets modified
     # and this modification won't persist into the GFA_image object

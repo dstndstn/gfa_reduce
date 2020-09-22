@@ -19,7 +19,7 @@ def acquire_field(fname_in):
     fm = _proc(fname_in, no_ps1_xmatch=True, skip_image_outputs=True,
                dont_write_invvar=True, skip_psf_models=True,
                dont_write_catalog=True, dont_write_ccds=True,
-               return_fieldmodel=True, multiproc=True)
+               return_fieldmodel=True, multiproc=True, skip_aper_phot=True)
 
     return fm
 
@@ -33,7 +33,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           write_detmap=False, write_full_detlist=False, max_cbox=31,
           fieldmodel=False, dont_write_catalog=False,
           dont_write_ccds=False, return_fieldmodel=False,
-          multiproc=False):
+          multiproc=False, skip_aper_phot=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -86,7 +86,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
     par = common.gfa_misc_params()
 
     if not no_cataloging:
-        catalogs = exp.all_source_catalogs(mp=multiproc)
+        catalogs = exp.all_source_catalogs(mp=multiproc,
+                                           run_aper_phot=(not skip_aper_phot))
 
         for extname, cat in catalogs.items():
             if cat is not None:
@@ -262,6 +263,9 @@ if __name__ == "__main__":
     parser.add_argument('--multiproc', default=False, action='store_true',
                         help="use multiprocessing to decrease wall time")
 
+    parser.add_argument('--skip_aper_phot', default=False, action='store_true',
+                        help="don't perform aperture photometry")
+
     args = parser.parse_args()
 
     fname_in = args.fname_in[0]
@@ -283,4 +287,4 @@ if __name__ == "__main__":
           max_cbox=args.max_cbox, fieldmodel=args.fieldmodel,
           dont_write_catalog=args.dont_write_catalog,
           dont_write_ccds=args.dont_write_ccds,
-          multiproc=args.multiproc)
+          multiproc=args.multiproc, skip_aper_phot=args.skip_aper_phot)
