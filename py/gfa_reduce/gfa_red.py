@@ -18,6 +18,7 @@ class ProcObj():
 def acquire_field(fname_in):
     fm = _proc(fname_in, no_ps1_xmatch=True, skip_image_outputs=True,
                dont_write_invvar=True, skip_psf_models=True,
+               skip_raw_imstats=True,
                dont_write_catalog=True, dont_write_ccds=True,
                return_fieldmodel=True, multiproc=True, skip_aper_phot=True)
 
