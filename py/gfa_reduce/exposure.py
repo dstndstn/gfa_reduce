@@ -59,8 +59,12 @@ class GFA_exposure:
                 self.images[extname].bias_subtracted = True
                 self.images[extname].calc_variance_e_squared()
 
-    def subtract_dark_current(self, do_dark_rescaling=True):
+    def subtract_dark_current(self, do_dark_rescaling=True, mp=False):
         print('Attempting to subtract dark current...')
+
+        if mp:
+            args = []
+
         for extname in self.images.keys():
             if self.images[extname] is not None:
                 
@@ -87,17 +91,32 @@ class GFA_exposure:
 
                 self.images[extname].t_c_for_dark = t_c
                 
-                
-                dark_image, dc_obj = dark_current.total_dark_image_adu(extname,
-                                                                       acttime, t_c,
-                                                                       self.images[extname].image,
-                                                                       do_dark_rescaling=do_dark_rescaling)
-                self.images[extname].image = self.images[extname].image - \
-                    dark_image
-                self.images[extname].dark_subtracted = True
-                self.images[extname].create_dq_mask(dark_image)
-                self.dark_current_objs[extname] = dc_obj
 
+                if not mp:
+                    dark_image, dc_obj = dark_current.total_dark_image_adu(extname,
+                                                                           acttime, t_c,
+                                                                           self.images[extname].image,
+                                                                           do_dark_rescaling=do_dark_rescaling)
+
+                    self.images[extname].ingest_dark_current_results(dark_image)
+                    self.dark_current_objs[extname] = dc_obj
+                else:
+                    args.append((extname, acttime, t_c, self.images[extname].image, do_dark_rescaling))
+
+        if mp:
+            print('Computing dark scalings for all guide cameras in parallel...')
+            nproc = len(args)
+            assert(nproc <= 6)
+            p = Pool(nproc)
+            results = p.starmap(dark_current.total_dark_image_adu, args)
+
+            for i, result in enumerate(results):
+                extname = args[i][0]
+                self.images[extname].ingest_dark_current_results(result[0])
+                self.dark_current_objs[extname] = result[1]
+
+            del args, results
+                
     def apply_flatfield(self):
         print('Attempting to apply flat field...')
         for extname in self.images.keys():
@@ -109,9 +128,9 @@ class GFA_exposure:
                 self.images[extname].calc_variance_adu(flatfield)
                 self.images[extname].update_bitmask_flat(flatfield)
 
-    def calibrate_pixels(self, do_dark_rescaling=True):
+    def calibrate_pixels(self, do_dark_rescaling=True, mp=False):
         self.subtract_bias()
-        self.subtract_dark_current(do_dark_rescaling=do_dark_rescaling)
+        self.subtract_dark_current(do_dark_rescaling=do_dark_rescaling, mp=mp)
         self.apply_flatfield()
         self.pixels_calibrated = True
 

@@ -78,7 +78,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
     exp_mjd = exp.exp_header['MJD-OBS']
     
     # go from "raw" images to "reduced" images
-    exp.calibrate_pixels(do_dark_rescaling=(not no_dark_rescaling))
+    exp.calibrate_pixels(do_dark_rescaling=(not no_dark_rescaling),
+                         mp=multiproc)
 
     # calculate sky brightness in mag per sq asec
     exp.estimate_all_sky_mags(careful_sky=careful_sky)

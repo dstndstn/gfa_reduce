@@ -497,6 +497,11 @@ class GFA_image:
         util.sanity_check_catalog(tab)
         return tab
 
+    def ingest_dark_current_results(self, dark_image):
+        self.image = self.image - dark_image
+        self.dark_subtracted = True
+        self.create_dq_mask(dark_image)
+
     def initialize_wcs(self):
         telra = self.header['SKYRA']
         teldec = self.header['SKYDEC']
