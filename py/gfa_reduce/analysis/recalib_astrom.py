@@ -49,5 +49,9 @@ def recalib_astrom(cat, fname_raw, mjd=None, h=None, mp=False):
     dt = time.time()-t0
 
     print('time taken to astrometrically recalibrate all cameras:  ', dt, ' seconds')
-        
+
+    for r in result:
+        if r is not None:
+            print(r['extname'], 'CONTRAST = ', r['contrast'])
+
     return result
