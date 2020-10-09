@@ -130,3 +130,7 @@ such `gfa_reduce` invocations print out various logging information, such as war
       --skip_aper_phot      don't perform aperture photometry
       --det_sn_thresh DET_SN_THRESH
                             source detection significance threshold
+      --skip_flatfield      skip flatfielding during pixel-level detrending
+      --search_rad_arcmin SEARCH_RAD_ARCMIN
+                            astrometric pattern match search radius (arcmin)
+

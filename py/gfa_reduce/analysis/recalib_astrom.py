@@ -8,7 +8,8 @@ import time
 # an initial guess (SKYRA, SKYDEC) of the field of view center
 # mainly going to be a wrapper for asterisms.pattern_match
 
-def recalib_astrom(cat, fname_raw, mjd=None, h=None, mp=False):
+def recalib_astrom(cat, fname_raw, mjd=None, h=None, mp=False,
+                   arcmin_max=6.0):
     # cat should be the catalog for an entire exposure
 
     if cat is None:
@@ -26,7 +27,6 @@ def recalib_astrom(cat, fname_raw, mjd=None, h=None, mp=False):
     # conserve memory
     gaia = gaia[['ra', 'dec']] # only columns needed for pattern matching
 
-    arcmin_max = 6.0
     print('astrometry search using ' + '{:.1f}'.format(arcmin_max) + ' arcminute radius')
     args = []
     for extname in extnames:

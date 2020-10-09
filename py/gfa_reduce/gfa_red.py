@@ -21,7 +21,8 @@ def acquire_field(fname_in):
                skip_raw_imstats=True,
                dont_write_catalog=True, dont_write_ccds=True,
                return_fieldmodel=True, multiproc=True,
-               skip_aper_phot=True, det_sn_thresh=10.0, apply_flatfield=False)
+               skip_aper_phot=True, det_sn_thresh=10.0, apply_flatfield=False,
+               search_rad_arcmin=1.5)
 
     return fm
 
@@ -36,7 +37,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           fieldmodel=False, dont_write_catalog=False,
           dont_write_ccds=False, return_fieldmodel=False,
           multiproc=False, skip_aper_phot=False,
-          det_sn_thresh=5.0, apply_flatfield=True):
+          det_sn_thresh=5.0, apply_flatfield=True,
+          search_rad_arcmin=6.0):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -109,7 +111,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
 
             astr = wcs.recalib_astrom(catalog, fname_in,
                                       mjd=(None if no_pm_pi_corr else exp_mjd),
-                                      h=exp.exp_header, mp=multiproc)
+                                      h=exp.exp_header, mp=multiproc,
+                                      arcmin_max=search_rad_arcmin)
             exp.update_wcs(astr)
             exp.recompute_catalog_radec(catalog)
 
@@ -279,6 +282,9 @@ if __name__ == "__main__":
     parser.add_argument('--skip_flatfield', default=False, action='store_true',
                         help="skip flatfielding during pixel-level detrending")
 
+    parser.add_argument('--search_rad_arcmin', default=6.0, type=float,
+                        help="astrometric pattern match search radius (arcmin)")
+
     args = parser.parse_args()
 
     fname_in = args.fname_in[0]
@@ -302,4 +308,5 @@ if __name__ == "__main__":
           dont_write_ccds=args.dont_write_ccds,
           multiproc=args.multiproc, skip_aper_phot=args.skip_aper_phot,
           det_sn_thresh=args.det_sn_thresh,
-          apply_flatfield=(not args.skip_flatfield))
+          apply_flatfield=(not args.skip_flatfield),
+          search_rad_arcmin=args.search_rad_arcmin)

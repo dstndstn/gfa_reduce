@@ -806,6 +806,10 @@ def write_full_detlists(exp, outdir, fname_in, cube_index=None):
 def write_dm_fieldmodel(fm, outdir, fname_in, cube_index=None):
     # fm should be a desimeter fieldmodel object
 
+    if fm is None:
+        print('No desimeter field model JSON file will be written')
+        return
+
     assert(os.path.exists(outdir))
 
     outname = os.path.join(outdir, os.path.basename(fname_in))
