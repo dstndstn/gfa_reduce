@@ -15,14 +15,15 @@ class ProcObj():
         self.fname_in = fname_in
         self.gitrev = gitrev
 
-def acquire_field(fname_in):
+def acquire_field(fname_in, gfa_targets=None):
+
     fm = _proc(fname_in=fname_in, no_ps1_xmatch=True, skip_image_outputs=True,
                dont_write_invvar=True, skip_psf_models=True,
                skip_raw_imstats=True,
                dont_write_catalog=True, dont_write_ccds=True,
                return_fieldmodel=True, multiproc=True,
                skip_aper_phot=True, det_sn_thresh=10.0, apply_flatfield=False,
-               search_rad_arcmin=1.5, do_sky_mag=False)
+               search_rad_arcmin=1.5, do_sky_mag=False, gfa_targets=gfa_targets)
 
     return fm
 
@@ -39,7 +40,7 @@ def _proc(fname_in=None, outdir=None, careful_sky=False,
           dont_write_ccds=False, return_fieldmodel=False,
           multiproc=False, skip_aper_phot=False,
           det_sn_thresh=5.0, apply_flatfield=True,
-          search_rad_arcmin=6.0, do_sky_mag=True):
+          search_rad_arcmin=6.0, do_sky_mag=True, gfa_targets=None):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -114,7 +115,8 @@ def _proc(fname_in=None, outdir=None, careful_sky=False,
             astr = wcs.recalib_astrom(catalog, fname_in,
                                       mjd=(None if no_pm_pi_corr else exp_mjd),
                                       h=exp.exp_header, mp=multiproc,
-                                      arcmin_max=search_rad_arcmin)
+                                      arcmin_max=search_rad_arcmin,
+                                      gfa_targets=gfa_targets)
             exp.update_wcs(astr)
             exp.recompute_catalog_radec(catalog)
 
