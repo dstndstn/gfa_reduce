@@ -370,6 +370,8 @@ def get_source_list(image, bitmask, extname, ivar_adu, max_cbox=31,
     if len(tab) == 0:
         return None, detsn, all_detections
 
+    tab['DETMAP_THRESH'] = thresh
+
     if run_aper_phot:
         do_aper_phot(image, tab, extname, ivar_adu, sig_adu=sig_adu_map)
 
