@@ -132,7 +132,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
 
     # make this work correctly in the case that --no_cataloging is set
     ccds = io.assemble_ccds_table(imstats, catalog, exp, outdir, proc_obj,
-                                  cube_index=cube_index, ps1=ps1)
+                                  cube_index=cube_index, ps1=ps1,
+                                  det_sn_thresh=det_sn_thresh)
     
     if write_outputs:
 

@@ -591,7 +591,7 @@ def dark_current_ccds_table(tab, exp):
     tab['dark_rescale_converged'] = dark_rescale_converged
     
 def assemble_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
-                        ps1=None):
+                        ps1=None, det_sn_thresh=5.0):
 
     nrows = len(tab)
     
@@ -705,6 +705,8 @@ def assemble_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
     tab['zp_adu_per_s'] = [exp.images[extname].compute_zeropoint(ps1) for extname in tab['camera']]
 
     tab['transparency'] = [util.transparency_from_zeropoint(tab[i]['zp_adu_per_s'], tab[i]['airmass_per_gfa'], tab[i]['camera']) for i in range(len(tab))]
+
+    tab['det_sn_thresh'] = det_sn_thresh
     
     prescan_overscan_ccds_table(tab, exp)
     high_level_ccds_metrics(tab, catalog, exp)
