@@ -591,20 +591,23 @@ def dark_current_ccds_table(tab, exp):
     tab['dark_rescale_converged'] = dark_rescale_converged
     
 def assemble_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
-                        ps1=None, det_sn_thresh=5.0):
+                        ps1=None, det_sn_thresh=5.0, sky_mags=True):
 
     nrows = len(tab)
-    
-    tab['sky_mag_ab'] = [exp.images[extname].sky_mag for extname in tab['camera']]
+
+    if sky_mags:
+        tab['sky_mag_ab'] = [exp.images[extname].sky_mag for extname in tab['camera']]
 
     amps = common.valid_amps_list()
-    sky_mag_ab_per_amp = np.zeros((nrows, len(amps)), dtype='float32') # 4 amps
-    for i, extname in enumerate(tab['camera']):
-        for j in range(len(amps)):
-            _mag = np.nan if exp.images[extname].sky_mag_per_amp is None else exp.images[extname].sky_mag_per_amp[j]
-            sky_mag_ab_per_amp[i, j] = _mag
 
-    tab['sky_mag_ab_per_amp'] = sky_mag_ab_per_amp
+    if sky_mags:
+        sky_mag_ab_per_amp = np.zeros((nrows, len(amps)), dtype='float32') # 4 amps
+        for i, extname in enumerate(tab['camera']):
+            for j in range(len(amps)):
+                _mag = np.nan if exp.images[extname].sky_mag_per_amp is None else exp.images[extname].sky_mag_per_amp[j]
+                sky_mag_ab_per_amp[i, j] = _mag
+
+        tab['sky_mag_ab_per_amp'] = sky_mag_ab_per_amp
     
     tab['petal_loc'] = np.array([common.gfa_extname_to_gfa_number(extname) for extname in tab['camera']], dtype='uint8')
 

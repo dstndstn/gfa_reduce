@@ -22,7 +22,7 @@ def acquire_field(fname_in):
                dont_write_catalog=True, dont_write_ccds=True,
                return_fieldmodel=True, multiproc=True,
                skip_aper_phot=True, det_sn_thresh=10.0, apply_flatfield=False,
-               search_rad_arcmin=1.5)
+               search_rad_arcmin=1.5, do_sky_mag=False)
 
     return fm
 
@@ -38,7 +38,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           dont_write_ccds=False, return_fieldmodel=False,
           multiproc=False, skip_aper_phot=False,
           det_sn_thresh=5.0, apply_flatfield=True,
-          search_rad_arcmin=6.0):
+          search_rad_arcmin=6.0, do_sky_mag=True):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -85,10 +85,11 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
     exp.calibrate_pixels(do_dark_rescaling=(not no_dark_rescaling),
                          mp=multiproc, do_apply_flatfield=apply_flatfield)
 
-    # calculate sky brightness in mag per sq asec
-    exp.estimate_all_sky_mags(careful_sky=careful_sky,
-                              flatfield_applied=apply_flatfield)
-    exp.estimate_all_sky_sigmas(careful_sky=careful_sky)
+    if do_sky_mag:
+        # calculate sky brightness in mag per sq asec
+        exp.estimate_all_sky_mags(careful_sky=careful_sky,
+                                  flatfield_applied=apply_flatfield)
+        exp.estimate_all_sky_sigmas(careful_sky=careful_sky)
 
     par = common.gfa_misc_params()
 
@@ -137,7 +138,8 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
     # make this work correctly in the case that --no_cataloging is set
     ccds = io.assemble_ccds_table(imstats, catalog, exp, outdir, proc_obj,
                                   cube_index=cube_index, ps1=ps1,
-                                  det_sn_thresh=det_sn_thresh)
+                                  det_sn_thresh=det_sn_thresh,
+                                  sky_mags=do_sky_mag)
     
     if write_outputs:
 
@@ -285,6 +287,9 @@ if __name__ == "__main__":
     parser.add_argument('--search_rad_arcmin', default=6.0, type=float,
                         help="astrometric pattern match search radius (arcmin)")
 
+    parser.add_argument('--skip_sky_mag', default=False, action='store_true',
+                        help="skip sky surface brightness estimation")
+
     args = parser.parse_args()
 
     fname_in = args.fname_in[0]
@@ -309,4 +314,5 @@ if __name__ == "__main__":
           multiproc=args.multiproc, skip_aper_phot=args.skip_aper_phot,
           det_sn_thresh=args.det_sn_thresh,
           apply_flatfield=(not args.skip_flatfield),
-          search_rad_arcmin=args.search_rad_arcmin)
+          search_rad_arcmin=args.search_rad_arcmin,
+          do_sky_mag=(not args.skip_sky_mag))
