@@ -16,6 +16,18 @@ class ProcObj():
         self.gitrev = gitrev
 
 def acquire_field(fname_in=None, gfa_targets=None, exp_data=None):
+    """Process acquisition image to obtain a global astrometric solution
+    Args:
+        fname_in    : input acquisition image filename
+        gfa_targets : FITS_rec table of relevant astrometric calibrators
+        exp_data    : HDUList encapsulating the acquisition image
+
+    Notes:
+        exactly one of fname_in and exp_data should be specified
+        if gfa_targets is not provided, then Gaia HEALPix chunk files are used
+
+    returns a desimeter fieldmodel object
+    """
 
     assert((fname_in is not None) ^ (exp_data is not None))
 
