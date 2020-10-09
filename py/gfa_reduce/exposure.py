@@ -262,3 +262,6 @@ class GFA_exposure:
             if image is None:
                 continue
             image.create_psf(catalog)
+
+    def assign_input_filename(self, fname_in):
+        self.fname_in = fname_in

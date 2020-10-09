@@ -93,20 +93,30 @@ def realtime_raw_read(fname, delay=2.0, max_attempts=5):
 
     return hdul
 
-def load_exposure(fname, verbose=True, realtime=False, cube_index=None,
-                  store_detmap=False, max_cbox=31):
-    assert(os.path.exists(fname))
+def load_exposure(fname=None, verbose=True, realtime=False, cube_index=None,
+                  store_detmap=False, max_cbox=31, hdul=None):
 
-    print('Attempting to load exposure : ' + fname)
+    # exactly one of fname, hdul should be specified
+    assert((fname is not None) ^ (hdul is not None))
 
-    par = common.gfa_misc_params()
+    from_file = fname is not None
 
-    if not realtime:
-        hdul = fits.open(fname)
+    if fname is not None:
+        assert(os.path.exists(fname))
+
+        print('Attempting to load exposure : ' + fname)
+
+        if not realtime:
+            hdul = fits.open(fname)
+        else:
+            hdul = realtime_raw_read(fname)
     else:
-        hdul = realtime_raw_read(fname)
+        # create a fake file name
+        fname = 'gfa-' + str(hdul[0].header['EXPID']) + '.3.fits'
 
     exp_header = None
+
+    par = common.gfa_misc_params()
 
     is_image_hdu = np.zeros(len(hdul), dtype=bool)
     for i, hdu in enumerate(hdul):
@@ -160,6 +170,10 @@ def load_exposure(fname, verbose=True, realtime=False, cube_index=None,
                        max_cbox=max_cbox)
 
     exp.set_bintable_rows()
+
+    # fake file name
+    if not from_file:
+        exp.assign_input_filename(fname)
     
     print('Successfully loaded exposure : ' + fname)
     print('Exposure has ' + str(exp.num_images_populated()) + 

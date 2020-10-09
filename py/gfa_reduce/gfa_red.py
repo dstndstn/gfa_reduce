@@ -15,7 +15,9 @@ class ProcObj():
         self.fname_in = fname_in
         self.gitrev = gitrev
 
-def acquire_field(fname_in, gfa_targets=None):
+def acquire_field(fname_in=None, gfa_targets=None, exp_data=None):
+
+    assert((fname_in is not None) ^ (exp_data is not None))
 
     fm = _proc(fname_in=fname_in, no_ps1_xmatch=True, skip_image_outputs=True,
                dont_write_invvar=True, skip_psf_models=True,
@@ -23,7 +25,8 @@ def acquire_field(fname_in, gfa_targets=None):
                dont_write_catalog=True, dont_write_ccds=True,
                return_fieldmodel=True, multiproc=True,
                skip_aper_phot=True, det_sn_thresh=10.0, apply_flatfield=False,
-               search_rad_arcmin=1.5, do_sky_mag=False, gfa_targets=gfa_targets)
+               search_rad_arcmin=1.5, do_sky_mag=False,
+               gfa_targets=gfa_targets, exp_data=exp_data)
 
     return fm
 
@@ -40,7 +43,8 @@ def _proc(fname_in=None, outdir=None, careful_sky=False,
           dont_write_ccds=False, return_fieldmodel=False,
           multiproc=False, skip_aper_phot=False,
           det_sn_thresh=5.0, apply_flatfield=True,
-          search_rad_arcmin=6.0, do_sky_mag=True, gfa_targets=None):
+          search_rad_arcmin=6.0, do_sky_mag=True, gfa_targets=None,
+          exp_data=None):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -54,7 +58,11 @@ def _proc(fname_in=None, outdir=None, careful_sky=False,
     
     write_outputs = (outdir is not None)
 
-    assert(os.path.exists(fname_in))
+    # one (but not both) of fname_in and exp_data should be specified
+    assert((fname_in is not None) ^ (exp_data is not None))
+
+    if fname_in is not None:
+        assert(os.path.exists(fname_in))
 
     gitrev = io.retrieve_git_rev()
 
@@ -65,15 +73,22 @@ def _proc(fname_in=None, outdir=None, careful_sky=False,
         io.check_image_level_outputs_exist(outdir, fname_in, gzip=True,
                                            cube_index=cube_index)
 
-    exp = io.load_exposure(fname_in, cube_index=cube_index, realtime=realtime,
-                           store_detmap=write_detmap, max_cbox=max_cbox)
+    exp = io.load_exposure(fname=fname_in, cube_index=cube_index,
+                           realtime=realtime,
+                           store_detmap=write_detmap, max_cbox=max_cbox,
+                           hdul=exp_data)
 
     # check for simulated data
     if (exp is None) or util.has_wrong_dimensions(exp):
         # point is to not crash, for sake of real time reductions
         print('EXITING: exposure may be a simulation or contain only focus camera images?!')
         return
-    
+
+    if exp_data is not None:
+        fname_in = exp.fname_in # fake file name
+
+    del exp_data
+
     print('Attempting to compute basic statistics of raw pixel data')
 
     imstats = io.gather_pixel_stats(exp, skip=skip_raw_imstats)
