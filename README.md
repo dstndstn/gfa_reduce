@@ -122,3 +122,11 @@ such `gfa_reduce` invocations print out various logging information, such as war
       --write_psf_cubes     write image cubes of sources used to build PSF models
       --write_detmap        write detection map
       --write_full_detlist  write out the initial, full list of detections
+      --max_cbox MAX_CBOX   maximum centroiding box size (pixels)
+      --fieldmodel          fit and write desimeter field model
+      --dont_write_catalog  don't write source catalog
+      --dont_write_ccds     don't write CCDs table
+      --multiproc           use multiprocessing to decrease wall time
+      --skip_aper_phot      don't perform aperture photometry
+      --det_sn_thresh DET_SN_THRESH
+                            source detection significance threshold

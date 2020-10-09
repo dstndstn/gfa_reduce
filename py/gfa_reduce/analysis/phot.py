@@ -336,6 +336,8 @@ def get_source_list(image, bitmask, extname, ivar_adu, max_cbox=31,
 
     print('Attempting to catalog sources in ' + extname + ' image')
 
+    assert((thresh >= 4) and (thresh <= 100))
+
     par = common.mask_bit_dict()
     
     image = djs_maskinterp.average_bilinear(image, (np.bitwise_and(bitmask, 1) != 0))
