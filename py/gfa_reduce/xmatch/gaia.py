@@ -155,14 +155,23 @@ def read_gaia_cat(ra, dec, ps1=False, mjd=None):
             
     return result
 
-def gaia_xmatch(ra, dec, ps1=False, mjd=None):
-    gaia_cat = read_gaia_cat(ra, dec, ps1=ps1, mjd=mjd)
+def gaia_xmatch(ra, dec, ps1=False, mjd=None, gfa_targets=None):
+
+    if gfa_targets is None:
+        gaia_cat = read_gaia_cat(ra, dec, ps1=ps1, mjd=mjd)
+    else:
+        radec = fits.ColDefs([fits.Column(name='ra', format='D',
+                                          array=gfa_targets['TARGET_RA']),
+                              fits.Column(name='dec', format='D',
+                                          array=gfa_targets['TARGET_DEC'])])
+
+        gaia_cat = (fits.BinTableHDU.from_columns(gfa_targets.columns + radec)).data
 
     if ps1 and (gaia_cat is None):
         return None
     
     assert(len(gaia_cat) > 0)
-    assert(type(gaia_cat).__name__ == 'ndarray')
+    # assert(type(gaia_cat).__name__ == 'ndarray') # not sure why this was here...
 
     catalog = SkyCoord(ra=ra*u.degree, dec=dec*u.degree)
     

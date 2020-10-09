@@ -133,7 +133,7 @@ def _proc(fname_in=None, outdir=None, careful_sky=False,
         if (not no_gaia_xmatch) and (par['gaia_env_var'] in os.environ):
             print('Attempting to identify Gaia cross-matches')
             catalog = io.append_gaia_crossmatches(catalog,
-                mjd=(None if no_pm_pi_corr else exp_mjd))
+                                                  mjd=(None if no_pm_pi_corr else exp_mjd), gfa_targets=gfa_targets)
     else:
         catalog = None
         ps1 = None

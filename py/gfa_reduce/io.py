@@ -392,13 +392,14 @@ def write_ps1_matches(ps1_matches, outdir, fname_in, cube_index=None):
 
     _atomic_write(ps1_matches, outname)
     
-def gather_gaia_crossmatches(catalog, mjd=None):
+def gather_gaia_crossmatches(catalog, mjd=None, gfa_targets=None):
 
     # handle case of exposure with no retained sources
     if catalog is None:
         return None
     
-    gaia_matches = gaia.gaia_xmatch(catalog['ra'], catalog['dec'], mjd=mjd)
+    gaia_matches = gaia.gaia_xmatch(catalog['ra'], catalog['dec'], mjd=mjd,
+                                    gfa_targets=gfa_targets)
 
     # avoid downstream conflict with 'ra', 'dec' columns that refer
     # to the world coordinates of the GFA detections
@@ -412,8 +413,9 @@ def gather_gaia_crossmatches(catalog, mjd=None):
         
     return gaia_matches
 
-def append_gaia_crossmatches(catalog, mjd=None):
-    gaia_matches = gather_gaia_crossmatches(catalog, mjd=mjd)
+def append_gaia_crossmatches(catalog, mjd=None, gfa_targets=None):
+    gaia_matches = gather_gaia_crossmatches(catalog, mjd=mjd,
+                                            gfa_targets=gfa_targets)
 
     # handle case of exposure with no retained sources
     if gaia_matches is None:
