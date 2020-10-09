@@ -133,4 +133,4 @@ such `gfa_reduce` invocations print out various logging information, such as war
       --skip_flatfield      skip flatfielding during pixel-level detrending
       --search_rad_arcmin SEARCH_RAD_ARCMIN
                             astrometric pattern match search radius (arcmin)
-
+      --skip_sky_mag        skip sky surface brightness estimation

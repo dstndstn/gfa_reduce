@@ -16,7 +16,7 @@ class ProcObj():
         self.gitrev = gitrev
 
 def acquire_field(fname_in):
-    fm = _proc(fname_in, no_ps1_xmatch=True, skip_image_outputs=True,
+    fm = _proc(fname_in=fname_in, no_ps1_xmatch=True, skip_image_outputs=True,
                dont_write_invvar=True, skip_psf_models=True,
                skip_raw_imstats=True,
                dont_write_catalog=True, dont_write_ccds=True,
@@ -26,7 +26,8 @@ def acquire_field(fname_in):
 
     return fm
 
-def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
+def _proc(fname_in=None, outdir=None, careful_sky=False,
+          no_cataloging=False,
           no_gaia_xmatch=False, no_ps1_xmatch=False,
           cube_index=None, skip_image_outputs=False,
           realtime=False, no_dark_rescaling=False, 
@@ -294,7 +295,7 @@ if __name__ == "__main__":
 
     fname_in = args.fname_in[0]
 
-    _proc(fname_in, outdir=args.outdir, careful_sky=args.careful_sky,
+    _proc(fname_in=fname_in, outdir=args.outdir, careful_sky=args.careful_sky,
           no_cataloging=args.no_cataloging, no_gaia_xmatch=args.no_gaia_xmatch,
           no_ps1_xmatch=args.no_ps1_xmatch, cube_index=args.cube_index,
           skip_image_outputs=args.skip_image_outputs, realtime=args.realtime,
