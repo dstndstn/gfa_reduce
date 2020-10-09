@@ -125,13 +125,18 @@ class GFA_exposure:
                 self.images[extname].image = self.images[extname].image / \
                     flatfield
                 self.images[extname].flatfielded = True
-                self.images[extname].calc_variance_adu(flatfield)
+                self.images[extname].calc_variance_adu(flatfield=flatfield)
                 self.images[extname].update_bitmask_flat(flatfield)
 
-    def calibrate_pixels(self, do_dark_rescaling=True, mp=False):
+    def calibrate_pixels(self, do_dark_rescaling=True, mp=False, do_apply_flatfield=True):
         self.subtract_bias()
         self.subtract_dark_current(do_dark_rescaling=do_dark_rescaling, mp=mp)
-        self.apply_flatfield()
+        if do_apply_flatfield:
+            self.apply_flatfield()
+        else:
+            print('Skipping flatfielding')
+            for extname in self.images.keys():
+                self.images[extname].calc_variance_adu()
         self.pixels_calibrated = True
 
     def num_images_populated(self):
@@ -151,10 +156,11 @@ class GFA_exposure:
 
         return fits.HDUList(hdulist)
 
-    def estimate_all_sky_mags(self, careful_sky=False):
+    def estimate_all_sky_mags(self, careful_sky=False, flatfield_applied=True):
         for im in self.images.values():
             if im is not None:
-                im.estimate_sky_mag(careful_sky=careful_sky)
+                im.estimate_sky_mag(careful_sky=careful_sky,
+                                    flatfielding_on=flatfield_applied)
 
     def estimate_all_sky_sigmas(self, careful_sky=False):
         for im in self.images.values():

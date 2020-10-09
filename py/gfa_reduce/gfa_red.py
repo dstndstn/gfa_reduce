@@ -21,7 +21,7 @@ def acquire_field(fname_in):
                skip_raw_imstats=True,
                dont_write_catalog=True, dont_write_ccds=True,
                return_fieldmodel=True, multiproc=True,
-               skip_aper_phot=True, det_sn_thresh=10.0)
+               skip_aper_phot=True, det_sn_thresh=10.0, apply_flatfield=False)
 
     return fm
 
@@ -36,7 +36,7 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
           fieldmodel=False, dont_write_catalog=False,
           dont_write_ccds=False, return_fieldmodel=False,
           multiproc=False, skip_aper_phot=False,
-          det_sn_thresh=5.0):
+          det_sn_thresh=5.0, apply_flatfield=True):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -81,10 +81,11 @@ def _proc(fname_in, outdir=None, careful_sky=False, no_cataloging=False,
     
     # go from "raw" images to "reduced" images
     exp.calibrate_pixels(do_dark_rescaling=(not no_dark_rescaling),
-                         mp=multiproc)
+                         mp=multiproc, do_apply_flatfield=apply_flatfield)
 
     # calculate sky brightness in mag per sq asec
-    exp.estimate_all_sky_mags(careful_sky=careful_sky)
+    exp.estimate_all_sky_mags(careful_sky=careful_sky,
+                              flatfield_applied=apply_flatfield)
     exp.estimate_all_sky_sigmas(careful_sky=careful_sky)
 
     par = common.gfa_misc_params()
@@ -275,6 +276,9 @@ if __name__ == "__main__":
     parser.add_argument('--det_sn_thresh', default=5.0, type=float,
                         help="source detection significance threshold")
 
+    parser.add_argument('--skip_flatfield', default=False, action='store_true',
+                        help="skip flatfielding during pixel-level detrending")
+
     args = parser.parse_args()
 
     fname_in = args.fname_in[0]
@@ -297,4 +301,5 @@ if __name__ == "__main__":
           dont_write_catalog=args.dont_write_catalog,
           dont_write_ccds=args.dont_write_ccds,
           multiproc=args.multiproc, skip_aper_phot=args.skip_aper_phot,
-          det_sn_thresh=args.det_sn_thresh)
+          det_sn_thresh=args.det_sn_thresh,
+          apply_flatfield=(not args.skip_flatfield))

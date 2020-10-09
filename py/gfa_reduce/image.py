@@ -305,8 +305,7 @@ class GFA_image:
         assert(np.sum(var_e_sq <= 0) == 0)
         self.var_e_sq = var_e_sq
 
-    def calc_variance_adu(self, flatfield):
-        assert(self.flatfielded)
+    def calc_variance_adu(self, flatfield=None):
 
         gain = common.gfa_camera_gain(self.extname)
 
@@ -315,7 +314,8 @@ class GFA_image:
         del self.var_e_sq
         self.var_e_sq = None
 
-        variance_adu_sq *= (flatfield**2)
+        if flatfield is not None:
+            variance_adu_sq *= (flatfield**2)
 
         assert(np.sum(variance_adu_sq <= 0) == 0)
 
@@ -370,17 +370,21 @@ class GFA_image:
 
         return hdu
 
-    def are_pixels_calibrated(self):
-        return (self.bias_subtracted and self.dark_subtracted and 
-                self.flatfielded)
+    def are_pixels_calibrated(self, flatfielding_on=True):
+        if flatfielding_on:
+            result = (self.bias_subtracted and self.dark_subtracted and 
+                      self.flatfielded)
+        else:
+            result = (self.bias_subtracted and self.dark_subtracted)
 
+        return result
 
-    def estimate_sky_level(self, careful_sky=False):
+    def estimate_sky_level(self, careful_sky=False, flatfielding_on=True):
         # do something dumb for now, return to this later with something
         # more sophisticated, possibly involving segmentation
         # and/or finding the mode
 
-        assert(self.are_pixels_calibrated())
+        assert(self.are_pixels_calibrated(flatfielding_on=flatfielding_on))
 
         if careful_sky:
             if self.segmap is None:
@@ -422,13 +426,14 @@ class GFA_image:
         if self.empirical_bg_sigma is None:
             self.empirical_bg_sigma = self.compute_empirical_bg_sigma(careful_sky=careful_sky)
 
-    def estimate_sky_mag(self, careful_sky=False):
+    def estimate_sky_mag(self, careful_sky=False, flatfielding_on=True):
         # calculate sky brightness in mag per sq asec
         # this is meant to be run on the reduced image in ADU
 
-        assert(self.are_pixels_calibrated())
+        assert(self.are_pixels_calibrated(flatfielding_on=flatfielding_on))
 
-        sky_adu_per_pixel = self.estimate_sky_level(careful_sky=careful_sky)
+        sky_adu_per_pixel = self.estimate_sky_level(careful_sky=careful_sky,
+                                                    flatfielding_on=flatfielding_on)
 
         acttime = self.time_s_for_dark
         
