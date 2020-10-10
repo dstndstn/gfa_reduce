@@ -395,9 +395,6 @@ def _test_shift():
     im = fits.getdata('gaussian.fits')
 
     result = _shift_stamp(im, 0.5, 0.0)
-
-    import fitsio
-    fitsio.write('gaussian_shifted_dx.fits', result)
     
 def _resize(arr, fac):
     assert(np.round(fac) == fac)
