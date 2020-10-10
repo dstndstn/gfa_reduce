@@ -36,7 +36,7 @@ def recalib_astrom(cat, fname_raw, mjd=None, h=None, mp=False,
     print('astrometry search using ' + '{:.1f}'.format(arcmin_max) + ' arcminute radius')
     args = []
     for extname in extnames:
-        _cat = cat[(cat['camera'] == extname) & (cat['sig_major_pix'] > 1.0) & (cat['min_edge_dist_pix'] > 5)] # 5 could use more tuning
+        _cat = cat[(cat['camera'] == extname) & cat['valid_astrom_calibrator']]
         if len(_cat) < 2:
             _cat = cat[cat['camera'] == extname]
         args.append((_cat, h['SKYRA'], h['SKYDEC'], extname, gaia, arcmin_max))

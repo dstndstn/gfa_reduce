@@ -330,6 +330,7 @@ def add_metadata_columns(tab, bitmask):
     iys = [int(min(max(np.round(t['ycentroid']), ymin), ymax)) for t in tab]
 
     tab['dq_flags'] = bitmask[iys, ixs].astype('uint8')
+    tab['valid_astrom_calibrator'] = ((tab['min_edge_dist_pix'] > 5) & (tab['sig_major_pix'] > 1.0)) # 5 could use more tuning
 
 def get_source_list(image, bitmask, extname, ivar_adu, max_cbox=31,
                     run_aper_phot=True, thresh=5):
