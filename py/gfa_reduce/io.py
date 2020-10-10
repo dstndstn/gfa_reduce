@@ -607,9 +607,17 @@ def dark_current_ccds_table(tab, exp):
     tab['dark_rescale_converged'] = dark_rescale_converged
     
 def assemble_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
-                        ps1=None, det_sn_thresh=5.0, sky_mags=True):
+                        ps1=None, det_sn_thresh=5.0, sky_mags=True,
+                        minimal=False):
 
     nrows = len(tab)
+
+    tab['extname'] = tab['camera']
+
+    tab['contrast'] = [exp.images[extname].header['CONTRAST'] for extname in tab['camera']]
+
+    if minimal:
+        return tab
 
     if sky_mags:
         tab['sky_mag_ab'] = [exp.images[extname].sky_mag for extname in tab['camera']]
@@ -669,10 +677,6 @@ def assemble_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
 
     tab['fname_raw'] = proc_obj.fname_in
     tab['gitrev']  = proc_obj.gitrev
-    
-    tab['extname'] = tab['camera']
-
-    tab['contrast'] = [exp.images[extname].header['CONTRAST'] for extname in tab['camera']]
 
     tab['fiber_fracflux'] = [(exp.images[extname].psf.fiber_fracflux if exp.images[extname].psf is not None else np.nan) for extname in tab['camera']]
 

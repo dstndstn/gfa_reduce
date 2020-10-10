@@ -38,7 +38,8 @@ def acquire_field(fname_in=None, gfa_targets=None, exp_data=None):
                return_fieldmodel=True, multiproc=True,
                skip_aper_phot=True, det_sn_thresh=10.0, apply_flatfield=False,
                search_rad_arcmin=1.5, do_sky_mag=False,
-               gfa_targets=gfa_targets, exp_data=exp_data)
+               gfa_targets=gfa_targets, exp_data=exp_data,
+               minimal_ccds_metadata=True)
 
     return fm
 
@@ -56,7 +57,7 @@ def _proc(fname_in=None, outdir=None, careful_sky=False,
           multiproc=False, skip_aper_phot=False,
           det_sn_thresh=5.0, apply_flatfield=True,
           search_rad_arcmin=6.0, do_sky_mag=True, gfa_targets=None,
-          exp_data=None):
+          exp_data=None, minimal_ccds_metadata=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -169,7 +170,8 @@ def _proc(fname_in=None, outdir=None, careful_sky=False,
     ccds = io.assemble_ccds_table(imstats, catalog, exp, outdir, proc_obj,
                                   cube_index=cube_index, ps1=ps1,
                                   det_sn_thresh=det_sn_thresh,
-                                  sky_mags=do_sky_mag)
+                                  sky_mags=do_sky_mag,
+                                  minimal=minimal_ccds_metadata)
     
     if write_outputs:
 
