@@ -3,6 +3,7 @@ import numpy as np
 from astropy import wcs
 import os
 import gfa_reduce.common as common
+import pickle
 
 def local_tan_wcs(telra, teldec, extname):
     wcs_big = nominal_tan_wcs(telra, teldec, extname)
@@ -32,7 +33,9 @@ def nominal_tan_wcs(telra, teldec, extname):
     fname = os.path.join(os.environ[par['meta_env_var']],
                          par['headers_dummy_filename'])
 
-    h = fits.getheader(fname, extname=extname)
+    templates = pickle.load(open(fname, 'rb'))
+
+    h = templates[extname]
 
     h['CRVAL1'] = telra
     h['CRVAL2'] = teldec
