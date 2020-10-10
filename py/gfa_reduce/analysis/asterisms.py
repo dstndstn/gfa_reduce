@@ -12,6 +12,7 @@ from scipy.ndimage import gaussian_filter
 from .center_contrast import center_contrast
 import gfa_reduce.common as common
 import copy
+from gfa_reduce.gfa_wcs import nominal_tan_wcs
 
 def downselected_star_sample(cat, n_desi_max):
     assert(len(np.unique(cat['camera'])) == 1)
@@ -116,16 +117,8 @@ def pattern_match(catalog, skyra, skydec, extname, gaia, arcmin_max):
         cat = downselected_star_sample(cat, n_desi_max)
 
     par = common.gfa_misc_params()
-    fname_wcs_templates = os.environ['GFA_REDUCE_META'] + '/' + par['headers_dummy_filename']
 
-    assert(os.path.exists(fname_wcs_templates))
-
-    h = fits.getheader(fname_wcs_templates, extname=extname)
-
-    assert(h['EXTNAME'] == extname)
-    
-    astrom = wcs.WCS(h)
-    astrom.wcs.crval = [racen, deccen]
+    astrom = nominal_tan_wcs(racen, deccen, extname)
 
     x_gaia_guess, y_gaia_guess = astrom.wcs_world2pix(gaia['ra'], gaia['dec'],
                                                       0)
