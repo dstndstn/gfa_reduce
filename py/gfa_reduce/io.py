@@ -340,6 +340,8 @@ def write_exposure_source_catalog(catalog, outdir, proc_obj, exp,
         mjd[catalog['camera'] == camera] = exp.images[camera].try_retrieve_meta_keyword('MJD-OBS', placeholder=0.0)
 
     catalog['mjd'] = mjd
+
+    catalog['valid_astrom_calibrator'] = catalog['valid_astrom_calibrator'].astype('uint8')
     
     hdul = []
     hdul.append(fits.PrimaryHDU())
