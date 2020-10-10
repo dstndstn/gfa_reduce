@@ -446,6 +446,7 @@ def append_gaia_crossmatches(catalog, mjd=None, gfa_targets=None):
 def gather_pixel_stats(exp, skip=False):
 
     if not skip:
+        print('Attempting to compute basic statistics of raw pixel data')
         t = None
         for extname, im in exp.images.items():
             if im is None:

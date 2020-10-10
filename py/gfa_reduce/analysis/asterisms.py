@@ -67,8 +67,6 @@ def pattern_match(catalog, skyra, skydec, extname, gaia, arcmin_max):
     # skyra, skydec are the initial guesses of the 
     # actual center of the field of view; these need to be within
     # arcmin_max of the true FOV center for this routine to succeed
-    
-    #assert(os.path.exists(fname_cat))
 
     # output needs to include, at a minimum:
     #     xshift_best
@@ -78,15 +76,6 @@ def pattern_match(catalog, skyra, skydec, extname, gaia, arcmin_max):
     # probably also want
     #     expid retrieved from the catalog table
 
-    #fname_reduced = fname_cat.replace('_catalog', '_reduced')
-
-    #assert(os.path.exists(fname_reduced))
-
-    #h = fits.getheader(fname_reduced, extname=extname)
-
-    #expid = h['EXPID']
-
-    #cat = fits.getdata(fname_cat)
     cat = copy.deepcopy(catalog)
  # should just entirely rename racen, deccen to skyr, skydec ...
     racen = skyra
@@ -133,7 +122,6 @@ def pattern_match(catalog, skyra, skydec, extname, gaia, arcmin_max):
         c = SkyCoord(cat[i]['ra']*u.deg, cat[i]['dec']*u.deg)
         dangle = c.separation(g if _g is None else _g)
         w = (np.where(dangle.arcminute < arcmin_max))[0]
-        print(len(w), len(dangle))
         if len(w) == 0:
             continue
 
@@ -153,11 +141,8 @@ def pattern_match(catalog, skyra, skydec, extname, gaia, arcmin_max):
             _g = g[keep]
         
     assert(len(dx_all) == len(dy_all))
-    #print(np.min(dy_all), np.max(dy_all))
 
     axlim = max(np.round(arcmin_max*60.0/0.214), 1000.0)
-
-    #print(axlim)
 
     dx = 1.0
     dy = 1.0
@@ -175,16 +160,11 @@ def pattern_match(catalog, skyra, skydec, extname, gaia, arcmin_max):
     
     counts_shape = counts.shape
     sidelen = counts_shape[0]
-    #plt.imshow(smth, cmap='gray_r')
-    #plt.show()
+
     indmax = np.argmax(smth)
 
     indx = (indmax // sidelen).astype(int)
     indy = (indmax % sidelen).astype(int)
-
-    #print(indmax, indx, indy, counts_shape, x_edges_left[indx],
-    #      y_edges_left[indy])
-    #print(x_edges_left[indx], y_edges_left[indy], ' ~~~~~~~~~~~~~~~~')
 
     xshift_best = x_edges_left[indx] + 0.5*dx
     yshift_best = y_edges_left[indy] + 0.5*dy
@@ -194,9 +174,6 @@ def pattern_match(catalog, skyra, skydec, extname, gaia, arcmin_max):
     
     d = np.sqrt(np.power(xcen_grid - xshift_best, 2) + np.power(ycen_grid - yshift_best, 2))
 
-    #fitsio.write('/global/cscratch1/sd/ameisner/smth.fits', smth)
-    #fitsio.write('/global/cscratch1/sd/ameisner/d.fits', d)
-    
     r_max = 4*4.7 # roughly 4 asec radius
 
     sind = np.argsort(np.ravel(smth))
@@ -206,19 +183,12 @@ def pattern_match(catalog, skyra, skydec, extname, gaia, arcmin_max):
     high = [(d < r_max) & ((smth == np.max(smth)) | (smth > val_90))]
 
     assert(np.sum(high) > 0)
-    
-    print(xshift_best, yshift_best)
 
     wt = np.sum(high*smth)
     xshift_best = np.sum(high*xcen_grid*smth)/wt
     yshift_best = np.sum(high*ycen_grid*smth)/wt
 
-    print(xshift_best, yshift_best)
     contrast = center_contrast(smth)
-
-
-    #print(xcen_grid.shape)
-    #print(counts.shape, smth.shape)
 
     result = {'xshift_best': xshift_best,
               'yshift_best': yshift_best,

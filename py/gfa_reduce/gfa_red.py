@@ -102,8 +102,6 @@ def _proc(fname_in=None, outdir=None, careful_sky=False,
 
     del exp_data
 
-    print('Attempting to compute basic statistics of raw pixel data')
-
     imstats = io.gather_pixel_stats(exp, skip=skip_raw_imstats)
 
     # create data quality bitmasks
