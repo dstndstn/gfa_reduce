@@ -52,6 +52,13 @@ def recalib_astrom(cat, fname_raw, mjd=None, h=None, mp=False,
         assert(nproc <= 6)
         p = Pool(nproc)
         result = p.starmap(pattern_match, args)
+
+    det_ids_used = set(np.concatenate([r['det_ids_used'] for r in result]))
+    used_astrom_calibrator = np.array([(d in det_ids_used) for d in cat['det_id']])
+    used_astrom_calibrator = used_astrom_calibrator.astype('uint8')
+
+    cat['used_astrom_calibrator'] = used_astrom_calibrator
+
     dt = time.time()-t0
 
     print('time taken to astrometrically recalibrate all cameras:  ', dt, ' seconds')

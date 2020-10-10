@@ -194,6 +194,7 @@ def pattern_match(catalog, skyra, skydec, extname, gaia, arcmin_max):
               'yshift_best': yshift_best,
               'contrast': contrast,
               'extname': extname,
-              'astr_guess': astrom}
+              'astr_guess': astrom,
+              'det_ids_used': np.array(cat['det_id'])}
 
     return result
