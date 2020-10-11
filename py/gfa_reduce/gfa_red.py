@@ -39,7 +39,7 @@ def acquire_field(fname_in=None, gfa_targets=None, exp_data=None):
                skip_aper_phot=True, det_sn_thresh=10.0, apply_flatfield=False,
                search_rad_arcmin=1.5, do_sky_mag=False,
                gfa_targets=gfa_targets, exp_data=exp_data,
-               minimal_ccds_metadata=True)
+               minimal_ccds_metadata=True, skip_2d_gaussians=True)
 
     return fm
 
@@ -57,7 +57,7 @@ def _proc(fname_in=None, outdir=None, careful_sky=False,
           multiproc=False, skip_aper_phot=False,
           det_sn_thresh=5.0, apply_flatfield=True,
           search_rad_arcmin=6.0, do_sky_mag=True, gfa_targets=None,
-          exp_data=None, minimal_ccds_metadata=False):
+          exp_data=None, minimal_ccds_metadata=False, skip_2d_gaussians=False):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -124,7 +124,8 @@ def _proc(fname_in=None, outdir=None, careful_sky=False,
     if not no_cataloging:
         catalogs = exp.all_source_catalogs(mp=multiproc,
                                            run_aper_phot=(not skip_aper_phot),
-                                           det_sn_thresh=det_sn_thresh)
+                                           det_sn_thresh=det_sn_thresh,
+                                           skip_2dg=skip_2d_gaussians)
 
         for extname, cat in catalogs.items():
             if cat is not None:

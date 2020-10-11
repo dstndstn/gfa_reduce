@@ -17,17 +17,21 @@ from gfa_reduce.gfa_wcs import nominal_tan_wcs
 def downselected_star_sample(cat, n_desi_max):
     assert(len(np.unique(cat['camera'])) == 1)
 
-    try:
+    if 'DQ_FLAGS' in cat.colnames:
         _cat = cat[cat['DQ_FLAGS'] == 0]
-    except:
+    else:
         _cat = cat[cat['dq_flags'] == 0]
 
-    try:
-        flux = _cat['APER_SUM_BKGSUB_3']
-    except:
-        flux = _cat['aper_sum_bkgsub_3']
+    if 'APER_SUM_BKGSUB_3' in cat.colnames:
+        brightness = _cat['APER_SUM_BKGSUB_3']
+    elif 'aper_sum_bkgsub_3' in cat.colnames:
+        brightness = _cat['aper_sum_bkgsub_3']
+    elif 'DETMAP_PEAK' in cat.colnames:
+        brightness = _cat['DETMAP_PEAK']
+    else:
+        brightness = _cat['detmap_peak']
     
-    sind = np.argsort(-1.0*flux)
+    sind = np.argsort(-1.0*brightness)
     
     n = len(sind)
 

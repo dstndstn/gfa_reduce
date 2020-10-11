@@ -209,10 +209,20 @@ def get_nominal_fwhm_pix(extname):
 
     return nominal_fwhm_pix
 
-def refine_centroids(tab, image, bitmask, ivar_adu, sig_adu=None):
+def refine_centroids(tab, image, bitmask, ivar_adu, sig_adu=None,
+                     skip_2dg=False):
     # input table tab gets augmented with additional columns
 
     print('Attempting to refine initial centroids')
+
+    # this is for field acquisition mode
+    if skip_2dg:
+        print('Skipping 2D Gaussian source fitting')
+        tab['xcentroid'] = tab['xcen_detmap_fw']
+        tab['ycentroid'] = tab['ycen_detmap_fw']
+        tab['sig_major_pix'] = 5.0 # HACK !!!
+        tab['sig_minor_pix'] = 5.0 # HACK !!!
+        return
 
     if sig_adu is None:
         aper_phot_unc_map(ivar_adu)
@@ -333,7 +343,7 @@ def add_metadata_columns(tab, bitmask):
     tab['valid_astrom_calibrator'] = ((tab['min_edge_dist_pix'] > 5) & (tab['sig_major_pix'] > 1.0)) # 5 could use more tuning
 
 def get_source_list(image, bitmask, extname, ivar_adu, max_cbox=31,
-                    run_aper_phot=True, thresh=5):
+                    run_aper_phot=True, thresh=5, skip_2dg=False):
 
     print('Attempting to catalog sources in ' + extname + ' image')
 
@@ -357,7 +367,8 @@ def get_source_list(image, bitmask, extname, ivar_adu, max_cbox=31,
 
     # only compute this 'sigma map' once to avoid wasted processing time
     sig_adu_map = aper_phot_unc_map(ivar_adu)
-    refine_centroids(tab, image, bitmask, ivar_adu, sig_adu=sig_adu_map)
+    refine_centroids(tab, image, bitmask, ivar_adu, sig_adu=sig_adu_map,
+                     skip_2dg=skip_2dg)
 
     # attempt to remove hot pixels, think this is safe since i end up
     # rejecting (sig_major_pix <= 1) sources when computing
