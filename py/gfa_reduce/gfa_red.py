@@ -139,6 +139,9 @@ def _proc(fname_in=None, outdir=None, careful_sky=False,
             # run astrometric recalibration
             print('Attempting astrometric recalibration relative to Gaia DR2')
 
+            if gfa_targets is not None:
+                util.pm_pi_corr_fiberassign(gfa_targets, exp_mjd)
+
             astr = wcs.recalib_astrom(catalog, fname_in,
                                       mjd=(None if no_pm_pi_corr else exp_mjd),
                                       h=exp.exp_header, mp=multiproc,

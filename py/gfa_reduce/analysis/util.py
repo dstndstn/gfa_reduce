@@ -7,6 +7,7 @@ from astropy import units as u
 from scipy.ndimage.interpolation import shift
 import astropy.io.fits as fits
 from scipy.optimize import minimize
+import gfa_reduce.xmatch.gaia as gaia
 
 def use_for_fwhm_meas(tab, bad_amps=None, snr_thresh=20,
                       no_sig_major_cut=False):
@@ -718,3 +719,29 @@ def _get_ha(ra_deg, lst_deg, mountdec):
 
     return ha
         
+def pm_pi_corr_fiberassign(gfa_targets, mjd):
+    # correct fiberassing TARGET_RA, TARGET_DEC to
+    # relevant DESI observation epoch based on available parallaxes
+    # and proper motions
+
+    assert(mjd is not None)
+
+    # fiberassign files appear to use dummy values of 0 for parallax
+    # dra is in true angular mas not RA coordinate mas
+    dra_pi_mas, ddec_pi_mas = gaia.parallax_offsets(gfa_targets['TARGET_RA'],
+                                                    gfa_targets['TARGET_DEC'],
+                                                    mjd, gfa_targets['PARALLAX'])
+
+    assert(np.sum(gfa_targets['REF_EPOCH'] != 2015.5) == 0)
+
+    ref_mjd =  57205.625 # 2015.5
+
+    ra_corr = gfa_targets['TARGET_RA'] + np.array(dra_pi_mas)/(np.cos(gfa_targets['TARGET_DEC']/(180.0/np.pi))*3600.0*1000.0)
+    dec_corr = gfa_targets['TARGET_DEC'] + np.array(ddec_pi_mas)/(3600.0*1000.0)
+
+    ra_corr += ((mjd - ref_mjd)/365.25)*gfa_targets['PMRA']/(np.cos(gfa_targets['TARGET_DEC']/(180.0/np.pi))*3600.0*1000.0)
+
+    dec_corr += ((mjd - ref_mjd)/365.25)*gfa_targets['PMDEC']/(3600.0*1000.0)
+
+    gfa_targets['TARGET_RA'] = ra_corr
+    gfa_targets['TARGET_DEC'] = dec_corr
