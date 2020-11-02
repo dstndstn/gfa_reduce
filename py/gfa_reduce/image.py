@@ -560,10 +560,16 @@ class GFA_image:
         
         # first look in the image header (could be dangerous for EXPTIME
         # in the case of guider cubes)
-        
+
+        if self.bintable_row is not None:
+            if self.cube_index != -1:
+                bintable_has_keyword = keyword in self.bintable_row.array.dtype.names
+            else:
+                bintable_has_keyword = keyword in self.bintable_row.colnames
+
         if keyword in self.header.keys():
             return self.header[keyword]
-        elif (self.bintable_row is not None) and (keyword in self.bintable_row.array.dtype.names):
+        elif (self.bintable_row is not None) and bintable_has_keyword:
             return self.bintable_row[keyword]
         else:
             print('could not find ' + keyword + ' !!')
