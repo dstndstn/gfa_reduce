@@ -133,9 +133,8 @@ def load_exposure(fname=None, verbose=True, realtime=False, cube_index=None,
 
     # hacks for PlateMaker acquisition image file format
     if exp_header is None:
-        exp_header = fits.getheader(fname, extname='PRIMARY')
-        exp_header['EXTNAME'] = 'PRIMARY' # placeholder
-        h0 = hdul[0].header # hack for PlateMaker acquisition image file format
+        exp_header = hdul['PRIMARY'].header
+        h0 = exp_header
     else:
         h0 = None
         
