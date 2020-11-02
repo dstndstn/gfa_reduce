@@ -297,11 +297,10 @@ def average_bintable_metadata(tab):
                           'GHUMID2',
                           'GHUMID3']
 
-    _tab = tab[1:]
     for col in columns_to_average:
-        if col in _tab.columns.names:
+        if col in tab.columns.names:
             # weighted average...
-            result[col] = [np.sum(_tab[col]*_tab['EXPTIME'])/np.sum(_tab['EXPTIME'])]
+            result[col] = [np.sum(tab[col]*tab['EXPTIME'])/np.sum(tab['EXPTIME'])]
 
     return result[0]
 
