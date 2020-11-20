@@ -4,8 +4,8 @@ import sys, os, time
 import multiprocessing as mp
 import argparse
 import glob
-from ci_reduce.gfa_red import _proc
-from ci_reduce.common import expid_from_filename
+from gfa_reduce.gfa_red import _proc
+from gfa_reduce.common import expid_from_filename
 import numpy as np
 import astropy.io.fits as fits
 import json
