@@ -21,6 +21,7 @@ parser.add_argument("-e", "--expid_min", type=int, default=-1, help="start with 
 parser.add_argument("--out_basedir", type=str, default='/n/home/datasystems/users/ameisner/reduced/realtime', help="base output directory for GFA reductions")
 parser.add_argument("--guider", default=False, action='store_true', help="process guide-????????.fits.fz files instead of gfa-????????.fz files")
 parser.add_argument("--focus", default=False, action='store_true', help="optimize for focus scan analysis")
+parser.add_argument("--indir", type=str, default='/data/dts/exposures/raw', help="base input directory to watch for new exposures")
 args = parser.parse_args()
 
 class ProcItem:
@@ -51,7 +52,8 @@ def is_flavor_science(gfa_image_fname):
     return check_flavor_json(gfa_image_fname).lower() == 'science'
 
 print('running on host : ' + os.environ['HOSTNAME'])
-indir = '/data/dts/exposures/raw/' + args.night
+assert(os.path.exists(args.indir))
+indir = args.indir + '/' + args.night
 print('WATCHING FOR NEW FILES IN : ' + indir)
 if not os.path.exists(indir):
     print('WARNING: INPUT DIRECTORY DOES NOT CURRENTLY EXIST')
