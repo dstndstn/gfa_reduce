@@ -90,7 +90,7 @@ def run(workerid, q):
             if not args.focus:
                 _proc(filename, outdir=outdir, realtime=True, cube_index=image.cube_index, skip_image_outputs=True, skip_raw_imstats=True)
             else:
-                _proc(filename, outdir=outdir, realtime=True, cube_index=image.cube_index, skip_image_outputs=True, skip_raw_imstats=True, skip_astrometry=True, no_ps1_xmatch=True, no_gaia_xmatch=True)
+                _proc(filename, outdir=outdir, realtime=True, cube_index=image.cube_index, skip_image_outputs=True, skip_raw_imstats=True, skip_astrometry=True, no_ps1_xmatch=True, no_gaia_xmatch=True, do_sky_mag=False)
         except:
             print('PROCESSING FAILURE: ' + image.fname_raw + '   ' + image._cube_index_string())
         print('Worker {} done with {}'.format(workerid, filename))
