@@ -40,7 +40,8 @@ class GFA_exposure:
 
     def assign_max_cbox(self):
         for image in self.images.values():
-            image.max_cbox = self.max_cbox
+            if image is not None:
+                image.max_cbox = self.max_cbox
 
     def subtract_bias(self):
         print('Attempting to subtract bias...')
