@@ -380,7 +380,7 @@ def get_source_list(image, bitmask, extname, ivar_adu, max_cbox=31,
     tab = tab[(tab['min_edge_dist_pix'] > -5)]
 
     if len(tab) == 0:
-        return None, detsn, all_detections
+        return None, detsn, all_detections, image
 
     tab['DETMAP_THRESH'] = thresh
 
