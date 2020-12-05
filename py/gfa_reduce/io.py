@@ -19,22 +19,29 @@ def loading_image_extension_message(extname):
     print('Attempting to load image extension : ' + extname)
 
 def load_image_from_hdu(hdu, verbose=True, cube_index=None, store_detmap=False,
-                        h0=None):
+                        exp_header=None):
     loading_image_extension_message(hdu.header['EXTNAME'])
 
     header = hdu.header
 
     # hack for PlateMaker acquisition image file format
     if 'SKYRA' not in header:
-        header['SKYRA'] = h0['SKYRA']
-        header['SKYDEC'] = h0['SKYDEC']
-        header['EXPTIME'] = h0['EXPTIME']
-        header['REQTIME'] = h0['REQTIME']
-        header['MJD-OBS'] = h0['MJD-OBS']
+        header['SKYRA'] = exp_header['SKYRA']
+        header['SKYDEC'] = exp_header['SKYDEC']
+        header['EXPTIME'] = exp_header['EXPTIME']
+        header['REQTIME'] = exp_header['REQTIME']
+        header['MJD-OBS'] = exp_header['MJD-OBS']
 
     if 'EXPID' not in header:
-        header['EXPID'] = h0['EXPID']
-        
+        header['EXPID'] = exp_header['EXPID']
+
+    # found some cases on 20201128 and 20201129 where SKYRA, SKYDEC
+    # are correct in the exposure-level header but incorrect in the
+    # per-image headers, for example EXPID = 65021
+    if ('SKYRA' in exp_header) and ('SKYDEC' in exp_header):
+        header['SKYRA'] = exp_header['SKYRA']
+        header['SKYDEC'] = exp_header['SKYDEC']
+
     return GFA_image(hdu.data, header, cube_index=cube_index,
                      store_detmap=store_detmap)
 
@@ -134,9 +141,6 @@ def load_exposure(fname=None, verbose=True, realtime=False, cube_index=None,
     # hacks for PlateMaker acquisition image file format
     if exp_header is None:
         exp_header = hdul['PRIMARY'].header
-        h0 = exp_header
-    else:
-        h0 = None
         
     if np.sum(is_image_hdu) == 0:
         print('exposure may contain only focus cameras?')
@@ -150,7 +154,7 @@ def load_exposure(fname=None, verbose=True, realtime=False, cube_index=None,
     assert(((not is_cube) and (cube_index is not None)) == False)
     
     try:
-        imlist = [load_image_from_hdu(hdul[ind], verbose=verbose, cube_index=cube_index, store_detmap=store_detmap, h0=h0) for ind in w_im]
+        imlist = [load_image_from_hdu(hdul[ind], verbose=verbose, cube_index=cube_index, store_detmap=store_detmap, exp_header=exp_header) for ind in w_im]
     except Exception as e:
         print('failed to load exposure at image list creation stage')
         print(e)
