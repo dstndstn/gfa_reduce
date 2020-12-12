@@ -283,7 +283,13 @@ def average_bintable_metadata(tab):
     result = Table()
 
     result['EXPTIME'] = [np.mean(tab['EXPTIME'])]
-    result['REQTIME'] = [np.mean(tab['REQTIME'])]
+
+    # eventually do a better job of dealing with missing REQTIME column
+    try:
+        result['REQTIME'] = [np.mean(tab['REQTIME'])]
+    except:
+        print('no REQTIME column in guide cube binary table???')
+
     result['NIGHT'] = [tab['NIGHT'][0]]
     
     columns_to_average = ['MJD-OBS',
