@@ -363,6 +363,9 @@ def get_source_list(image, bitmask, extname, ivar_adu, max_cbox=31,
 
     all_detections = detmap_centroids(all_detections, detsn, max_cbox=max_cbox)
 
+    if len(all_detections) == 0:
+        return None, detsn, all_detections, image
+
     tab = copy.deepcopy(all_detections)
 
     # only compute this 'sigma map' once to avoid wasted processing time
