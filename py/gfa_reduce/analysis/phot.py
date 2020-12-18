@@ -5,7 +5,12 @@ from scipy import ndimage
 import numpy as np
 from scipy.ndimage.measurements import label, find_objects
 from astropy.table import Table
-from photutils.centroids.core import fit_2dgaussian
+try:
+    # photutils 0.4
+    from photutils.centroids.core import fit_2dgaussian
+except:
+    # photutils 1.0 (not sure when the transition is)
+    from photutils.centroids import fit_2dgaussian
 from astropy.stats import sigma_clipped_stats
 from photutils import aperture_photometry
 from photutils import CircularAperture, CircularAnnulus, EllipticalAperture
