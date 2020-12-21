@@ -57,7 +57,8 @@ def _proc(fname_in=None, outdir=None, careful_sky=False,
           multiproc=False, skip_aper_phot=False,
           det_sn_thresh=5.0, apply_flatfield=True,
           search_rad_arcmin=6.0, do_sky_mag=True, gfa_targets=None,
-          exp_data=None, minimal_ccds_metadata=False, skip_2d_gaussians=False):
+          exp_data=None, minimal_ccds_metadata=False,
+          skip_2d_gaussians=False, mjdmin=None, mjdmax=None):
 
     print('Starting GFA reduction pipeline at: ' + str(datetime.utcnow()) + 
           ' UTC')
@@ -86,10 +87,15 @@ def _proc(fname_in=None, outdir=None, careful_sky=False,
         io.check_image_level_outputs_exist(outdir, fname_in, gzip=True,
                                            cube_index=cube_index)
 
+    if (mjdmin is None) or (mjdmax is None):
+        mjdrange = None
+    else:
+        mjdrange = [mjdmin, mjdmax]
+
     exp = io.load_exposure(fname=fname_in, cube_index=cube_index,
                            realtime=realtime,
                            store_detmap=write_detmap, max_cbox=max_cbox,
-                           hdul=exp_data)
+                           hdul=exp_data, mjdrange=mjdrange)
 
     # check for simulated data
     if (exp is None) or util.has_wrong_dimensions(exp):
@@ -324,6 +330,12 @@ if __name__ == "__main__":
     parser.add_argument('--skip_sky_mag', default=False, action='store_true',
                         help="skip sky surface brightness estimation")
 
+    parser.add_argument('--mjdmin', default=None, type=float,
+                        help='minimum MJD for guide cube coaddition')
+
+    parser.add_argument('--mjdmax', default=None, type=float,
+                        help='maximum MJD for guide cube coaddition')
+
     args = parser.parse_args()
 
     fname_in = args.fname_in[0]
@@ -349,4 +361,5 @@ if __name__ == "__main__":
           det_sn_thresh=args.det_sn_thresh,
           apply_flatfield=(not args.skip_flatfield),
           search_rad_arcmin=args.search_rad_arcmin,
-          do_sky_mag=(not args.skip_sky_mag))
+          do_sky_mag=(not args.skip_sky_mag), mjdmin=args.mjdmin,
+          mjdmax=args.mjdmax)

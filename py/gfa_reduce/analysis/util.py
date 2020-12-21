@@ -750,3 +750,26 @@ def pm_pi_corr_fiberassign(gfa_targets, mjd):
 
     gfa_targets['TARGET_RA'] = ra_corr
     gfa_targets['TARGET_DEC'] = dec_corr
+
+def coadd_cube_index_range(bintable, cube_index, mjdrange):
+
+    if cube_index != -1:
+        return cube_index, cube_index
+
+    if mjdrange is None:
+        return 1, (len(bintable)-1)
+
+    else:
+        mjdmin = mjdrange[0]
+        mjdmax = mjdrange[1]
+        assert(mjdmin <= mjdmax)
+        w = np.where((bintable['MJD-OBS'] >= mjdmin) &
+                     (bintable['MJD-OBS'] < mjdmax))[0]
+
+        # always assume zeroth frame is acquisition image !!
+        indmin = max(np.min(w), 1)
+        indmax = np.max(w)
+
+        assert(indmax >= indmin)
+
+        return indmin, indmax

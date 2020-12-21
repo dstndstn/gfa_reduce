@@ -180,16 +180,21 @@ class Overscan:
 class GFA_image:
     """Single GFA image from one GFA exposure"""
 
-    def __init__(self, image, header, cube_index=None, store_detmap=False):
+    def __init__(self, image, header, cube_index=None, store_detmap=False, coadd_index_range=None):
         if cube_index is None:
             self.image = image.astype('float32')
             self.nframe = 1
         elif cube_index == -1:
-            self.image = np.mean(image[1:, :, :].astype('float32'), axis=0)
+            cube_index_start = coadd_index_range[0]
+            cube_index_end = coadd_index_range[1]
+            self.image = np.mean(image[cube_index_start:(cube_index_end + 1), :, :].astype('float32'),
+                                 axis=0)
             self.nframe = image.shape[0]
         else:
             self.image = image[cube_index, :, :].astype('float32')
             self.nframe = 1
+
+        self.coadd_index_range = coadd_index_range
 
         self.overscan = Overscan(self.image)
         self.remove_overscan()

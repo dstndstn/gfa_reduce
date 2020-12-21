@@ -248,7 +248,7 @@ class GFA_exposure:
             if image.cube_index is None:
                 image.bintable_row = None
             elif image.cube_index == -1:
-                image.bintable_row = util.average_bintable_metadata(self.bintables[extname][1:])
+                image.bintable_row = util.average_bintable_metadata(self.bintables[extname][image.coadd_index_range[0]:(image.coadd_index_range[1]+1)])
             else:
                 image.bintable_row = self.bintables[extname][image.cube_index]
 

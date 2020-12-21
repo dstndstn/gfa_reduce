@@ -19,7 +19,7 @@ def loading_image_extension_message(extname):
     print('Attempting to load image extension : ' + extname)
 
 def load_image_from_hdu(hdu, verbose=True, cube_index=None, store_detmap=False,
-                        exp_header=None):
+                        exp_header=None, coadd_index_range=None):
     loading_image_extension_message(hdu.header['EXTNAME'])
 
     header = hdu.header
@@ -43,7 +43,8 @@ def load_image_from_hdu(hdu, verbose=True, cube_index=None, store_detmap=False,
         header['SKYDEC'] = exp_header['SKYDEC']
 
     return GFA_image(hdu.data, header, cube_index=cube_index,
-                     store_detmap=store_detmap)
+                     store_detmap=store_detmap,
+                     coadd_index_range=coadd_index_range)
 
 def load_image_from_filename(fname, extname):
     assert(os.path.exists(fname))
@@ -101,7 +102,9 @@ def realtime_raw_read(fname, delay=2.0, max_attempts=5):
     return hdul
 
 def load_exposure(fname=None, verbose=True, realtime=False, cube_index=None,
-                  store_detmap=False, max_cbox=31, hdul=None):
+                  store_detmap=False, max_cbox=31, hdul=None, mjdrange=None):
+
+    # mjdrange should be 2 element list : [mjdmin, mjdmax]
 
     # exactly one of fname, hdul should be specified
     assert((fname is not None) ^ (hdul is not None))
@@ -152,22 +155,26 @@ def load_exposure(fname=None, verbose=True, realtime=False, cube_index=None,
 
     assert((is_cube and (cube_index is None)) == False)
     assert(((not is_cube) and (cube_index is not None)) == False)
-    
-    try:
-        imlist = [load_image_from_hdu(hdul[ind], verbose=verbose, cube_index=cube_index, store_detmap=store_detmap, exp_header=exp_header) for ind in w_im]
-    except Exception as e:
-        print('failed to load exposure at image list creation stage')
-        print(e)
-        return None
 
     bintables = None
     if is_cube:
         bintables = {}
+        coadd_ind_ranges = []
         for ind in w_im:
             extname_im = hdul[ind].header['EXTNAME'].strip()
             extname_tab = extname_im + 'T'
             # this will crash if the binary table extension is missing...
             bintables[extname_im] = hdul[extname_tab].data
+            coadd_ind_ranges.append(util.coadd_cube_index_range(bintables[extname_im], cube_index, mjdrange))
+    else:
+        coadd_ind_ranges = [None]*len(w_im)
+            
+    try:
+        imlist = [load_image_from_hdu(hdul[ind], verbose=verbose, cube_index=cube_index, store_detmap=store_detmap, exp_header=exp_header, coadd_index_range=coadd_ind_ranges[i]) for i, ind in enumerate(w_im)]
+    except Exception as e:
+        print('failed to load exposure at image list creation stage')
+        print(e)
+        return None
 
     exp = GFA_exposure(imlist, exp_header=exp_header, bintables=bintables,
                        max_cbox=max_cbox)
@@ -677,6 +684,10 @@ def assemble_ccds_table(tab, catalog, exp, outdir, proc_obj, cube_index=None,
     tab['exptime'] = [exp.images[extname].try_retrieve_meta_keyword('EXPTIME', placeholder=np.nan) for extname in tab['camera']]
     
     tab['cube_index'] = np.nan if cube_index is None else int(cube_index)
+
+    if cube_index == -1:
+        tab['coadd_index_start'] = [exp.images[extname].coadd_index_range[0] for extname in tab['camera']]
+        tab['coadd_index_end'] = [exp.images[extname].coadd_index_range[1] for extname in tab['camera']]
     
     tab['racen'] = np.zeros(len(tab), dtype=float)
     tab['deccen'] = np.zeros(len(tab), dtype=float)
