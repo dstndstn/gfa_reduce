@@ -9,6 +9,7 @@ from gfa_reduce.common import expid_from_filename
 import numpy as np
 import astropy.io.fits as fits
 import json
+import gfa_reduce
 
 # using Stephen Bailey's "multirunner" template as the basis for this script
 # https://raw.githubusercontent.com/sbailey/multirunner/master/multirunner.py
@@ -52,6 +53,10 @@ def is_flavor_science(gfa_image_fname):
     return check_flavor_json(gfa_image_fname).lower() == 'science'
 
 print('running on host : ' + os.environ['HOSTNAME'])
+
+print('PATH TO gfa_reduce IS : ')
+print(gfa_reduce.__file__)
+
 assert(os.path.exists(args.indir))
 indir = args.indir + '/' + args.night
 print('WATCHING FOR NEW FILES IN : ' + indir)
@@ -60,6 +65,7 @@ if not os.path.exists(indir):
 
 guider = args.guider
 
+print('BASE OUTPUT DIRECTORY : ')
 print(args.out_basedir)
 assert(os.path.exists(args.out_basedir))
 night_basedir_out = os.path.join(args.out_basedir, args.night)
