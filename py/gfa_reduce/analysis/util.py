@@ -737,9 +737,14 @@ def pm_pi_corr_fiberassign(gfa_targets, mjd):
                                                     gfa_targets['TARGET_DEC'],
                                                     mjd, gfa_targets['PARALLAX'])
 
-    assert(np.sum(gfa_targets['REF_EPOCH'] != 2015.5) == 0)
+    def year_to_mjd(yr):
+        mjd2k = 51545. # J2000
+        return mjd2k + 365.25 * (yr - 2000.)
 
-    ref_mjd =  57205.625 # 2015.5
+    #assert(np.sum(gfa_targets['REF_EPOCH'] != 2015.5) == 0)
+    #ref_mjd =  57205.625 # 2015.5
+    assert(np.all(gfa_targets['REF_EPOCH'] > 2000.))
+    ref_mjd = year_to_mjd(gfa_targets['REF_EPOCH'])
 
     ra_corr = gfa_targets['TARGET_RA'] + np.array(dra_pi_mas)/(np.cos(gfa_targets['TARGET_DEC']/(180.0/np.pi))*3600.0*1000.0)
     dec_corr = gfa_targets['TARGET_DEC'] + np.array(ddec_pi_mas)/(3600.0*1000.0)
