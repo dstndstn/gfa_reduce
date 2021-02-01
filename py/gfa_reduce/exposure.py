@@ -136,6 +136,7 @@ class GFA_exposure:
             self.apply_flatfield()
         else:
             print('Skipping flatfielding')
+            print('images:', self.images)
             for extname in self.images.keys():
                 self.images[extname].calc_variance_adu()
         self.pixels_calibrated = True

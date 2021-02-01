@@ -550,6 +550,8 @@ class GFA_image:
         del self.header['PC1_2']
         del self.header['PC2_2']
 
+        print('Update_wcs:', self.extname, 'header', self.header)
+
     def try_retrieve_meta_keyword(self, keyword, placeholder=None):
         # examples are MJD-OBS and GCCDTEMP, which
         # are found in different places in the raw data depending

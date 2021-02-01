@@ -147,6 +147,7 @@ def _proc(fname_in=None, outdir=None, careful_sky=False,
                                       h=exp.exp_header, mp=multiproc,
                                       arcmin_max=search_rad_arcmin,
                                       gfa_targets=gfa_targets)
+            print('astr:', astr)
             exp.update_wcs(astr)
             exp.recompute_catalog_radec(catalog)
 
